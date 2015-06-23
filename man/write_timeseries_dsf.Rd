@@ -4,7 +4,7 @@
 \alias{write_timeseries_dsf}
 \title{Create timeseries NCDF file}
 \usage{
-write_timeseries_dsf(nc_file, station_names, lats, lons, alts, times, data,
+write_timeseries_dsf(nc_file, station_names, lats, lons, times, data,
   data_unit = "", data_prec = "double")
 }
 \arguments{
@@ -14,8 +14,6 @@ write_timeseries_dsf(nc_file, station_names, lats, lons, alts, times, data,
 
 \item{lons}{Vector of longitudes}
 
-\item{alts}{Vector of altitudes}
-
 \item{times}{A vector of times. Must be of type \code{\link{POSIXct}} or an attempt to
 convert it will be made using \code{\link{as.POSIXct(times)}}.}
 
@@ -23,11 +21,11 @@ convert it will be made using \code{\link{as.POSIXct(times)}}.}
 samples at different times. nrow must be the same length as times.
 Column names are used as names in the NCDF file.}
 
+\item{data_unit}{Character vector of observation units. Length must be the same as number
+of columns in \code{data} parameter}
+
 \item{data_prec}{Precision of observation data in NCDF file.
 Valid options: 'short' 'integer' 'float' 'double' 'char'.}
-
-\item{data_units}{Character vector of observation units. Length must be the same as number
-of columns in \code{data} parameter}
 }
 \description{
 This creates a timeseries discrete sampling features NCDF file
