@@ -13,10 +13,18 @@
 #'of columns in \code{data} parameter
 #'@param data_prec Precision of observation data in NCDF file. 
 #'Valid options: 'short' 'integer' 'float' 'double' 'char'.
-#'
+#'@param attributes An optional list of attributes that will be added at the global level. 
+#'See details for useful attributes.
 #'
 #'@description
 #'This creates a timeseries discrete sampling features NCDF file
+#'
+#'@details
+#'title = "title"
+#'abstract = "history"
+#'provider site = "institution"
+#'provider name ="source"
+#'description = "description"
 #'
 #'@references
 #'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
@@ -25,7 +33,7 @@
 #'
 #'@export
 write_timeseries_dsf = function(nc_file, station_names, lats, lons, times, data, data_unit='',
-													 data_prec='double'){
+													 data_prec='double', attributes=list()){
 	
 	#building this with what I think is the minium required as shown here:
 	# http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data
@@ -35,8 +43,8 @@ write_timeseries_dsf = function(nc_file, station_names, lats, lons, times, data,
 	}
 	
 	n = length(station_names)
-	if(length(lats)!=n || length(lons)!=n || length(alts)!=n){
-		stop('station_names, lats, lons, and alts must all be vectors of the same length')
+	if(length(lats)!=n || length(lons)!=n){
+		stop('station_names, lats, and lons must all be vectors of the same length')
 	}
 	
 	if(ncol(data)!=n){
@@ -94,6 +102,11 @@ write_timeseries_dsf = function(nc_file, station_names, lats, lons, times, data,
 	put.var.ncdf(nc_file, station_var, station_names, count=c(-1,n))
 	
 	put.var.ncdf(nc_file, data_name, as.vector((as.matrix(data))), start=c(1,1), count=c(nt, n))
+	
+	#Add the optional global attributes
+	for(i in 1:length(attributes)){
+		att.put.ncdf(nc_file, 0, names(attributes[i]), attributes[[i]])
+	}
 	
 	close.ncdf(nc_file)
 }

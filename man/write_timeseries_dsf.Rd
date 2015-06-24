@@ -5,7 +5,7 @@
 \title{Create timeseries NCDF file}
 \usage{
 write_timeseries_dsf(nc_file, station_names, lats, lons, times, data,
-  data_unit = "", data_prec = "double")
+  data_unit = "", data_prec = "double", attributes = list())
 }
 \arguments{
 \item{nc_file}{A string file path to the nc file to be created.}
@@ -26,9 +26,19 @@ of columns in \code{data} parameter}
 
 \item{data_prec}{Precision of observation data in NCDF file.
 Valid options: 'short' 'integer' 'float' 'double' 'char'.}
+
+\item{attributes}{An optional list of attributes that will be added at the global level.
+See details for useful attributes.}
 }
 \description{
 This creates a timeseries discrete sampling features NCDF file
+}
+\details{
+title = "title"
+abstract = "history"
+provider site = "institution"
+provider name ="source"
+description = "description"
 }
 \references{
 http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
