@@ -1,4 +1,4 @@
-#'@title Create timeseries NCDF file
+#'@title Create ragged array timeseries NCDF file
 #'
 #'
 #'@param nc_file A string file path to the nc file to be created.
@@ -32,8 +32,8 @@
 #'@import ncdf
 #'
 #'@export
-write_timeseries_dfg = function(nc_file, station_names, lats, lons, times, data, data_unit='',
-													 data_prec='double', attributes=list()){
+write_ragged_timeseries_dfg = function(nc_file, station_names, lats, lons, times, data, data_unit='',
+																data_prec='double', attributes=list()){
 	
 	#building this with what I think is the minium required as shown here:
 	# http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data
@@ -73,7 +73,7 @@ write_timeseries_dfg = function(nc_file, station_names, lats, lons, times, data,
 	data_vars = list()
 	data_name = names(data)[1]
 	data_vars[[1]] = var.def.ncdf(data_name, data_unit, list(time_dim, station_dim), prec=data_prec, missval=-999)
-		
+	
 	#nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, alt_var, time_var, station_var), data_vars))
 	nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, time_var, station_var), data_vars))
 	
