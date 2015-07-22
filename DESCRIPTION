@@ -1,7 +1,7 @@
 Package: netcdf.dsg
 Type: Package
 Title: Discrete Sampling Geometry NetCDF
-Version: 0.1.1
+Version: 0.3.0
 Date: 2015-06-11
 Author: Luke Winslow, Dave Blodgett
 Maintainer: Luke Winslow <lwinslow@usgs.gov>
