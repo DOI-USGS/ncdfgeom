@@ -32,7 +32,7 @@
 #'@import ncdf
 #'
 #'@export
-write_timeseries_dfg = function(nc_file, station_names, lats, lons, times, data, data_unit='',
+write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data, data_unit='',
 													 data_prec='double', attributes=list()){
 	
 	#building this with what I think is the minium required as shown here:

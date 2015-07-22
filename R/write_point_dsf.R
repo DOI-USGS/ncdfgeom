@@ -24,7 +24,7 @@
 #'@import ncdf
 #'
 #'@export
-write_point_dfg = function(nc_file, times, lats, lons, alts, data, data_units=rep('', ncol(data)),
+write_point_dsg = function(nc_file, times, lats, lons, alts, data, data_units=rep('', ncol(data)),
 													 data_prec=rep('double', ncol(data))){
 	
 	#building this with what I think is the minium required as shown here:
