@@ -30,6 +30,7 @@
 #'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
 #'
 #'@import ncdf
+#'@importFrom methods is
 #'
 #'@export
 write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data, data_unit='',
