@@ -6,10 +6,10 @@
 #'convert it will be made using \code{\link{as.POSIXct(times)}}.
 #'@param lats Vector of latitudes 
 #'@param lons Vector of longitudes
-#'@param alts Vector of altitudes
 #'@param data \code{data.frame} with each column corresponding to a observation. Rows correspond to 
 #'samples at different times. nrow must be the same length as times. 
 #'Column names are used as names in the NCDF file.
+#'@param alts Vector of altitudes (Optional)
 #'@param data_units Character vector of observation units. Length must be the same as number 
 #'of columns in \code{data} parameter
 #'@param data_prec Precision of observation data in NCDF file. 
@@ -25,7 +25,7 @@
 #'@import ncdf
 #'
 #'@export
-write_timeseries_dsg = function(nc_file, station_names, lats, lons, alts, times, data, data_unit='', data_prec='double'){
+write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data, alts='', data_unit='', data_prec='double'){
 	
 	#building this with what I think is the minium required as shown here:
 	# http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data
@@ -36,7 +36,11 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, alts, times,
 	
 	n = length(station_names)
 	if(length(lats)!=n || length(lons)!=n || length(alts)!=n){
-		stop('station_names, lats, lons, and alts must all be vectors of the same length')
+		stop('station_names, lats, and lons must all be vectors of the same length')
+	}
+	
+	if(is.vector(alts) && length(alts)!=n){
+		stop('station_names and alts must all be vectors of the same length')
 	}
 	
 	if(ncol(data)!=n){
@@ -60,27 +64,36 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, alts, times,
 	time_var 		= var.def.ncdf('time','days since 1970-01-01 00:00:00', time_dim, -999, prec='double', longname='time of measurement')
 	lat_var 		= var.def.ncdf('lat', 'degrees_north', station_dim, -999, prec='double', longname = 'latitude of the observation')
 	lon_var 		= var.def.ncdf('lon', 'degrees_east', station_dim, -999, prec='double', longname = 'longitude of the observation')
-	alt_var 		= var.def.ncdf('alt', 'm', station_dim, -999, prec='double', longname='vertical distance above the surface')
-	
+	if(is.vector(alts)){
+		alt_var 		= var.def.ncdf('alt', 'm', station_dim, -999, prec='double', longname='vertical distance above the surface')
+	}
 	data_vars = list()
 	data_name = names(data)[1]
 	data_vars[[1]] = var.def.ncdf(data_name, data_unit, list(station_dim, time_dim), prec=data_prec, missval=-999)
-		
-	nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, alt_var, time_var, station_var), data_vars))
 	
+	if(is.vector(alts)){
+		nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, time_var, alt_var, station_var), data_vars))
+	} else {
+		nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, time_var, station_var), data_vars))
+	}
 	#add standard_names
 	att.put.ncdf(nc_file, 'lat', 'standard_name', 'latitude')
 	att.put.ncdf(nc_file, 'time', 'standard_name', 'time')
 	att.put.ncdf(nc_file, 'lon', 'standard_name', 'longitude')
-	att.put.ncdf(nc_file, 'alt', 'standard_name', 'height')
+	if(is.vector(alts)){
+		att.put.ncdf(nc_file, 'alt', 'standard_name', 'height')
+	}
 	att.put.ncdf(nc_file, 'station_name', 'cf_role', 'timeseries_id')
 	att.put.ncdf(nc_file, 'station_name','standard_name','station_id')
 	
 	#use the same names for "standard names" and add coordinates as well
 	att.put.ncdf(nc_file, data_name, 'standard_name', data_name)
-	att.put.ncdf(nc_file, data_name, 'coordinates', 'time lat lon alt')
-	
-	#some final stuff
+	if(is.vector(alts)){
+		att.put.ncdf(nc_file, data_name, 'coordinates', 'time lat lon alt')
+	} else {
+		att.put.ncdf(nc_file, data_name, 'coordinates', 'time lat lon')
+	}
+	#Important Global Variables
 	att.put.ncdf(nc_file, 0,'featureType','timeSeries')
 	att.put.ncdf(nc_file, 0,'Conventions','CF-1.6')
 	att.put.ncdf(nc_file, 0,'cdm_data_type','Station')
@@ -90,11 +103,11 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, alts, times,
 	put.var.ncdf(nc_file, time_var, as.numeric(times)/86400, count=nt) #convert to days since 1970-01-01
 	put.var.ncdf(nc_file, lat_var, lats, count=n)
 	put.var.ncdf(nc_file, lon_var, lons, count=n)
-	put.var.ncdf(nc_file, alt_var, alts, count=n)
+	if(is.vector(alts)){
+		put.var.ncdf(nc_file, alt_var, alts, count=n)
+	}
 	put.var.ncdf(nc_file, station_var, station_names, count=c(-1,n))
-	
 	put.var.ncdf(nc_file, data_name, as.vector(t(as.matrix(data))), start=c(1,1), count=c(n,nt))
-	att.put.ncdf(nc_file, data_name, 'coordinates', 'time lat lon alt')
 	
 	close.ncdf(nc_file)
 }

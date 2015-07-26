@@ -43,7 +43,7 @@ test_that("Create basic DSG file",{
 	data_frame<-data[2:(ncol(data)-3)]
 	time<-data$DateTime
 	
-	testnc<-write_timeseries_dsg(nc_file, names(data_frame), lats, lons, alts, time, data_frame, data_unit=data$units[1],	data_prec='double')
+	testnc<-write_timeseries_dsg(nc_file, names(data_frame), lats, lons, time, data_frame, alts, data_unit=data$units[1],	data_prec='double')
 	testnc<-open.ncdf(nc_file)
 	
 	expect_equivalent(length(testnc$dim$station$vals),71)
