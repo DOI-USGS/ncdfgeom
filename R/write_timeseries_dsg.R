@@ -25,8 +25,7 @@
 #'@import ncdf
 #'
 #'@export
-write_timeseries_dsg = function(nc_file, station_names, lats, lons, alts, times, data, data_unit='',
-													 data_prec='double'){
+write_timeseries_dsg = function(nc_file, station_names, lats, lons, alts, times, data, data_unit='', data_prec='double'){
 	
 	#building this with what I think is the minium required as shown here:
 	# http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data
@@ -75,14 +74,18 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, alts, times,
 	att.put.ncdf(nc_file, 'lon', 'standard_name', 'longitude')
 	att.put.ncdf(nc_file, 'alt', 'standard_name', 'height')
 	att.put.ncdf(nc_file, 'station_name', 'cf_role', 'timeseries_id')
+	att.put.ncdf(nc_file, 'station_name','standard_name','station_id')
 	
 	#use the same names for "standard names" and add coordinates as well
 	att.put.ncdf(nc_file, data_name, 'standard_name', data_name)
-	att.put.ncdf(nc_file, data_name, 'coordinates', 'lat lon alt')
+	att.put.ncdf(nc_file, data_name, 'coordinates', 'time lat lon alt')
 	
 	#some final stuff
 	att.put.ncdf(nc_file, 0,'featureType','timeSeries')
-	
+	att.put.ncdf(nc_file, 0,'Conventions','CF-1.6')
+	att.put.ncdf(nc_file, 0,'cdm_data_type','Station')
+	att.put.ncdf(nc_file, 0,'standard_name_vocabulary','CF-1.6')
+
 	#Put data in NC file
 	put.var.ncdf(nc_file, time_var, as.numeric(times)/86400, count=nt) #convert to days since 1970-01-01
 	put.var.ncdf(nc_file, lat_var, lats, count=n)
@@ -91,7 +94,7 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, alts, times,
 	put.var.ncdf(nc_file, station_var, station_names, count=c(-1,n))
 	
 	put.var.ncdf(nc_file, data_name, as.vector(t(as.matrix(data))), start=c(1,1), count=c(n,nt))
-	att.put.ncdf(nc_file, data_name, 'coordinates', 'lat lon alt')
+	att.put.ncdf(nc_file, data_name, 'coordinates', 'time lat lon alt')
 	
 	close.ncdf(nc_file)
 }

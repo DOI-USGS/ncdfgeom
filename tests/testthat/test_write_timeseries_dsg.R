@@ -30,6 +30,7 @@ test_that("Create basic DSG file",{
 	
 	lats<-attributes$YCOORD
 	lons<-attributes$XCOORD
+	# Altitude shouldn't be required.
 	alts<-rep(1,length(lats))
 	
 	# Don't need to do this if use GeoKnife patterns.
@@ -46,4 +47,12 @@ test_that("Create basic DSG file",{
 	testnc<-open.ncdf(nc_file)
 	
 	expect_equivalent(length(testnc$dim$station$vals),71)
+	expect_equivalent(att.get.ncdf(testnc,varid=0,"Conventions")$value,"CF-1.6")
+	expect_equivalent(att.get.ncdf(testnc,varid=0,"cdm_data_type")$value,"Station")
+	expect_equivalent(att.get.ncdf(testnc,varid=0,"standard_name_vocabulary")$value,"CF-1.6")
+	expect_equivalent(att.get.ncdf(testnc,varid="station_name","standard_name")$value,"station_id")
+	expect_equivalent(att.get.ncdf(testnc,varid="station_name","cf_role")$value,"timeseries_id")
+	expect_equivalent(att.get.ncdf(testnc,varid="time","standard_name")$value,"time")
+	expect_equivalent(att.get.ncdf(testnc,varid="lat","standard_name")$value,"latitude")
+	expect_equivalent(att.get.ncdf(testnc,varid="lon","standard_name")$value,"longitude")
 })
