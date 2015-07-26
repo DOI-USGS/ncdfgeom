@@ -30,11 +30,9 @@ gdp_ids_and_units<-function(GDPFile)
 			for (i in 1:length(nc_stations))
 				if (nc_stations[i]=="")
 					nc_stations[i]="000000000000"
-			print('null station found')
 		}
 		else if (substr(line,1,8)=="TIMESTEP")
 		{
-			print('Parsing stats and units.')
 			stats<-strsplit(line,split=',')[[1]]
 			stats<-stats[2:length(stats)]
 			units<-stats
