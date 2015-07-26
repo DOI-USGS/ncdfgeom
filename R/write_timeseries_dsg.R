@@ -17,7 +17,7 @@
 #'
 #'
 #'@description
-#'This creates a timeseries discrete sampling features NCDF file
+#'This creates a timeseries discrete sampling geometry NCDF file
 #'
 #'@references
 #'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
@@ -25,7 +25,7 @@
 #'@import ncdf
 #'
 #'@export
-write_timeseries_dsf = function(nc_file, station_names, lats, lons, alts, times, data, data_unit='',
+write_timeseries_dsg = function(nc_file, station_names, lats, lons, alts, times, data, data_unit='',
 													 data_prec='double'){
 	
 	#building this with what I think is the minium required as shown here:
