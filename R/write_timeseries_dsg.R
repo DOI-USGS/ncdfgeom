@@ -34,7 +34,7 @@
 #'@importFrom methods is
 #'
 #'@export
-write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data, alts='', data_unit='', 
+write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data, alts='', data_unit='',
 																data_prec='double',data_metadata=list(name='data',long_name='unnamed data'),attributes=list()){
 	
 	#building this with what I think is the minium required as shown here:
@@ -76,7 +76,7 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 	lon_var 		= var.def.ncdf('lon', 'degrees_east', station_dim, -999, prec='double', longname = 'longitude of the observation')
 
 	if(is.vector(alts)){
-		alt_var 		= var.def.ncdf('alt', 'm', station_dim, -999, prec='double', longname='vertical distance above the surface')
+		alt_var = var.def.ncdf('alt', 'm', station_dim, -999, prec='double', longname='vertical distance above the surface')
 	}
 	data_vars = list()
 	data_name = data_metadata[['name']]
