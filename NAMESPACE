@@ -2,6 +2,8 @@
 
 export(gdp_count_time_steps)
 export(gdp_ids_and_units)
-export(write_point_dsf)
+export(write_point_dsg)
+export(write_ragged_timeseries_dsg)
 export(write_timeseries_dsg)
 import(ncdf)
+importFrom(methods,is)
