@@ -6,14 +6,14 @@
 #'convert it will be made using \code{\link{as.POSIXct(times)}}.
 #'@param lats Vector of latitudes 
 #'@param lons Vector of longitudes
-#'@param data \code{data.frame} with each column corresponding to a observation. Rows correspond to 
-#'samples at different times. nrow must be the same length as times. 
-#'Column names are used as names in the NCDF file.
+#'@param data \code{data.frame} with each column corresponding to a station. Rows correspond to 
+#'time steps. nrow must be the same length as times. Column names must match station names.
 #'@param alts Vector of altitudes (Optional)
 #'@param data_units Character vector of observation units. Length must be the same as number 
 #'of columns in \code{data} parameter
 #'@param data_prec Precision of observation data in NCDF file. 
 #'Valid options: 'short' 'integer' 'float' 'double' 'char'.
+#'@param data_metadata A named list of strings: list(name='ShortVarName', long_name='A Long Name')
 #'
 #'
 #'@description
@@ -25,7 +25,8 @@
 #'@import ncdf
 #'
 #'@export
-write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data, alts='', data_unit='', data_prec='double'){
+write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data, alts='', data_unit='', 
+																data_prec='double',data_metadata=list(name='data',long_name='unnamed data')){
 	
 	#building this with what I think is the minium required as shown here:
 	# http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data
@@ -68,8 +69,9 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		alt_var 		= var.def.ncdf('alt', 'm', station_dim, -999, prec='double', longname='vertical distance above the surface')
 	}
 	data_vars = list()
-	data_name = names(data)[1]
-	data_vars[[1]] = var.def.ncdf(data_name, data_unit, list(station_dim, time_dim), prec=data_prec, missval=-999)
+	data_name = data_metadata[['name']]
+	data_vars[[1]] = var.def.ncdf(data_name, data_unit, list(station_dim, time_dim), prec=data_prec, 
+																longname=data_metadata[['long_name']], missval=-999)
 	
 	if(is.vector(alts)){
 		nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, time_var, alt_var, station_var), data_vars))
@@ -87,7 +89,6 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 	att.put.ncdf(nc_file, 'station_name','standard_name','station_id')
 	
 	#use the same names for "standard names" and add coordinates as well
-	att.put.ncdf(nc_file, data_name, 'standard_name', data_name)
 	if(is.vector(alts)){
 		att.put.ncdf(nc_file, data_name, 'coordinates', 'time lat lon alt')
 	} else {
