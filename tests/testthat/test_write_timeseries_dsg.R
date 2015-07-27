@@ -24,9 +24,9 @@ test_that("Create basic DSG file",{
 	testnc<-open.ncdf(nc_file)
 	
 	expect_equivalent(length(testnc$dim$station$vals),71)
-	expect_equivalent(att.get.ncdf(testnc,varid=0,"Conventions")$value,"CF-1.6")
+	expect_equivalent(att.get.ncdf(testnc,varid=0,"Conventions")$value,"CF-1.7")
 	expect_equivalent(att.get.ncdf(testnc,varid=0,"cdm_data_type")$value,"Station")
-	expect_equivalent(att.get.ncdf(testnc,varid=0,"standard_name_vocabulary")$value,"CF-1.6")
+	expect_equivalent(att.get.ncdf(testnc,varid=0,"standard_name_vocabulary")$value,"CF-1.7")
 	expect_equivalent(att.get.ncdf(testnc,varid="station_name","standard_name")$value,"station_id")
 	expect_equivalent(att.get.ncdf(testnc,varid="station_name","cf_role")$value,"timeseries_id")
 	expect_equivalent(att.get.ncdf(testnc,varid="time","standard_name")$value,"time")

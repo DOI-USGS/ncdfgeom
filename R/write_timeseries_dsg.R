@@ -124,8 +124,10 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 	put.var.ncdf(nc_file, data_name, as.vector(t(as.matrix(data))), start=c(1,1), count=c(nt, n))
 	
 	#Add the optional global attributes
-	for(i in 1:length(attributes)){
-		att.put.ncdf(nc_file, 0, names(attributes[i]), attributes[[i]])
+	if(length(attributes>0)){
+		for(i in 1:length(attributes)){
+			att.put.ncdf(nc_file, 0, names(attributes[i]), attributes[[i]])
+		}
 	}
 	
 	close.ncdf(nc_file)
