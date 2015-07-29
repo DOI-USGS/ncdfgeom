@@ -49,7 +49,7 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		stop('station_names, lats, and lons must all be vectors of the same length')
 	}
 	
-	if(!is.na(alts) && length(alts)!=n){
+	if(!is.na(alts[1]) && length(alts)!=n){
 		stop('station_names and alts must all be vectors of the same length')
 	}
 	
@@ -75,14 +75,14 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 	lat_var 		= var.def.ncdf('lat', 'degrees_north', station_dim, -999, prec='double', longname = 'latitude of the observation')
 	lon_var 		= var.def.ncdf('lon', 'degrees_east', station_dim, -999, prec='double', longname = 'longitude of the observation')
 
-	if(!is.na(alts)){
+	if(!is.na(alts[1])){
 		alt_var = var.def.ncdf('alt', 'm', station_dim, -999, prec='double', longname='vertical distance above the surface')
 	}
 	data_vars = list()
 	data_name = data_metadata[['name']]
 	data_vars[[1]] = var.def.ncdf(data_name, data_unit, list(time_dim, station_dim), prec=data_prec, 
 																longname=data_metadata[['long_name']], missval=-999)
-	if(!is.na(alts)){
+	if(!is.na(alts[1])){
 		nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, time_var, alt_var, station_var), data_vars))
 	} else {
 		nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, time_var, station_var), data_vars))
@@ -92,7 +92,7 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 	att.put.ncdf(nc_file, 'time', 'standard_name', 'time')
 	att.put.ncdf(nc_file, 'lon', 'standard_name', 'longitude')
 	
-	if(!is.na(alts)){
+	if(!is.na(alts[1])){
 		att.put.ncdf(nc_file, 'alt', 'standard_name', 'height')
 	}
 	
@@ -100,7 +100,7 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 	att.put.ncdf(nc_file, 'station_name','standard_name','station_id')
 	
 	#Add coordinates
-	if(!is.na(alts)){
+	if(!is.na(alts[1])){
 		att.put.ncdf(nc_file, data_name, 'coordinates', 'time lat lon alt')
 	} else {
 		att.put.ncdf(nc_file, data_name, 'coordinates', 'time lat lon')
@@ -117,7 +117,7 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 	put.var.ncdf(nc_file, lat_var, lats, count=n)
 	put.var.ncdf(nc_file, lon_var, lons, count=n)
 	
-	if(!is.na(alts)){
+	if(!is.na(alts[1])){
 		put.var.ncdf(nc_file, alt_var, alts, count=n)
 	}
 	put.var.ncdf(nc_file, station_var, station_names, count=c(-1,n))
