@@ -33,5 +33,7 @@ test_that("Create basic DSG file",{
 	expect_equivalent(att.get.ncdf(testnc,varid="lat","standard_name")$value,"latitude")
 	expect_equivalent(att.get.ncdf(testnc,varid="lon","standard_name")$value,"longitude")
 	expect_equivalent(att.get.ncdf(testnc,varid=data$variable[1],'long_name')$value,long_name)
-	# Should make an expectation to ensure that data is being written in the right order.
+	expect_equivalent(get.var.ncdf(testnc,varid="station_name")[1],"1")
+	expect_equivalent(get.var.ncdf(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,1],data$`1`)
+	expect_equivalent(get.var.ncdf(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,71],data$`71`)
 })

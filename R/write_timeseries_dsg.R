@@ -121,7 +121,7 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		put.var.ncdf(nc_file, alt_var, alts, count=n)
 	}
 	put.var.ncdf(nc_file, station_var, station_names, count=c(-1,n))
-	put.var.ncdf(nc_file, data_name, as.vector(t(as.matrix(data))), start=c(1,1), count=c(nt, n))
+	put.var.ncdf(nc_file, data_name, as.matrix(data), start=c(1,1), count=c(nt, n))
 	
 	#Add the optional global attributes
 	if(length(attributes>0)){
