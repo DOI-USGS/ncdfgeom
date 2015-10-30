@@ -5,7 +5,7 @@
 \title{Create timeseries NCDF file}
 \usage{
 write_timeseries_dsg(nc_file, station_names, lats, lons, times, data,
-  alts = "", data_unit = "", data_prec = "double",
+  alts = NA, data_unit = "", data_prec = "double",
   data_metadata = list(name = "data", long_name = "unnamed data"),
   attributes = list())
 }
