@@ -82,6 +82,12 @@ read_timeseries_dsg = function(nc_file){
 
 # For all variables that have a 'coordinates' attribute that matches the one found earlier... (only implement one for now.)
 #### Continue Here.
+	for(data_var in data_vars) {
+		nc_list$data_unit[data_var]<-nc$var[data_var][[1]]$units
+		nc_list$data_prec[data_var]<-nc$var[data_var][[1]]$prec
+		nc_list$varmeta[data_var][[1]]$name<-nc$var[data_var][[1]]$name
+		nc_list$varmeta[data_var][[1]]$long_name<-nc$var[data_var][[1]]$longname
+	}
 # 	nc_list$data_unit[1], data$units[1]
 # 	nc_list$data_prec[1],'double'
 # 	nc_list$varmeta[1]$name,data$variable[1]
