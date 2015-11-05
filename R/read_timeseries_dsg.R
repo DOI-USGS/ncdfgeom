@@ -80,25 +80,22 @@ read_timeseries_dsg = function(nc_file){
 		nc_list$alts<-get.var.ncdf(nc,alt,1,-1)
 	}
 
-# For all variables that have a 'coordinates' attribute that matches the one found earlier... (only implement one for now.)
-#### Continue Here.
+	# For all variables that have a 'coordinates' attribute that matches the one found earlier... (only implement one for now.)
+	nc_list$varmeta<-list()
 	for(data_var in data_vars) {
 		nc_list$data_unit[data_var]<-nc$var[data_var][[1]]$units
 		nc_list$data_prec[data_var]<-nc$var[data_var][[1]]$prec
 		nc_list$varmeta[data_var][[1]]$name<-nc$var[data_var][[1]]$name
 		nc_list$varmeta[data_var][[1]]$long_name<-nc$var[data_var][[1]]$longname
 	}
-# 	nc_list$data_unit[1], data$units[1]
-# 	nc_list$data_prec[1],'double'
-# 	nc_list$varmeta[1]$name,data$variable[1]
-# 	nc_list$varmeta[1]$long_name,long_name
-# 	nc_list$global_attributes$nc_summary,'test summary'
-# 	nc_list$global_attributes$nc_date_create,'2099-01-01'
-# 	nc_list$global_attributes$nc_creator_name,'test creator'
-# 	nc_list$global_attributes$nc_creator_email,'test@test.com'
-# 	nc_list$global_attributes$nc_project,'testthat netcdf.dsg'
-# 	nc_list$global_attributes$nc_proc_level,'just a test no processing'
-# 	nc_list$global_attributes$nc_title,'test title'
+	
+	nc_list$global_attributes$nc_summary<-att.get.ncdf(nc,0,'summary')$value
+	nc_list$global_attributes$nc_date_created<-att.get.ncdf(nc,0,'date_created')$value
+	nc_list$global_attributes$nc_creator_name<-att.get.ncdf(nc,0,'creator_name')$value
+	nc_list$global_attributes$nc_creator_email<-att.get.ncdf(nc,0,'creator_email')$value
+	nc_list$global_attributes$nc_project<-att.get.ncdf(nc,0,'project')$value
+	nc_list$global_attributes$nc_proc_level<-att.get.ncdf(nc,0,'processing_level')$value
+	nc_list$global_attributes$nc_title<-att.get.ncdf(nc,0,'title')$value
 # 	nc_list$data_frames[1],data_frame # Plan to have the dataframes work for 1 to many variables.
 	return(nc_list)
 }
