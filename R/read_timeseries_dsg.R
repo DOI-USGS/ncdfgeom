@@ -87,6 +87,8 @@ read_timeseries_dsg = function(nc_file){
 		nc_list$data_prec[data_var]<-nc$var[data_var][[1]]$prec
 		nc_list$varmeta[data_var][[1]]$name<-nc$var[data_var][[1]]$name
 		nc_list$varmeta[data_var][[1]]$long_name<-nc$var[data_var][[1]]$longname
+		nc_list$data_frames[data_var][[1]]<-as.data.frame(get.var.ncdf(nc,data_var,c(1,1),c(-1,-1)))
+		colnames(nc_list$data_frames[data_var][[1]])<-as.character(nc$dim$station$vals)
 	}
 	
 	nc_list$global_attributes$nc_summary<-att.get.ncdf(nc,0,'summary')$value
