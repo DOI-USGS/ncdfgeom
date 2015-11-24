@@ -112,6 +112,13 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 	att.put.ncdf(nc_file, 0,'cdm_data_type','Station')
 	att.put.ncdf(nc_file, 0,'standard_name_vocabulary','CF-1.7')
 	
+	#Add the optional global attributes
+	if(length(attributes)>0){
+		for(i in 1:length(attributes)){
+			att.put.ncdf(nc_file, 0, names(attributes)[i], attributes[[i]])
+		}
+	}
+	
 	#Put data in NC file
 	put.var.ncdf(nc_file, time_var, as.numeric(times)/86400, count=nt) #convert to days since 1970-01-01
 	put.var.ncdf(nc_file, lat_var, lats, count=n)
@@ -122,13 +129,6 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 	}
 	put.var.ncdf(nc_file, station_var, station_names, count=c(-1,n))
 	put.var.ncdf(nc_file, data_name, as.matrix(data), start=c(1,1), count=c(nt, n))
-	
-	#Add the optional global attributes
-	if(length(attributes)>0){
-		for(i in 1:length(attributes)){
-			att.put.ncdf(nc_file, 0, names(attributes)[i], attributes[[i]])
-		}
-	}
 	
 	close.ncdf(nc_file)
 }
