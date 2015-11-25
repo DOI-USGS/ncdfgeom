@@ -128,7 +128,13 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		put.var.ncdf(nc_file, alt_var, alts, count=n)
 	}
 	put.var.ncdf(nc_file, station_var, station_names, count=c(-1,n))
+	if ( nt * n < 100000 ) {
 	put.var.ncdf(nc_file, data_name, as.matrix(data), start=c(1,1), count=c(nt, n))
+	} else {
+		for ( st in 1:n ) {
+			put.var.ncdf(nc_file, data_name, as.matrix(data[,st]), start=c(1,st), count=c(nt, 1))
+		}
+	}
 	
 	close.ncdf(nc_file)
 }
