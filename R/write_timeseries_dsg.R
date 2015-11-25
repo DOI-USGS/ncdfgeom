@@ -62,6 +62,9 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		stop('The length of times must match the number of rows in data')
 	}
 	
+	if(!all(sapply(data,typeof) %in% typeof(outData[names(data)[1]][[1]]))) {
+		stop('All the collumns in the input dataframe must be of the same type.')
+	}
 	
 	#Lay the foundation. This is a point featureType. Which has one dimension, "obs"
 	#obs_dim = dim.def.ncdf('obs', '', 1:n, unlim = TRUE, create_dimvar=FALSE)
