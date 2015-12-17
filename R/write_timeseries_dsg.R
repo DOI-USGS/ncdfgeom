@@ -62,6 +62,9 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		stop('The length of times must match the number of rows in data')
 	}
 	
+	if(!all(sapply(data,typeof) %in% typeof(data[names(data)[1]][[1]]))) {
+		stop('All the collumns in the input dataframe must be of the same type.')
+	}
 	
 	#Lay the foundation. This is a point featureType. Which has one dimension, "obs"
 	#obs_dim = ncdim_def('obs', '', 1:n, unlim = TRUE, create_dimvar=FALSE)
@@ -114,6 +117,13 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 	ncatt_put(nc, 0,'cdm_data_type','Station')
 	ncatt_put(nc, 0,'standard_name_vocabulary','CF-1.7')
 	
+	#Add the optional global attributes
+	if(length(attributes)>0){
+		for(i in 1:length(attributes)){
+			ncatt_put(nc, 0, names(attributes)[i], attributes[[i]])
+		}
+	}
+	
 	#Put data in NC file
 	ncvar_put(nc, time_var, as.numeric(times)/86400, count=nt) #convert to days since 1970-01-01
 	ncvar_put(nc, lat_var, lats, count=n)
@@ -123,14 +133,12 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		ncvar_put(nc, alt_var, alts, count=n)
 	}
 	ncvar_put(nc, station_var, station_names, count=c(-1,n))
-	ncvar_put(nc, data_name, as.matrix(data), start=c(1,1), count=c(nt, n))
-	
-	#Add the optional global attributes
-	if(length(attributes)>0){
-		for(i in 1:length(attributes)){
-			ncatt_put(nc, 0, names(attributes)[i], attributes[[i]])
+	if ( nt * n < 100000 ) {
+		ncvar_put(nc, data_name, as.matrix(data), start=c(1,1), count=c(nt, n))
+	} else {
+		for ( st in 1:n ) {
+			ncvar_put(nc, data_name, as.matrix(data[,st]), start=c(1,st), count=c(nt, 1))
 		}
 	}
-	
 	nc_close(nc)
 }
