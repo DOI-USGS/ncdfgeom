@@ -6,7 +6,8 @@ Date: 2015-06-11
 Author: Luke Winslow, Dave Blodgett
 Maintainer: Luke Winslow <lwinslow@usgs.gov>
 Description: Tools to create discrete sampling geometry NetCDF files from R.
-Imports: 
-	ncdf,
-	methods
+Imports:
+    ncdf,
+    methods
 License: CC0
+RoxygenNote: 5.0.1
