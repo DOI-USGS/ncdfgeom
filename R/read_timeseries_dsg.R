@@ -32,25 +32,25 @@
 #'@references
 #'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
 #'
-#'@import ncdf
+#'@importFrom ncdf4 nc_open ncatt_get ncvar_get
 #'
 #'@export
 read_timeseries_dsg = function(nc_file){
-	nc<-open.ncdf(nc_file)
+	nc<-nc_open(nc_file)
 	nc_list<-list()
 	# Check important global atts
-	if(!grepl('CF',att.get.ncdf(nc,0,'Conventions')$value)) {
+	if(!grepl('CF',ncatt_get(nc,0,'Conventions')$value)) {
 		warning('File does not advertise CF conventions, unexpected behavior may result.')}
-	if(!grepl('timeSeries',att.get.ncdf(nc,0,'featureType')$value)) {
+	if(!grepl('timeSeries',ncatt_get(nc,0,'featureType')$value)) {
 		warning('File does not advertise use of the CF timeseries featureType, unexpected behavior may result.')}
-	if(!grepl('Station',att.get.ncdf(nc,0,'cdm_data_type')$value)) {
+	if(!grepl('Station',ncatt_get(nc,0,'cdm_data_type')$value)) {
 		warning('File does not advertise use of the Station cdm_data_type, unexpected behavior may result.')}
 
 	# Look for variable with the timeseries_id in it.
 	timeseries_id<-NULL
 	for(var in nc$var) {
-		if(att.get.ncdf(nc,var$name,'standard_name')$value=='station_id') { timeseries_id<-var$name }
-		if(att.get.ncdf(nc,var$name,'cf_role')$value=='timeseries_id') { timeseries_id<-var$name }
+		if(ncatt_get(nc,var$name,'standard_name')$value=='station_id') { timeseries_id<-var$name }
+		if(ncatt_get(nc,var$name,'cf_role')$value=='timeseries_id') { timeseries_id<-var$name }
 	}
 	if(is.null(timeseries_id)) { stop('A timeseries id variable was not found in the file.') }
 
@@ -60,7 +60,7 @@ read_timeseries_dsg = function(nc_file){
 	data_var<-FALSE
 	for(var in nc$var) {
 		for(coord_var in append(nc$var,nc$dim)) {
-			if(grepl(coord_var$name,att.get.ncdf(nc,var$name,'coordinates')$value)) {
+			if(grepl(coord_var$name,ncatt_get(nc,var$name,'coordinates')$value)) {
 				coord_vars<-append(coord_vars,coord_var$name)
 				data_var<-TRUE
 			}
@@ -76,10 +76,10 @@ read_timeseries_dsg = function(nc_file){
 	time<-NULL
 	for(coord_var in coord_vars) {
 		for(var in nc$var) {
-			if(att.get.ncdf(nc,var$name,'standard_name')$value=='latitude') {lat<-var}
-			if(att.get.ncdf(nc,var$name,'standard_name')$value=='longitude') {lon<-var}
-			if(att.get.ncdf(nc,var$name,'standard_name')$value=='height') {alt<-var}
-			if(att.get.ncdf(nc,var$name,'standard_name')$value=='time') {time<-var}
+			if(ncatt_get(nc,var$name,'standard_name')$value=='latitude') {lat<-var}
+			if(ncatt_get(nc,var$name,'standard_name')$value=='longitude') {lon<-var}
+			if(ncatt_get(nc,var$name,'standard_name')$value=='height') {alt<-var}
+			if(ncatt_get(nc,var$name,'standard_name')$value=='time') {time<-var}
 		for(dim in nc$dim) { # ncdf doesn't treat time as a variable, only a dimension / coordinate variable?
 				if(dim$name=="time") {time<-dim}
 				if(grepl(' since ',dim$units)) {time<-dim}
@@ -97,10 +97,10 @@ read_timeseries_dsg = function(nc_file){
 	nc_list$time<-as.POSIXct(time$vals*86400, origin='1970-01-01 00:00.00 UTC')
 
 	# Return lat/lon/alt as they are found.
-	nc_list$lats<-get.var.ncdf(nc,lat,1,-1)
-	nc_list$lons<-get.var.ncdf(nc,lon,1,-1)
+	nc_list$lats<-ncvar_get(nc,lat,1,-1)
+	nc_list$lons<-ncvar_get(nc,lon,1,-1)
 	if(!is.null(alt)){
-		nc_list$alts<-get.var.ncdf(nc,alt,1,-1)
+		nc_list$alts<-ncvar_get(nc,alt,1,-1)
 	}
 
 	# For all variables that have a 'coordinates' attribute that matches the one found earlier...
@@ -110,16 +110,16 @@ read_timeseries_dsg = function(nc_file){
 		nc_list$data_prec[data_var]<-nc$var[data_var][[1]]$prec
 		nc_list$varmeta[data_var][[1]]$name<-nc$var[data_var][[1]]$name
 		nc_list$varmeta[data_var][[1]]$long_name<-nc$var[data_var][[1]]$longname
-		nc_list$data_frames[data_var][[1]]<-as.data.frame(get.var.ncdf(nc,data_var,c(1,1),c(-1,-1)))
-		colnames(nc_list$data_frames[data_var][[1]])<-as.character(get.var.ncdf(nc,timeseries_id))
+		nc_list$data_frames[data_var][[1]]<-as.data.frame(ncvar_get(nc,data_var,c(1,1),c(-1,-1)))
+		colnames(nc_list$data_frames[data_var][[1]])<-as.character(ncvar_get(nc,timeseries_id))
 	}
 	
-	nc_list$global_attributes$nc_summary<-att.get.ncdf(nc,0,'summary')$value
-	nc_list$global_attributes$nc_date_created<-att.get.ncdf(nc,0,'date_created')$value
-	nc_list$global_attributes$nc_creator_name<-att.get.ncdf(nc,0,'creator_name')$value
-	nc_list$global_attributes$nc_creator_email<-att.get.ncdf(nc,0,'creator_email')$value
-	nc_list$global_attributes$nc_project<-att.get.ncdf(nc,0,'project')$value
-	nc_list$global_attributes$nc_proc_level<-att.get.ncdf(nc,0,'processing_level')$value
-	nc_list$global_attributes$nc_title<-att.get.ncdf(nc,0,'title')$value
+	nc_list$global_attributes$nc_summary<-ncatt_get(nc,0,'summary')$value
+	nc_list$global_attributes$nc_date_created<-ncatt_get(nc,0,'date_created')$value
+	nc_list$global_attributes$nc_creator_name<-ncatt_get(nc,0,'creator_name')$value
+	nc_list$global_attributes$nc_creator_email<-ncatt_get(nc,0,'creator_email')$value
+	nc_list$global_attributes$nc_project<-ncatt_get(nc,0,'project')$value
+	nc_list$global_attributes$nc_proc_level<-ncatt_get(nc,0,'processing_level')$value
+	nc_list$global_attributes$nc_title<-ncatt_get(nc,0,'title')$value
 	return(nc_list)
 }
