@@ -21,7 +21,7 @@
 #'@references
 #'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
 #'
-#'@import ncdf
+#'@import ncdf4
 #'
 #'@export
 write_point_dsg = function(nc_file, times, lats, lons, alts, data, data_units=rep('', ncol(data)),
