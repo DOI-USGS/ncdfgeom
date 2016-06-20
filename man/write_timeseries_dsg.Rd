@@ -7,7 +7,7 @@
 write_timeseries_dsg(nc_file, station_names, lats, lons, times, data,
   alts = NA, data_unit = "", data_prec = "double",
   data_metadata = list(name = "data", long_name = "unnamed data"),
-  attributes = list())
+  attributes = list(), add_to_existing = FALSE)
 }
 \arguments{
 \item{nc_file}{A string file path to the nc file to be created.}
@@ -31,6 +31,8 @@ Valid options: 'short' 'integer' 'float' 'double' 'char'.}
 
 \item{attributes}{An optional list of attributes that will be added at the global level. 
 See details for useful attributes.}
+
+\item{add_to_existing}{boolean If TRUE and the file already exists, variables will be added to the existing file.}
 
 \item{data_units}{Character vector of observation units. Length must be the same as number 
 of columns in \code{data} parameter}

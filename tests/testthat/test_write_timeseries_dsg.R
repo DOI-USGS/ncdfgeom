@@ -14,6 +14,8 @@ test_that("Create basic DSG file",{
 									 project=nc_project, processing_level=nc_proc_level)
 	nc_file<-'test_output.nc'
 	
+	file.remove(nc_file)
+	
 	# Could use this code to generate a non-geoknife required rda file.
 	gdp_file<-'data/yahara_alb_gdp_file.csv'
 	attribute_file<-'data/yahara_alb_attributes.csv'
