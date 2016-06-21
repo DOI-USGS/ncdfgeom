@@ -16,7 +16,9 @@
 #'@param data_metadata A named list of strings: list(name='ShortVarName', long_name='A Long Name')
 #'@param attributes An optional list of attributes that will be added at the global level. 
 #'See details for useful attributes.
-#'@param add_to_existing boolean If TRUE and the file already exists, variables will be added to the existing file.
+#'@param add_to_existing boolean If TRUE and the file already exists, variables will be added to the existing file. 
+#'Note that this should be used to add variables not stations or time steps. All inputs should be the same as are 
+#'already in the file.
 #'
 #'@description
 #'This creates a timeseries discrete sampling geometry NCDF file
