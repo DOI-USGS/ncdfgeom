@@ -22,7 +22,7 @@ test_that("Read basic DSG file",{
 	
 	load("data/yahara_test_data.rda")
 	
-	nc_file<-'test_output.nc'
+	nc_file<-'data/test_output.nc'
 	
 	testlist<-read_timeseries_dsg(nc_file)
 	

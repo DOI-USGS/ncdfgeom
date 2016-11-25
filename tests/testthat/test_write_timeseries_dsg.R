@@ -11,9 +11,8 @@ test_that("Create basic DSG file",{
 	global_attributes<-list(title = nc_title, summary = nc_summary, date_created=nc_date_create, 
 									 creator_name=nc_creator_name,creator_email=nc_creator_email,
 									 project=nc_project, processing_level=nc_proc_level)
-	nc_file<-'test_output.nc'
 	
-	file.remove(nc_file)
+	nc_file<-'data/test_output.nc'
 	
 	# See test_read_timeseries_dsg.R for how this data was created.
 	load("data/yahara_test_data.rda")
