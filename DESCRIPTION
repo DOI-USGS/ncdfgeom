@@ -9,5 +9,6 @@ Description: Tools to create discrete sampling geometry NetCDF files from R.
 Imports:
     ncdf4,
     methods
+Suggests: testthat
 License: CC0
 RoxygenNote: 5.0.1

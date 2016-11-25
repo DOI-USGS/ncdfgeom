@@ -1,26 +1,30 @@
+# # Data Prep:
+# library(geoknife)
+# ### Could use this code to generate a non-geoknife required rda file.
+# gdp_file<-'data/yahara_alb_gdp_file.csv'
+# attribute_file<-'data/yahara_alb_attributes.csv'
+# # This is a csv dumped out of the yahara_alb dbf file.
+# attributes<-read.csv(attribute_file,colClasses='character')
+# lats<-attributes$YCOORD
+# lons<-attributes$XCOORD
+# alts<-rep(1,length(lats))
+# # Using Geoknife to get at the timeseries.
+# data<-parseTimeseries(gdp_file,delim=',',with.units=TRUE)
+# data_frame<-data[2:(ncol(data)-3)]
+# time<-data$DateTime
+# long_name=paste(data$variable[1], 'area weighted', data$statistic[1], 'in', data$units[1], sep=' ')
+# meta<-list(name=data$variable[1],long_name=long_name)
+# ### Could use this code to generate a non-geoknife required rda file.
+
 context("Read Station Timeseries DSG File")
-library(geoknife)
+
 test_that("Read basic DSG file",{
+	
+	load("data/yahara_test_data.rda")
 	
 	nc_file<-'test_output.nc'
 	
 	testlist<-read_timeseries_dsg(nc_file)
-	
-	### Could use this code to generate a non-geoknife required rda file.
-	gdp_file<-'data/yahara_alb_gdp_file.csv'
-	attribute_file<-'data/yahara_alb_attributes.csv'
-	# This is a csv dumped out of the yahara_alb dbf file.
-	attributes<-read.csv(attribute_file,colClasses='character')
-	lats<-attributes$YCOORD
-	lons<-attributes$XCOORD
-	alts<-rep(1,length(lats))
-	# Using Geoknife to get at the timeseries.
-	data<-parseTimeseries(gdp_file,delim=',',with.units=TRUE)
-	data_frame<-data[2:(ncol(data)-3)]
-	time<-data$DateTime
-	long_name=paste(data$variable[1], 'area weighted', data$statistic[1], 'in', data$units[1], sep=' ')
-	meta<-list(name=data$variable[1],long_name=long_name)
-	### Could use this code to generate a non-geoknife required rda file.
 	
 	expect_equivalent(length(testlist$time), length(time))
 	expect_equivalent(as.numeric(testlist$lats), as.numeric(lats))

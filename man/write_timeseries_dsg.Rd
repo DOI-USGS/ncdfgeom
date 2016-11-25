@@ -32,7 +32,9 @@ Valid options: 'short' 'integer' 'float' 'double' 'char'.}
 \item{attributes}{An optional list of attributes that will be added at the global level. 
 See details for useful attributes.}
 
-\item{add_to_existing}{boolean If TRUE and the file already exists, variables will be added to the existing file.}
+\item{add_to_existing}{boolean If TRUE and the file already exists, variables will be added to the existing file. 
+Note that this should be used to add variables not stations or time steps. All inputs should be the same as are 
+already in the file.}
 
 \item{data_units}{Character vector of observation units. Length must be the same as number 
 of columns in \code{data} parameter}

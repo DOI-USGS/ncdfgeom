@@ -1,6 +1,5 @@
 context("Create Station Timeseries DSG File")
-library(geoknife)
-library(ncdf4)
+
 test_that("Create basic DSG file",{
 	nc_summary<-'test summary'
 	nc_date_create<-'2099-01-01'
@@ -16,23 +15,8 @@ test_that("Create basic DSG file",{
 	
 	file.remove(nc_file)
 	
-	# Could use this code to generate a non-geoknife required rda file.
-	gdp_file<-'data/yahara_alb_gdp_file.csv'
-	attribute_file<-'data/yahara_alb_attributes.csv'
-	
-	# This is a csv dumped out of the yahara_alb dbf file.
-	attributes<-read.csv(attribute_file,colClasses='character')
-	
-	lats<-attributes$YCOORD
-	lons<-attributes$XCOORD
-	alts<-rep(1,length(lats))
-	
-	# Using Geoknife to get at the timeseries.
-	data<-parseTimeseries(gdp_file,delim=',',with.units=TRUE)
-	data_frame<-data[2:(ncol(data)-3)]
-	time<-data$DateTime
-	long_name=paste(data$variable[1], 'area weighted', data$statistic[1], 'in', data$units[1], sep=' ')
-	meta<-list(name=data$variable[1],long_name=long_name)
+	# See test_read_timeseries_dsg.R for how this data was created.
+	load("data/yahara_test_data.rda")
 	
 	testnc<-write_timeseries_dsg(nc_file, names(data_frame), lats, lons, time, data_frame, 
 															 alts, data_unit=data$units[1],	data_prec='double',data_metadata=meta,
