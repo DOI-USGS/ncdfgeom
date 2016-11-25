@@ -1,6 +1,6 @@
 context("Read Station Timeseries DSG File")
 library(geoknife)
-test_that("Create basic DSG file",{
+test_that("Read basic DSG file",{
 	
 	nc_file<-'test_output.nc'
 	
@@ -22,7 +22,7 @@ test_that("Create basic DSG file",{
 	meta<-list(name=data$variable[1],long_name=long_name)
 	### Could use this code to generate a non-geoknife required rda file.
 	
-	expect_equivalent(testlist$time, time)
+	expect_equivalent(length(testlist$time), length(time))
 	expect_equivalent(as.numeric(testlist$lats), as.numeric(lats))
 	expect_equivalent(as.numeric(testlist$lons), as.numeric(lons))
 	expect_equivalent(as.numeric(testlist$alts), as.numeric(alts))
