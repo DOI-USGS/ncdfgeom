@@ -10,7 +10,7 @@
 #'to names of observation columns in \code{all_data}. Not required. Columns without 
 #'supplied long name are given a long name of empty string.
 #'
-#'@param data_unit Optional list of observation units.  Names must correspond
+#'@param data_units Optional list of observation units.  Names must correspond
 #'to names of observation columns in \code{all_data}. Not required. Columns without 
 #'supplied data unit are given a unit of empty string.
 #'
@@ -53,20 +53,21 @@
 #'	\item{description = "description"}
 #'}
 #'
-#'@references
-#'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
-#'
 #'@import ncdf4
 #'
 #'@examples
 #'\dontrun{
 #'library(soilmoisturetools)
 #'ok = ok_data()
-#'ok_meta = ok_sites_metadata(ok$station)[, c('station', 'latitude', 'longitude', 'elevation')]
+#'ok_meta = ok_sites_metadata(ok$station)[, c('station', 'latitude', 
+#'                                            'longitude', 'elevation')]
 #'all_data = merge(ok, ok_meta)
 #'
-#'names(all_data) = c('station_name', 'time', 'soil_moisture', 'soil_moisture_depth', 'lat', 'lon', 'alt')
-#'write_ragged_timeseries_dsg(path.expand('~/test.nc'), all_data, list(soil_moisture='%', soil_moisture_depth='inches'))
+#'names(all_data) = c('station_name', 'time', 'soil_moisture', 
+#'                    'soil_moisture_depth', 'lat', 'lon', 'alt')
+#'write_ragged_timeseries_dsg('test.nc', 
+#'                             all_data,list(soil_moisture='%', 
+#'                             soil_moisture_depth='inches'))
 #'
 #'}
 #'@export
@@ -100,18 +101,18 @@ write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), dat
 	n_sta = nrow(sta_obs)
 	
 	#Lay the foundation. This is a ragged array. Which has two dimensions, "obs" and "station"
-	obs_dim = dim.def.ncdf('obs', '', 1:n, unlim=FALSE, create_dimvar=FALSE)
-	station_dim = dim.def.ncdf('station', '', 1:n_sta, unlim=TRUE, create_dimvar=FALSE)
+	obs_dim = ncdim_def('obs', '', 1:n, create_dimvar=FALSE)
+	station_dim = ncdim_def('station', '', 1:n_sta, create_dimvar=FALSE)
 	
-	strlen_dim = dim.def.ncdf('name_strlen', '', 1:max(sapply(all_data$station_name, nchar)), create_dimvar=FALSE)
+	strlen_dim = ncdim_def('name_strlen', '', 1:max(sapply(all_data$station_name, nchar)), create_dimvar=FALSE)
 	
 	#Setup our spatial and time info
-	station_var = var.def.ncdf('station_name', '', list(strlen_dim, station_dim), missval='', prec='char', longname='Station Names')
-	row_var     = var.def.ncdf('row_size', '', station_dim, missval=0, prec='integer', longname='number of observations for this station')
-	time_var 		= var.def.ncdf('time','days since 1970-01-01 00:00:00', obs_dim, -999, prec='double', longname='time of measurement')
-	lat_var 		= var.def.ncdf('lat', 'degrees_north', station_dim, -999, prec='double', longname = 'latitude of the observation')
-	lon_var 		= var.def.ncdf('lon', 'degrees_east', station_dim, -999, prec='double', longname = 'longitude of the observation')
-	alt_var 		= var.def.ncdf('alt', 'm', station_dim, -999, prec='double', longname='vertical distance above the surface')
+	station_var = ncvar_def('station_name', '', list(strlen_dim, station_dim), missval='', prec='char', longname='Station Names')
+	row_var     = ncvar_def('row_size', '', station_dim, missval=0, prec='integer', longname='number of observations for this station')
+	time_var 		= ncvar_def('time','days since 1970-01-01 00:00:00', obs_dim, -999, prec='double', longname='time of measurement')
+	lat_var 		= ncvar_def('lat', 'degrees_north', station_dim, -999, prec='double', longname = 'latitude of the observation')
+	lon_var 		= ncvar_def('lon', 'degrees_east', station_dim, -999, prec='double', longname = 'longitude of the observation')
+	alt_var 		= ncvar_def('alt', 'm', station_dim, -999, prec='double', longname='vertical distance above the surface')
 	
 	#now do the observation data itself
 	data = all_data[, !(names(all_data) %in% required_cols)]
@@ -121,33 +122,33 @@ write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), dat
 	for(i in 1:length(data_names)){
 		unit     = ifelse(is.null(data_units[[data_names[i]]]), '', data_units[[data_names[i]]])
 		
-		data_vars[[i]] = var.def.ncdf(data_names[i], unit, obs_dim, prec=data_prec, missval=-999)
+		data_vars[[i]] = ncvar_def(data_names[i], unit, obs_dim, prec=data_prec, missval=-999)
 	}
 	
 	#nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, alt_var, time_var, station_var), data_vars))
-	nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, alt_var, time_var, station_var, row_var), data_vars))
+	nc_file = nc_create(nc_file, vars = c(list(lat_var, lon_var, alt_var, time_var, station_var, row_var), data_vars))
 	
 	#add standard_names
-	att.put.ncdf(nc_file, 'lat', 'standard_name', 'latitude')
-	att.put.ncdf(nc_file, 'time', 'standard_name', 'time')
-	att.put.ncdf(nc_file, 'lon', 'standard_name', 'longitude')
-	att.put.ncdf(nc_file, 'alt', 'standard_name', 'height')
-	att.put.ncdf(nc_file, 'station_name', 'cf_role', 'timeseries_id')
+	ncatt_put(nc_file, 'lat', 'standard_name', 'latitude')
+	ncatt_put(nc_file, 'time', 'standard_name', 'time')
+	ncatt_put(nc_file, 'lon', 'standard_name', 'longitude')
+	ncatt_put(nc_file, 'alt', 'standard_name', 'height')
+	ncatt_put(nc_file, 'station_name', 'cf_role', 'timeseries_id')
 	
 	#some final stuff
-	att.put.ncdf(nc_file, 0,'Conventions','CF-1.7')
-	att.put.ncdf(nc_file, 0,'featureType','timeSeries')
-	att.put.ncdf(nc_file, 0,'cdm_data_type','Station')
-	att.put.ncdf(nc_file, 0,'standard_name_vocabulary','CF-1.7')
+	ncatt_put(nc_file, 0,'Conventions','CF-1.7')
+	ncatt_put(nc_file, 0,'featureType','timeSeries')
+	ncatt_put(nc_file, 0,'cdm_data_type','Station')
+	ncatt_put(nc_file, 0,'standard_name_vocabulary','CF-1.7')
 	
 	#Put data in NC file
-	put.var.ncdf(nc_file, 'time', as.numeric(all_data$time)/86400, count=n) #convert to days since 1970-01-01
-	put.var.ncdf(nc_file, 'lat', sta_obs$lat, count=n_sta)
-	put.var.ncdf(nc_file, 'lon', sta_obs$lon, count=n_sta)
-	put.var.ncdf(nc_file, 'alt', sta_obs$alt, count=n_sta)
-	put.var.ncdf(nc_file, 'row_size', sta_obs$row_size, count=n_sta)
+	ncvar_put(nc_file, 'time', as.numeric(all_data$time)/86400, count=n) #convert to days since 1970-01-01
+	ncvar_put(nc_file, 'lat', sta_obs$lat, count=n_sta)
+	ncvar_put(nc_file, 'lon', sta_obs$lon, count=n_sta)
+	ncvar_put(nc_file, 'alt', sta_obs$alt, count=n_sta)
+	ncvar_put(nc_file, 'row_size', sta_obs$row_size, count=n_sta)
 	
-	put.var.ncdf(nc_file, 'station_name', sta_obs$station_name, count=c(-1,n_sta))
+	ncvar_put(nc_file, 'station_name', sta_obs$station_name, count=c(-1,n_sta))
 	
 	data_names = names(data)
 	data_vars = list()
@@ -155,18 +156,18 @@ write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), dat
 	for(i in 1:length(data_names)){	
 		data_name = ifelse(is.null(data_longnames[[data_names[i]]]), '', data_longnames[[data_names[i]]])
 		
-		att.put.ncdf(nc_file, data_names[i], 'standard_name', data_name)
-		att.put.ncdf(nc_file, data_names[i], 'coordinates', 'time lat lon')
+		ncatt_put(nc_file, data_names[i], 'standard_name', data_name)
+		ncatt_put(nc_file, data_names[i], 'coordinates', 'time lat lon')
 		
-		put.var.ncdf(nc_file, data_names[i], data[, data_names[i]], start=1, count=n)
+		ncvar_put(nc_file, data_names[i], data[, data_names[i]], start=1, count=n)
 	}
 	
 	#Add the optional global attributes
 	if(length(attributes) > 0){
 		for(i in 1:length(attributes)){
-			att.put.ncdf(nc_file, 0, names(attributes[i]), attributes[[i]])
+			ncatt_put(nc_file, 0, names(attributes[i]), attributes[[i]])
 		}
 	}
 	
-	close.ncdf(nc_file)
+	nc_close(nc_file)
 }

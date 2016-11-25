@@ -13,16 +13,16 @@ write_ragged_timeseries_dsg(nc_file, all_data, data_units = list(),
 \item{all_data}{A data.frame object containing all station and observation data. See 
 description for further information}
 
+\item{data_units}{Optional list of observation units.  Names must correspond
+to names of observation columns in \code{all_data}. Not required. Columns without 
+supplied data unit are given a unit of empty string.}
+
 \item{data_longnames}{Optional named list of observation long names. Names must correspond
 to names of observation columns in \code{all_data}. Not required. Columns without 
 supplied long name are given a long name of empty string.}
 
 \item{attributes}{An optional list of attributes that will be added at the global level. 
 See details for useful attributes.}
-
-\item{data_unit}{Optional list of observation units.  Names must correspond
-to names of observation columns in \code{all_data}. Not required. Columns without 
-supplied data unit are given a unit of empty string.}
 }
 \description{
 This creates a ragged array timeseries discrete sampling features NCDF file
@@ -64,15 +64,16 @@ Here are some common important attributes that could be added.
 \dontrun{
 library(soilmoisturetools)
 ok = ok_data()
-ok_meta = ok_sites_metadata(ok$station)[, c('station', 'latitude', 'longitude', 'elevation')]
+ok_meta = ok_sites_metadata(ok$station)[, c('station', 'latitude', 
+                                           'longitude', 'elevation')]
 all_data = merge(ok, ok_meta)
 
-names(all_data) = c('station_name', 'time', 'soil_moisture', 'soil_moisture_depth', 'lat', 'lon', 'alt')
-write_ragged_timeseries_dsg(path.expand('~/test.nc'), all_data, list(soil_moisture='\%', soil_moisture_depth='inches'))
+names(all_data) = c('station_name', 'time', 'soil_moisture', 
+                   'soil_moisture_depth', 'lat', 'lon', 'alt')
+write_ragged_timeseries_dsg('test.nc', 
+                            all_data,list(soil_moisture='\%', 
+                            soil_moisture_depth='inches'))
 
 }
-}
-\references{
-http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
 }
 
