@@ -1,5 +1,6 @@
 Discrete Sampling Geometry tools for R
 ===
+[![Build Status](https://travis-ci.org/USGS-R/netcdf.dsg.svg)](https://travis-ci.org/USGS-R/netcdf.dsg) [![Coverage Status](https://coveralls.io/repos/github/USGS-R/netcdf.dsg/badge.svg?branch=master)](https://coveralls.io/github/USGS-R/netcdf.dsg?branch=master)
 
 This package is a work in progress intially designed to support timeSeries featuretypes from the NetDF-CF specification.
 
