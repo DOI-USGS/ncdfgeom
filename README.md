@@ -1,6 +1,10 @@
 Discrete Sampling Geometry tools for R
 ===
 
+This package is a work in progress intially designed to support timeSeries featuretypes from the NetDF-CF specification.
+
+It will soon include functionality from the proposed extension to CF described here: https://github.com/bekozi/netCDF-CF-simple-geometry
+
 ##Disclaimer
 This software is in the public domain because it contains materials that originally came from the U.S. Geological Survey, an agency of the United States Department of Interior. For more information, see the [official USGS copyright policy](http://www.usgs.gov/visual-id/credit_usgs.html#copyright/ "official USGS copyright policy")
 
