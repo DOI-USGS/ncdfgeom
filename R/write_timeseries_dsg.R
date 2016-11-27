@@ -154,6 +154,8 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		putDataInNC(nc,nt,n,data_name,data)
 		
 		nc_close(nc) 
+		
+		return(nc_file)
 	}
 }
 
