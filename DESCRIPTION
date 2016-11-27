@@ -12,6 +12,6 @@ Imports:
 Suggests: 
 		testthat,
 		geoknife,
-		soilmoisturetools,
+		soilmoisturetools
 License: CC0
 RoxygenNote: 5.0.1
