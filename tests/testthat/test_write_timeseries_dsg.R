@@ -1,5 +1,4 @@
 context("Create Station Timeseries DSG File")
-library(soilmoisturetools)
 library(ncdf4)
 
 test_that("Create basic DSG file",{
@@ -42,8 +41,8 @@ test_that("Create basic DSG file",{
 })
 
 test_that('soilmoisturetools data writes as expected', {
-	ok = ok_data()
-	ok_meta = ok_sites_metadata(ok$station)
+	ok<-readRDS("data/soilmoisturetools/ok.rds")
+	ok_meta<-readRDS("data/soilmoisturetools/ok_meta.rds")
 	attributes <- list(
 		title = 'National Soil Moisture Network SOS',
 		abstract = 'This service provides soil moisture data from the U.S.

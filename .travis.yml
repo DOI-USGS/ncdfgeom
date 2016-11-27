@@ -20,7 +20,6 @@ before_install:
 install:
   - ./travis-tool.sh install_deps
   - ./travis-tool.sh github_package jimhester/covr
-  - ./travis-tool.sh github_package USGS-R/soilmoisturetools
 
 env:
    global:
