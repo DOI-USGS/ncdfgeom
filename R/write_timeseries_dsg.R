@@ -2,21 +2,24 @@
 #'
 #'
 #'@param nc_file A string file path to the nc file to be created.
-#'@param times A vector of times. Must be of type \code{\link{POSIXct}} or an attempt to 
-#'convert it will be made using \code{\link{as.POSIXct(times)}}.
+#'@param station_names A vector of names for each station to be added to the file.
+#'@param times A vector of times. Must be of type \code{POSIXct} or an attempt to 
+#'convert it will be made using \code{as.POSIXct(times)}.
 #'@param lats Vector of latitudes 
 #'@param lons Vector of longitudes
 #'@param data \code{data.frame} with each column corresponding to a station. Rows correspond to 
 #'time steps. nrow must be the same length as times. Column names must match station names.
 #'@param alts Vector of altitudes (Optional)
-#'@param data_units Character vector of observation units. Length must be the same as number 
+#'@param data_unit Character vector of observation units. Length must be the same as number 
 #'of columns in \code{data} parameter
 #'@param data_prec Precision of observation data in NCDF file. 
 #'Valid options: 'short' 'integer' 'float' 'double' 'char'.
 #'@param data_metadata A named list of strings: list(name='ShortVarName', long_name='A Long Name')
 #'@param attributes An optional list of attributes that will be added at the global level. 
 #'See details for useful attributes.
-#'@param add_to_existing boolean If TRUE and the file already exists, variables will be added to the existing file.
+#'@param add_to_existing boolean If TRUE and the file already exists, variables will be added to the existing file. 
+#'Note that this should be used to add variables not stations or time steps. All inputs should be the same as are 
+#'already in the file.
 #'
 #'@description
 #'This creates a timeseries discrete sampling geometry NCDF file

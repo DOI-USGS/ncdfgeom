@@ -10,8 +10,8 @@ write_point_dsg(nc_file, times, lats, lons, alts, data, data_units = rep("",
 \arguments{
 \item{nc_file}{A string file path to the nc file to be created.}
 
-\item{times}{A vector of times. Must be of type \code{\link{POSIXct}} or an attempt to 
-convert it will be made using \code{\link{as.POSIXct(times)}}.}
+\item{times}{A vector of times. Must be of type \code{POSIXct} or an attempt to 
+convert it will be made using \code{as.POSIXct(times)}.}
 
 \item{lats}{Vector of latitudes}
 
