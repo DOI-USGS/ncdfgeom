@@ -20,6 +20,7 @@ before_install:
 install:
   - ./travis-tool.sh install_deps
   - ./travis-tool.sh github_package jimhester/covr
+  - ./travis-tool.sh github_package USGS-R/soilmoisturetools
 
 env:
    global:
@@ -28,10 +29,7 @@ env:
      - R_CHECK_ARGS="--no-build-vignettes --no-manual --as-cran"
      - BOOTSTRAP_LATEX=""
      - NOT_CRAN="true"
-     - _R_CHECK_FORCE_SUGGESTS_="false"
 
-r_github_packages:
- - jimhester/covr
 script: ./travis-tool.sh run_tests
 
 after_success:
