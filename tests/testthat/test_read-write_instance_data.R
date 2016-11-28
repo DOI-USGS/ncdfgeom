@@ -17,5 +17,6 @@ test_that("A dataframe can be round tripped to netCDF.", {
   for(name in names(dataFrame)) {
   	expect_equal(class(dataFrame[name][[1]]), class(returnDataFrame[name][[1]]))
   }
+  expect_error(read_instance_data(nc, "garbage"), "The instance dimension was not found in the provided NetCDF object.")
   })
 
