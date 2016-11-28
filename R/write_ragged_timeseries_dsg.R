@@ -110,30 +110,29 @@ write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), dat
 		data_vars[[i]] = ncvar_def(data_names[i], unit, obs_dim, prec=data_prec, missval=-999)
 	}
 	
-	#nc_file = create.ncdf(nc_file, vars = c(list(lat_var, lon_var, alt_var, time_var, station_var), data_vars))
-	nc_file = nc_create(nc_file, vars = c(list(lat_var, lon_var, alt_var, time_var, station_var, row_var), data_vars))
+	nc = nc_create(nc_file, vars = c(list(lat_var, lon_var, alt_var, time_var, station_var, row_var), data_vars))
 	
 	#add standard_names
-	ncatt_put(nc_file, 'lat', 'standard_name', 'latitude')
-	ncatt_put(nc_file, 'time', 'standard_name', 'time')
-	ncatt_put(nc_file, 'lon', 'standard_name', 'longitude')
-	ncatt_put(nc_file, 'alt', 'standard_name', 'height')
-	ncatt_put(nc_file, 'station_name', 'cf_role', 'timeseries_id')
+	ncatt_put(nc, 'lat', 'standard_name', 'latitude')
+	ncatt_put(nc, 'time', 'standard_name', 'time')
+	ncatt_put(nc, 'lon', 'standard_name', 'longitude')
+	ncatt_put(nc, 'alt', 'standard_name', 'height')
+	ncatt_put(nc, 'station_name', 'cf_role', 'timeseries_id')
 	
 	#some final stuff
-	ncatt_put(nc_file, 0,'Conventions','CF-1.7')
-	ncatt_put(nc_file, 0,'featureType','timeSeries')
-	ncatt_put(nc_file, 0,'cdm_data_type','Station')
-	ncatt_put(nc_file, 0,'standard_name_vocabulary','CF-1.7')
+	ncatt_put(nc, 0,'Conventions','CF-1.7')
+	ncatt_put(nc, 0,'featureType','timeSeries')
+	ncatt_put(nc, 0,'cdm_data_type','Station')
+	ncatt_put(nc, 0,'standard_name_vocabulary','CF-1.7')
 	
 	#Put data in NC file
-	ncvar_put(nc_file, 'time', as.numeric(all_data$time)/86400, count=n) #convert to days since 1970-01-01
-	ncvar_put(nc_file, 'lat', sta_obs$lat, count=n_sta)
-	ncvar_put(nc_file, 'lon', sta_obs$lon, count=n_sta)
-	ncvar_put(nc_file, 'alt', sta_obs$alt, count=n_sta)
-	ncvar_put(nc_file, 'row_size', sta_obs$row_size, count=n_sta)
+	ncvar_put(nc, 'time', as.numeric(all_data$time)/86400, count=n) #convert to days since 1970-01-01
+	ncvar_put(nc, 'lat', sta_obs$lat, count=n_sta)
+	ncvar_put(nc, 'lon', sta_obs$lon, count=n_sta)
+	ncvar_put(nc, 'alt', sta_obs$alt, count=n_sta)
+	ncvar_put(nc, 'row_size', sta_obs$row_size, count=n_sta)
 	
-	ncvar_put(nc_file, 'station_name', sta_obs$station_name, count=c(-1,n_sta))
+	ncvar_put(nc, 'station_name', sta_obs$station_name, count=c(-1,n_sta))
 	
 	data_names = names(data)
 	data_vars = list()
@@ -141,18 +140,18 @@ write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), dat
 	for(i in 1:length(data_names)){	
 		data_name = ifelse(is.null(data_longnames[[data_names[i]]]), '', data_longnames[[data_names[i]]])
 		
-		ncatt_put(nc_file, data_names[i], 'standard_name', data_name)
-		ncatt_put(nc_file, data_names[i], 'coordinates', 'time lat lon')
+		ncatt_put(nc, data_names[i], 'standard_name', data_name)
+		ncatt_put(nc, data_names[i], 'coordinates', 'time lat lon')
 		
-		ncvar_put(nc_file, data_names[i], data[, data_names[i]], start=1, count=n)
+		ncvar_put(nc, data_names[i], data[, data_names[i]], start=1, count=n)
 	}
 	
 	#Add the optional global attributes
 	if(length(attributes) > 0){
 		for(i in 1:length(attributes)){
-			ncatt_put(nc_file, 0, names(attributes[i]), attributes[[i]])
+			ncatt_put(nc, 0, names(attributes[i]), attributes[[i]])
 		}
 	}
 	
-	nc_close(nc_file)
+	nc_close(nc)
 }

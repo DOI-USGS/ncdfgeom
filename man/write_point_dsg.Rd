@@ -26,7 +26,7 @@ of columns in \code{data} parameter}
 Valid options: 'short' 'integer' 'float' 'double' 'char'.}
 }
 \description{
-This creates a simple point data discrete sampling features NCDF file
+This creates a simple point data discrete sampling features NCDF file. Returns the created filename.
 }
 \references{
 http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
