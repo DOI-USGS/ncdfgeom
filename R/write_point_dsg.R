@@ -28,33 +28,26 @@ write_point_dsg = function(nc_file, lats, lons, alts, data, data_units=rep('', n
 		stop('lats, lons, and alts must all be vectors of the same length')
 	}
 	
-	#Lay the foundation. This is a point featureType. Which has one dimension, "obs"
-	obs_dim = ncdim_def('obs', '', 1:n, create_dimvar=FALSE)
+	nc_file <- write_instance_data(ncFile=nc_file, attData = data, instanceDimName = "obs", units = data_units)
 	
-	vars_to_write <- list()
+	nc <- nc_open(nc_file, write = TRUE)
 	
 	if(!is.null(feature_names)) {
 		if(length(lats)!=n || length(lons)!=n){
 			stop('feature_names, lats, and lons must all be vectors of the same length')
 		}
 		strlen_dim = ncdim_def('name_strlen', '', 1:max(sapply(feature_names, nchar)), create_dimvar=FALSE)
-		feature_var = ncvar_def('feature_name', '', dim=list(strlen_dim, obs_dim), missval=NULL, prec='char', longname='Feature Names')
-		vars_to_write <- c(vars_to_write, list(feature_var))
+		feature_var = ncvar_def('feature_name', '', dim=list(strlen_dim, nc$dim$obs), missval=NULL, prec='char', longname='Feature Names')
+		nc <- ncvar_add(nc, feature_var)
 	}
 	
 	#Setup our spatial and info
-	lat_var = ncvar_def('lat', 'degrees_north', obs_dim, -999, prec='double', longname = 'latitude of the observation')
-	lon_var = ncvar_def('lon', 'degrees_east', obs_dim, -999, prec='double', longname = 'longitude of the observation')
-	alt_var = ncvar_def('alt', 'm', obs_dim, -999, prec='double', longname='vertical distance above the surface')
-	vars_to_write <- c(vars_to_write, list(lat_var, lon_var, alt_var))
-	
-	data_names = names(data)
-	data_vars  = list()
-	for(i in 1:ncol(data)){
-		vars_to_write <- c(vars_to_write, list(ncvar_def(data_names[i], data_units[i], obs_dim, prec=data_prec[i], missval=-999)))
-	}
-	
-	nc = nc_create(nc_file, vars = vars_to_write)
+	lat_var = ncvar_def('lat', 'degrees_north', nc$dim$obs, -999, prec='double', longname = 'latitude of the observation')
+	nc <- ncvar_add(nc, lat_var)
+	lon_var = ncvar_def('lon', 'degrees_east', nc$dim$obs, -999, prec='double', longname = 'longitude of the observation')
+	nc <- ncvar_add(nc, lon_var)
+	alt_var = ncvar_def('alt', 'm', nc$dim$obs, -999, prec='double', longname='vertical distance above the surface')
+	nc <- ncvar_add(nc, alt_var)
 	
 	#add standard_names
 	ncatt_put(nc, 'lat', 'standard_name', 'latitude')
@@ -62,8 +55,8 @@ write_point_dsg = function(nc_file, lats, lons, alts, data, data_units=rep('', n
 	ncatt_put(nc, 'alt', 'standard_name', 'height')
 	
 	#use the same names for "standard names" and add coordinates as well
-	for(i in 1:ncol(data)){
-		ncatt_put(nc, data_names[i], 'coordinates', 'lat lon alt')
+	for(data_name in names(data)){
+		ncatt_put(nc, data_name, 'coordinates', 'lat lon alt')
 	}
 	#some final stuff
 	ncatt_put(nc, 0,'featureType','point')
@@ -79,10 +72,6 @@ write_point_dsg = function(nc_file, lats, lons, alts, data, data_units=rep('', n
 	ncvar_put(nc, 'lat', lats)
 	ncvar_put(nc, 'lon', lons)
 	ncvar_put(nc, 'alt', alts)
-	
-	for(i in 1:ncol(data)){
-		ncvar_put(nc, data_names[i], data[, i], count=n)
-	}
 	
 	nc_close(nc)
 	

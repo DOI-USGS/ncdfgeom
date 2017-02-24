@@ -18,6 +18,7 @@ test_that("Point data can be written", {
   expect_equal(ncatt_get(nc,0,"featureType")$value,"point")
   expect_equal(ncatt_get(nc,0,"cdm_data_type")$value,"Station")
   expect_equal(ncatt_get(nc, nc$var$GRIDCODE, "units")$value, "unitless")
+  expect_equal(ncatt_get(nc, nc$var$GRIDCODE, "coordinates")$value, "lat lon alt")
   expect_equal(ncatt_get(nc, nc$var$Y_COORD, "units")$value, "m")
   })
 
