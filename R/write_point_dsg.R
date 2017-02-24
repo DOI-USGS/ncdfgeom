@@ -11,6 +11,7 @@
 #'of columns in \code{data} parameter
 #'@param data_prec Precision of observation data in NCDF file. 
 #'Valid options: 'short' 'integer' 'float' 'double' 'char'.
+#'@param feature_names \code{vector} of identifiers for features or stations.
 #'@description
 #'This creates a simple point data discrete sampling features NCDF file. Returns the created filename.
 #'

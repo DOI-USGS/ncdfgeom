@@ -4,7 +4,8 @@
 \alias{write_instance_data}
 \title{Put attribute / instance data in a NetCDF-CF File}
 \usage{
-write_instance_data(ncFile, attData, instanceDimName = "instance")
+write_instance_data(ncFile, attData, instanceDimName = "instance",
+  units = rep("unknown", ncol(attData)))
 }
 \arguments{
 \item{ncFile}{A string file path to the nc file to be created. It must already have an instance dimension.}
@@ -12,13 +13,13 @@ write_instance_data(ncFile, attData, instanceDimName = "instance")
 \item{attData}{A \code{data.frame} as included in a spatial dataFrame.}
 
 \item{instanceDimName}{A string to name the instance dimension. Defaults to "instance"}
+
+\item{units}{A character \code{vector} with units for each column of attData. Default is "unknown" for all.}
 }
 \description{
 Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 
 Use to create the start of a NetCDF-DSG file. One character length dimension is created
 long enough to contain the longest provided character string.
 This function does not implement any CF convention attributes or standard names.
-Any columns of class date will be converted to character, handling for units is
-is planned for future development.
+Any columns of class date will be converted to character.
 }
-
