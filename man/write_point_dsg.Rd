@@ -5,7 +5,7 @@
 \title{Create point data NCDF file}
 \usage{
 write_point_dsg(nc_file, lats, lons, alts, data, data_units = rep("",
-  ncol(data)), data_prec = rep("double", ncol(data)), feature_names = NULL)
+  ncol(data)), feature_names = NULL, force_v4 = FALSE)
 }
 \arguments{
 \item{nc_file}{A string file path to the nc file to be created.}
@@ -22,10 +22,9 @@ names are used as names in the NCDF file}
 \item{data_units}{Character vector of observation units. Length must be the same as number 
 of columns in \code{data} parameter}
 
-\item{data_prec}{Precision of observation data in NCDF file. 
-Valid options: 'short' 'integer' 'float' 'double' 'char'.}
-
 \item{feature_names}{\code{vector} of identifiers for features or stations.}
+
+\item{force_v4}{as in ncdf4 nc_create, default to FALSE.}
 }
 \description{
 This creates a simple point data discrete sampling features NCDF file. Returns the created filename.

@@ -4,6 +4,7 @@
 #'@param attData A \code{data.frame} as included in a spatial dataFrame.
 #'@param instanceDimName A string to name the instance dimension. Defaults to "instance"
 #'@param units A character \code{vector} with units for each column of attData. Default is "unknown" for all.
+#'@param force_v4 as in ncdf4 nc_create, default to FALSE.
 #'
 #'@description
 #'Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 
@@ -16,7 +17,7 @@
 #'@importFrom methods is
 #'
 #'@export
-write_instance_data <- function(ncFile, attData, instanceDimName = "instance", units = rep("unknown", ncol(attData))) {
+write_instance_data <- function(ncFile, attData, instanceDimName = "instance", units = rep("unknown", ncol(attData)), force_v4 = FALSE) {
 	
 	n <- nrow(attData)
 	
@@ -53,7 +54,7 @@ write_instance_data <- function(ncFile, attData, instanceDimName = "instance", u
 		col <- col + 1
 	}
 	
-	nc <- nc_create(filename = ncFile, vars = vars)
+	nc <- nc_create(filename = ncFile, vars = vars, force_v4 = force_v4)
 	
 	nc_close(nc)
 	
