@@ -9,8 +9,6 @@
 #'names are used as names in the NCDF file
 #'@param data_units Character vector of observation units. Length must be the same as number 
 #'of columns in \code{data} parameter
-#'@param data_prec Precision of observation data in NCDF file. 
-#'Valid options: 'short' 'integer' 'float' 'double' 'char'.
 #'@param feature_names \code{vector} of identifiers for features or stations.
 #'@description
 #'This creates a simple point data discrete sampling features NCDF file. Returns the created filename.
@@ -21,8 +19,7 @@
 #'@importFrom ncdf4 nc_create nc_close ncvar_def ncvar_put ncatt_put ncdim_def
 #'
 #'@export
-write_point_dsg = function(nc_file, lats, lons, alts, data, data_units=rep('', ncol(data)),
-													 data_prec=rep('double', ncol(data)), feature_names = NULL){
+write_point_dsg = function(nc_file, lats, lons, alts, data, data_units=rep('', ncol(data)), feature_names = NULL){
 	
 	n = length(lats)
 	if(length(lats)!=n || length(lons)!=n || length(alts)!=n){
@@ -49,6 +46,10 @@ write_point_dsg = function(nc_file, lats, lons, alts, data, data_units=rep('', n
 	nc <- ncvar_add(nc, lon_var)
 	alt_var = ncvar_def('alt', 'm', nc$dim$obs, -999, prec='double', longname='vertical distance above the surface')
 	nc <- ncvar_add(nc, alt_var)
+	
+	nc_close(nc)
+	
+	nc <- nc_open(nc_file, write = TRUE)
 	
 	#add standard_names
 	ncatt_put(nc, 'lat', 'standard_name', 'latitude')
