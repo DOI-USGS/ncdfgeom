@@ -79,7 +79,6 @@ write_point_dsg = function(nc_file, lats, lons, alts, times, data, data_units=re
 	#Put data in NC file
 	if(!is.null(feature_names)) {
 		ncatt_put(nc, 'feature_name', 'long_name', 'Feature Name')
-		ncatt_put(nc, 'feature_name', 'cf_role', 'timeseries_id')
 	}
 	
 	ncvar_put(nc, 'lat', lats)
