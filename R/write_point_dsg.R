@@ -5,14 +5,16 @@
 #'@param lats Vector of latitudes 
 #'@param lons Vector of longitudes
 #'@param alts Vector of altitudes
+#'@param times Vector of times, one per point, if length is one, will use the same time for each point. 
+#'Must be of type \code{POSIXct} or an attempt to convert it will be made using \code{as.POSIXct(times)}.
 #'@param data \code{data.frame} with each column corresponding to a observation. Column 
 #'names are used as names in the NCDF file
 #'@param data_units Character vector of observation units. Length must be the same as number 
 #'of columns in \code{data} parameter
-#'@param data_prec Precision of observation data in NCDF file. 
-#'Valid options: 'short' 'integer' 'float' 'double' 'char'.
+#'@param feature_names \code{vector} of identifiers for features or stations.
 #'@description
-#'This creates a simple point data discrete sampling features NCDF file. Returns the created filename.
+#'This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
+#'Can pass in netcdf creation options like force_v4 to pass on.
 #'
 #'@references
 #'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
@@ -20,52 +22,69 @@
 #'@importFrom ncdf4 nc_create nc_close ncvar_def ncvar_put ncatt_put ncdim_def
 #'
 #'@export
-write_point_dsg = function(nc_file, lats, lons, alts, data, data_units=rep('', ncol(data)),
-													 data_prec=rep('double', ncol(data))){
+write_point_dsg = function(nc_file, lats, lons, alts, times, data, data_units=rep('', ncol(data)), feature_names = NULL, ...){
 	
 	n = length(lats)
 	if(length(lats)!=n || length(lons)!=n || length(alts)!=n){
 		stop('lats, lons, and alts must all be vectors of the same length')
 	}
 	
-	
-	#Lay the foundation. This is a point featureType. Which has one dimension, "obs"
-	obs_dim = ncdim_def('obs', '', 1:n, create_dimvar=FALSE)
-	
-	#Setup our spatial and info
-	lat_var = ncvar_def('lat', 'degrees_north', obs_dim, -999, prec='double', longname = 'latitude of the observation')
-	lon_var = ncvar_def('lon', 'degrees_east', obs_dim, -999, prec='double', longname = 'longitude of the observation')
-	alt_var = ncvar_def('alt', 'm', obs_dim, -999, prec='double', longname='vertical distance above the surface')
-	
-	data_names = names(data)
-	data_vars  = list()
-	for(i in 1:ncol(data)){
-		data_vars[[i]] = ncvar_def(data_names[i], data_units[i], obs_dim, prec=data_prec[i], missval=-999)
+	if(!is.null(feature_names)) {
+		if(length(lats)!=n || length(lons)!=n){
+			stop('feature_names, lats, and lons must all be vectors of the same length')
+		}
+		data["feature_name"] <- feature_names
 	}
 	
-	nc = nc_create(nc_file, vars = c(list(lat_var, lon_var, alt_var), data_vars))
+	if(length(times)==1) {
+		times<-rep(times, n)
+	}
+	
+	if(!is(times, 'POSIXct')){
+		times = as.POSIXct(times)
+	}
+	
+	nc_file <- write_instance_data(ncFile=nc_file, attData = data, instanceDimName = "obs", units = data_units, ...)
+	
+	nc <- nc_open(nc_file, write = TRUE)
+	
+	#Setup our spatial and info
+	lat_var = ncvar_def('lat', 'degrees_north', nc$dim$obs, -999, prec='double', longname = 'latitude of the observation')
+	nc <- ncvar_add(nc, lat_var)
+	lon_var = ncvar_def('lon', 'degrees_east', nc$dim$obs, -999, prec='double', longname = 'longitude of the observation')
+	nc <- ncvar_add(nc, lon_var)
+	alt_var = ncvar_def('alt', 'm', nc$dim$obs, -999, prec='double', longname='vertical distance above the surface')
+	nc <- ncvar_add(nc, alt_var)
+	time_var = ncvar_def('time', 'days since 1970-01-01 00:00:00', nc$dim$obs, -999, prec='integer', longname = 'time stamp')
+	nc <- ncvar_add(nc, time_var)
+	
+	nc_close(nc)
+	
+	nc <- nc_open(nc_file, write = TRUE)
 	
 	#add standard_names
 	ncatt_put(nc, 'lat', 'standard_name', 'latitude')
 	ncatt_put(nc, 'lon', 'standard_name', 'longitude')
 	ncatt_put(nc, 'alt', 'standard_name', 'height')
+	ncatt_put(nc, 'time', 'standard_name', 'time')
 	
 	#use the same names for "standard names" and add coordinates as well
-	for(i in 1:ncol(data)){
-		ncatt_put(nc, data_names[i], 'standard_name', data_names[i])
-		ncatt_put(nc, data_names[i], 'coordinates', 'lat lon alt')
+	for(data_name in names(data)){
+		ncatt_put(nc, data_name, 'coordinates', 'lat lon alt time')
 	}
 	#some final stuff
 	ncatt_put(nc, 0,'featureType','point')
+	ncatt_put(nc, 0,'Conventions','CF-1.7')
 	
 	#Put data in NC file
+	if(!is.null(feature_names)) {
+		ncatt_put(nc, 'feature_name', 'long_name', 'Feature Name')
+	}
+	
 	ncvar_put(nc, 'lat', lats)
 	ncvar_put(nc, 'lon', lons)
 	ncvar_put(nc, 'alt', alts)
-	
-	for(i in 1:ncol(data)){
-		ncvar_put(nc, data_names[i], data[, i], count=n)
-	}
+	ncvar_put(nc, 'time', as.numeric(times)/86400) #convert to days since 1970-01-01
 	
 	nc_close(nc)
 	

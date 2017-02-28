@@ -60,4 +60,3 @@ Here are some common important attributes that could be added.
 \item{description = "description"}
 }
 }
-
