@@ -4,19 +4,17 @@
 \alias{write_instance_data}
 \title{Put attribute / instance data in a NetCDF-CF File}
 \usage{
-write_instance_data(ncFile, attData, instanceDimName = "instance",
-  units = rep("unknown", ncol(attData)), force_v4 = FALSE)
+write_instance_data(nc_file, attData, instanceDimName = "instance",
+  units = rep("unknown", ncol(attData)), ...)
 }
 \arguments{
-\item{ncFile}{A string file path to the nc file to be created. It must already have an instance dimension.}
+\item{nc_file}{A string file path to the nc file to be created. It must already have an instance dimension.}
 
 \item{attData}{A \code{data.frame} as included in a spatial dataFrame.}
 
 \item{instanceDimName}{A string to name the instance dimension. Defaults to "instance"}
 
 \item{units}{A character \code{vector} with units for each column of attData. Default is "unknown" for all.}
-
-\item{force_v4}{as in ncdf4 nc_create, default to FALSE.}
 }
 \description{
 Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 

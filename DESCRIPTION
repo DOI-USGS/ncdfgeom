@@ -11,6 +11,7 @@ Imports:
     methods
 Suggests: 
 		testthat,
-		geoknife
+		geoknife,
+		sp
 License: CC0
 RoxygenNote: 6.0.1

@@ -4,8 +4,8 @@
 \alias{write_point_dsg}
 \title{Create point data NCDF file}
 \usage{
-write_point_dsg(nc_file, lats, lons, alts, data, data_units = rep("",
-  ncol(data)), feature_names = NULL, force_v4 = FALSE)
+write_point_dsg(nc_file, lats, lons, alts, times, data, data_units = rep("",
+  ncol(data)), feature_names = NULL, ...)
 }
 \arguments{
 \item{nc_file}{A string file path to the nc file to be created.}
@@ -16,6 +16,9 @@ write_point_dsg(nc_file, lats, lons, alts, data, data_units = rep("",
 
 \item{alts}{Vector of altitudes}
 
+\item{times}{Vector of times, one per point, if length is one, will use the same time for each point. 
+Must be of type \code{POSIXct} or an attempt to convert it will be made using \code{as.POSIXct(times)}.}
+
 \item{data}{\code{data.frame} with each column corresponding to a observation. Column 
 names are used as names in the NCDF file}
 
@@ -23,11 +26,10 @@ names are used as names in the NCDF file}
 of columns in \code{data} parameter}
 
 \item{feature_names}{\code{vector} of identifiers for features or stations.}
-
-\item{force_v4}{as in ncdf4 nc_create, default to FALSE.}
 }
 \description{
-This creates a simple point data discrete sampling features NCDF file. Returns the created filename.
+This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
+Can pass in netcdf creation options like force_v4 to pass on.
 }
 \references{
 http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
