@@ -1,6 +1,6 @@
 #'@title Put attribute / instance data in a NetCDF-CF File
 #'
-#'@param ncFile A string file path to the nc file to be created. It must already have an instance dimension.
+#'@param nc_file A string file path to the nc file to be created. It must already have an instance dimension.
 #'@param attData A \code{data.frame} as included in a spatial dataFrame.
 #'@param instanceDimName A string to name the instance dimension. Defaults to "instance"
 #'@param units A character \code{vector} with units for each column of attData. Default is "unknown" for all.
@@ -16,7 +16,7 @@
 #'@importFrom methods is
 #'
 #'@export
-write_instance_data <- function(ncFile, attData, instanceDimName = "instance", units = rep("unknown", ncol(attData)), ...) {
+write_instance_data <- function(nc_file, attData, instanceDimName = "instance", units = rep("unknown", ncol(attData)), ...) {
 	
 	n <- nrow(attData)
 	
@@ -53,11 +53,18 @@ write_instance_data <- function(ncFile, attData, instanceDimName = "instance", u
 		col <- col + 1
 	}
 	
-	nc <- nc_create(filename = ncFile, vars = vars, ...)
+	if(file.exists(nc_file)) {
+		nc <- nc_open(nc_file, write = TRUE)
+		for(var in vars) {
+			nc <- ncvar_add(nc, var)
+		}
+	} else {
+		nc <- nc_create(filename = nc_file, vars = vars, ...) 
+	}
 	
 	nc_close(nc)
 	
-	nc <- nc_open(ncFile, write = TRUE)
+	nc <- nc_open(nc_file, write = TRUE)
 	
 	if(!is.null(attData)) {
 		for(colName in names(attData)) {
@@ -67,5 +74,5 @@ write_instance_data <- function(ncFile, attData, instanceDimName = "instance", u
 	
 	nc_close(nc)
 	
-	return(ncFile)
+	return(nc_file)
 }
