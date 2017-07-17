@@ -1,17 +1,23 @@
 Package: netcdf.dsg
 Type: Package
 Title: Discrete Sampling Geometry NetCDF
-Version: 0.3.0
-Date: 2016-11-26
+Version: 0.4.0
+Date: 2017-07-17
 Author: Luke Winslow, Dave Blodgett
 Maintainer: David Blodgett <dblodgett@usgs.gov>
 Description: Tools to create discrete sampling geometry NetCDF files from R.
 Imports:
     ncdf4,
+    sp,
+  	rgdal,
     methods
+Depends:
+  R (>= 3.0)
 Suggests: 
 		testthat,
 		geoknife,
-		sp
+    maptools,
+    rgeos
 License: CC0
+LazyData: TRUE
 RoxygenNote: 6.0.1

@@ -4,6 +4,7 @@
 #'@param attData A \code{data.frame} as included in a spatial dataFrame.
 #'@param instanceDimName A string to name the instance dimension. Defaults to "instance"
 #'@param units A character \code{vector} with units for each column of attData. Default is "unknown" for all.
+#'@param ... additional arguments to be passed on nc_create.
 #'
 #'@description
 #'Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 
