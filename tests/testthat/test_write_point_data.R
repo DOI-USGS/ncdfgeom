@@ -3,7 +3,7 @@ library("ncdf4")
 context("Test creating a netcdf file with instance data content.")
 
 test_that("Point data can be written", {
-  dataFrame <- read.csv("data/yahara_alb_attributes.csv")
+  dataFrame <- read.csv(system.file("extdata/yahara_alb_attributes.csv", package = "netcdf.dsg"))
   nc_file <- write_point_dsg(nc_file=tempfile(), lats = dataFrame$YCOORD, lons = dataFrame$XCOORD, 
   													 alts = rep(0, length(dataFrame$XCOORD)), times = as.POSIXct("1970-01-01 00:00:00 GMT"),
   													 feature_names = dataFrame$ID,

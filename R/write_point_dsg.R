@@ -12,6 +12,8 @@
 #'@param data_units Character vector of observation units. Length must be the same as number 
 #'of columns in \code{data} parameter
 #'@param feature_names \code{vector} of identifiers for features or stations.
+#'@param ... additional arguments to be passed on nc_create.
+#'
 #'@description
 #'This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
 #'Can pass in netcdf creation options like force_v4 to pass on.
@@ -44,7 +46,7 @@ write_point_dsg = function(nc_file, lats, lons, alts, times, data, data_units=re
 		times = as.POSIXct(times)
 	}
 	
-	nc_file <- write_instance_data(nc_file=nc_file, attData = data, instanceDimName = "obs", units = data_units, ...)
+	nc_file <- write_instance_data(nc_file=nc_file, attData = data, instance_dim_name = "obs", units = data_units, ...)
 	
 	nc <- nc_open(nc_file, write = TRUE)
 	

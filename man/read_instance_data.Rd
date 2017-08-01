@@ -4,12 +4,12 @@
 \alias{read_instance_data}
 \title{Get Dataframe from NetCDF-DSG File}
 \usage{
-read_instance_data(nc, instanceDim)
+read_instance_data(nc, instance_dim)
 }
 \arguments{
 \item{nc}{A open ncdf4 object.}
 
-\item{instanceDim}{The NetCDF instance/station dimension.}
+\item{instance_dim}{The NetCDF instance/station dimension.}
 }
 \description{
 Gets instance data from a NetCDF-DSG file and returns it in a \code{data.frame}.

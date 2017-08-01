@@ -1,0 +1,158 @@
+---
+title: "netcdf.dsg"
+author: "David Blodgett"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The netcdf.dsg package provides functions to read and write NetCDF-CF Discrete Sampling Geometries point and timeseries feature types as well as NetCDF-CF spatial geometries. These utilities are meant to be general, but were designed to support working with typical geospatial feature data with linked attributes and time series in NetCDF. Supported data types include:  
+
+- Variables from R `data.frame` tables with one row per geometry are read from or written to NetCDF variables.
+- `data.frame` tables with a time series per collumn are read from or written as NetCDF-CF DSG TimeSeries FeatureType data.
+- `data.frame` table variables with a single-time-step observation for a given point location in each row are written to a NetCDF-CF DSG Point FeatureType.
+- `sp` spatial point, line, and polygon types can be read from or written to NetCDF-CF geometry variables introduced in CF-1.8
+
+Additional read / write functions to include additional DSG feature types will be implemented in the future and contributions are welcomed.
+
+## Write a Timeseries to NetCDF
+
+First, we'll load up some time series data. 
+
+```{r attributes}
+attribute_file<-system.file('extdata/yahara_alb_attributes.csv', package = "netcdf.dsg")
+
+# Grab some attributes
+attributes <- read.csv(attribute_file,colClasses='character')
+lats <- attributes$YCOORD
+lons <- attributes$XCOORD
+alts <- rep(1,length(lats)) # Making up altitude for the sake of demonstration.
+```
+
+We now have vectors of latitudes, longitudes, altitudes for each of our time series.
+
+```{r timeseries}
+timeseries_file<-system.file('extdata/yahara_alb_gdp_file.csv', package = "netcdf.dsg")
+raw_data <- geoknife::parseTimeseries(timeseries_file,delim=',',with.units=TRUE)
+timeseries_data <- raw_data[2:(ncol(raw_data)-3)]
+time <- raw_data$DateTime
+long_name <- paste(raw_data$variable[1], 'area weighted', raw_data$statistic[1], 'in', raw_data$units[1], sep=' ')
+meta <- list(name=raw_data$variable[1],long_name=long_name)
+```
+
+Now we have a dataframe of timeseries data, a vector of timesteps, and a bit of metadata for the timeseries variable that we will write into the NetCDF file.  
+
+```{r write}
+nc_summary<-'example summary'
+nc_date_create<-'2099-01-01'
+nc_creator_name='example creator'
+nc_creator_email='example@test.com'
+nc_project='example netcdf.dsg'
+nc_proc_level='just an example no processing'
+nc_title<-'example title'
+global_attributes<-list(title = nc_title, summary = nc_summary, date_created=nc_date_create,
+												creator_name=nc_creator_name,creator_email=nc_creator_email,
+												project=nc_project, processing_level=nc_proc_level)
+
+nc_file <- netcdf.dsg::write_timeseries_dsg(nc_file = "demo_nc.nc", 
+																						station_names = names(timeseries_data),
+																						lats = lats, lons = lons, times = time, alts = alts,
+																						data = timeseries_data,
+																						data_unit = raw_data$units[1],
+																						data_prec = 'double',
+																						data_metadata = meta,
+																						attributes = global_attributes)
+
+nc <- ncdf4::nc_open(nc_file)
+```
+
+Now we have a NetCDF file with reference spatial information for each time series, and a single timeseries variable.
+
+The file has three dimensions. A dimension called "station" that that is the same length as the number of timeseries written, one called "time" that is the length of the number of time series, and one called "name_strlen" that is the length of the longest timeseries ID (which is stored as a string).
+
+```{r dim}
+names(nc$dim)
+```
+
+The file has variables for latitude, longitude, altitude, timeseries IDs, and a data variable.
+```{r var}
+names(nc$var)
+```
+The primary dimensions in the file are of length, numer of time steps and number of time series.
+```{r dim2}
+nc$dim$time$len
+nc$dim$station$len
+```
+
+The header of the resulting NetCDF file looks like:
+
+```
+ncdump -h demo_nc.nc 
+netcdf demo_nc {
+dimensions:
+	station = 71 ;
+	time = 730 ;
+	name_strlen = 2 ;
+variables:
+	double lat(station) ;
+		lat:units = "degrees_north" ;
+		lat:_FillValue = -999. ;
+		lat:long_name = "latitude of the observation" ;
+		lat:standard_name = "latitude" ;
+	double lon(station) ;
+		lon:units = "degrees_east" ;
+		lon:_FillValue = -999. ;
+		lon:long_name = "longitude of the observation" ;
+		lon:standard_name = "longitude" ;
+	double time(time) ;
+		time:units = "days since 1970-01-01 00:00:00" ;
+		time:_FillValue = -999. ;
+		time:long_name = "time of measurement" ;
+		time:standard_name = "time" ;
+	double alt(station) ;
+		alt:units = "m" ;
+		alt:_FillValue = -999. ;
+		alt:long_name = "vertical distance above the surface" ;
+		alt:standard_name = "height" ;
+	char station_name(station, name_strlen) ;
+		station_name:long_name = "Station Names" ;
+		station_name:cf_role = "timeseries_id" ;
+		station_name:standard_name = "station_id" ;
+	double BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1(station, time) ;
+		BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:units = "mm/d" ;
+		BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:_FillValue = -999. ;
+		BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:long_name = "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1 area weighted MEAN in mm/d" ;
+		BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:coordinates = "time lat lon" ;
+
+// global attributes:
+		:Conventions = "CF-1.7" ;
+		:featureType = "timeSeries" ;
+		:cdm_data_type = "Station" ;
+		:standard_name_vocabulary = "CF-1.7" ;
+		:title = "example title" ;
+		:summary = "example summary" ;
+		:date_created = "2099-01-01" ;
+		:creator_name = "example creator" ;
+		:creator_email = "example@test.com" ;
+		:project = "example netcdf.dsg" ;
+		:processing_level = "just an example no processing" ;
+}
+```
+This file can be read back into R with the function `read_timeseries_dsg`. The response is a list of variables as shown below.
+
+```{r read}
+timeseries_dataset <- netcdf.dsg::read_timeseries_dsg(nc_file)
+names(timeseries_dataset)
+```
+`time`, `lats`, `lons`, and `alts` are vectors that apply to the whole dataset. `varmeta` has one entry per timeseries variable read from the NetCDF file and contains the `name` and `long_name` attribute of each variable. `data_unit` and `data_prec` contain units and precision metadata for each variable. `data_frames` is a list containing one `data.frame` for each variable read from the NetCDF file. `global_attributes` contains standard glabal attributes found in the file. All of the variables that have one element per timeseries variable, are named the same as the NetCDF variable names so they can be accessed by name like this:
+
+```{r names}
+varNames <- names(timeseries_dataset$varmeta)
+timeseries_dataset$data_unit[varNames[1]][[1]]
+```
+```{r delete, echo=F, message=F}
+t <- file.remove(nc_file)
+```

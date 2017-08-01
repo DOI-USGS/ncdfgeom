@@ -26,6 +26,8 @@ names are used as names in the NCDF file}
 of columns in \code{data} parameter}
 
 \item{feature_names}{\code{vector} of identifiers for features or stations.}
+
+\item{...}{additional arguments to be passed on nc_create.}
 }
 \description{
 This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
