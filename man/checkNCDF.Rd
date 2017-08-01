@@ -11,10 +11,10 @@ checkNCDF(nc)
 }
 \description{
 Introspects a netcdf file and tries to interpret it as a NetCDF-DSG file. Returns a named
-\code{list} containing \code{instance_id} \code{instanceDim} \code{node_count}
+\code{list} containing \code{instance_id} \code{instance_dim} \code{node_count}
 \code{part_node_count} \code{part_type} If these values aren't found or aren't applicable,
 they are returned \code{NULL}.
 }
 \references{
-https://github.com/bekozi/netCDF-CF-simple-geometry
+https://github.com/twhiteaker/netCDF-CF-simple-geometry
 }

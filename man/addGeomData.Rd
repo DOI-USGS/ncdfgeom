@@ -24,5 +24,5 @@ Creates a file with point, line or polygon instance data ready for the extended 
 Will also add attributes if a sp dataframe object is passed in.
 }
 \references{
-https://github.com/bekozi/netCDF-CF-simple-geometry
+https://github.com/twhiteaker/netCDF-CF-simple-geometry
 }

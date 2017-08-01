@@ -5,12 +5,12 @@
 #'
 #'@description
 #'Introspects a netcdf file and tries to interpret it as a NetCDF-DSG file. Returns a named
-#'\code{list} containing \code{instance_id} \code{instanceDim} \code{node_count}
+#'\code{list} containing \code{instance_id} \code{instance_dim} \code{node_count}
 #'\code{part_node_count} \code{part_type} If these values aren't found or aren't applicable,
 #'they are returned \code{NULL}.
 #'
 #'@references
-#'https://github.com/bekozi/netCDF-CF-simple-geometry
+#'https://github.com/twhiteaker/netCDF-CF-simple-geometry
 #'
 #'@importFrom ncdf4 ncatt_get
 #'
@@ -18,7 +18,7 @@
 checkNCDF <- function(nc) {
 
   instance_id<-NULL
-  instanceDim<-NULL
+  instance_dim<-NULL
   geom_container <- list(geom_type = NULL, node_count = NULL, part_node_count = NULL,
                          part_type = NULL, x = NULL, y = NULL)
 
@@ -70,9 +70,9 @@ checkNCDF <- function(nc) {
   if(length(instance_id)>1) { stop('multiple timeseries id variables were found.') }
 
   if(geom_container$node_count == 0) {
-    instanceDim <- nc$var[geom_container$x][[1]]$dim[[1]]$name
+    instance_dim <- nc$var[geom_container$x][[1]]$dim[[1]]$name
   } else {
-    instanceDim <- nc$var[geom_container$node_count][[1]]$dim[[1]]$name }
+    instance_dim <- nc$var[geom_container$node_count][[1]]$dim[[1]]$name }
 
   crs_referents <- c(findVarByAtt(nc, "grid_mapping", strict="false"))
 
@@ -90,7 +90,7 @@ checkNCDF <- function(nc) {
   }
 
   return(list(instance_id = instance_id,
-              instanceDim = instanceDim,
+              instance_dim = instance_dim,
               geom_container = geom_container,
               variable_list = variable_list,
               crs = crs))

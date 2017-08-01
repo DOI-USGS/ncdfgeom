@@ -6,7 +6,7 @@ context("Test adding instance data to an new or existing netcdf file.")
 test_that("A dataframe can be round tripped to netCDF.", {
   dataFrame <- readRDS("data/NHDline_data.rds")@data
   units<-c("unitless","date","unitless","unitless","unitless","km","unitless","unitless","unknown")
-  nc_file <- write_instance_data(nc_file=tempfile(), attData = dataFrame, instanceDimName = "instance", units = units)
+  nc_file <- write_instance_data(nc_file=tempfile(), attData = dataFrame, instance_dim_name = "instance", units = units)
   nc <- nc_open(nc_file)
   expect_equal(class(nc),"ncdf4")
   expect_equal(as.character(ncvar_get(nc, nc$var$COMID)), as.character(dataFrame$COMID))

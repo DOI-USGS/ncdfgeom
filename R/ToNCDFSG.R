@@ -19,7 +19,7 @@
 #'Will also add attributes if a sp dataframe object is passed in.
 #'
 #'@references
-#'https://github.com/bekozi/netCDF-CF-simple-geometry
+#'https://github.com/twhiteaker/netCDF-CF-simple-geometry
 #'
 #'@importFrom ncdf4 nc_open ncvar_add nc_close ncvar_def ncvar_put ncatt_put ncdim_def
 #'@importFrom sp SpatialLinesDataFrame polygons SpatialPoints

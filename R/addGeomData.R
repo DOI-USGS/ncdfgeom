@@ -15,7 +15,7 @@
 #'Will also add attributes if a sp dataframe object is passed in.
 #'
 #'@references
-#'https://github.com/bekozi/netCDF-CF-simple-geometry
+#'https://github.com/twhiteaker/netCDF-CF-simple-geometry
 #'
 #'@importFrom ncdf4 nc_open ncvar_add nc_close ncvar_def ncvar_put ncatt_put ncdim_def nc_create
 #'
@@ -160,10 +160,10 @@ addGeomData<-function(nc_file, geomData, instance_dim_name, variables = c()) {
   if(!(pointsMode && !multis)) {
     ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$node_count_attr_name, attval = pkg.env$node_count_var_name)
 
-    instanceDim <- nc$dim[instance_dim_name]
-    if(is.null(unlist(instanceDim))) instanceDim <- ncdim_def(instance_dim_name, '', 1:length(node_count), create_dimvar = FALSE)
+    instance_dim <- nc$dim[instance_dim_name]
+    if(is.null(unlist(instance_dim))) instance_dim <- ncdim_def(instance_dim_name, '', 1:length(node_count), create_dimvar = FALSE)
 
-    node_count_var<-ncvar_def(name = pkg.env$node_count_var_name, units = '', dim = instanceDim,
+    node_count_var<-ncvar_def(name = pkg.env$node_count_var_name, units = '', dim = instance_dim,
                               longname = "count of coordinates in each instance geometry", prec = "integer")
     nc <- ncvar_add(nc, node_count_var)
     ncvar_put(nc = nc, varid = pkg.env$node_count_var_name, vals = node_count)

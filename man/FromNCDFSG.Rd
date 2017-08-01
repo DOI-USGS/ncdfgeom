@@ -9,9 +9,12 @@ FromNCDFSG(nc_file)
 \arguments{
 \item{nc_file}{A string file path to the nc file to be read.}
 }
+\value{
+sp object containing spatial geometry of type found in the NetCDF-CF DSG file.
+}
 \description{
 Attemps to convert a NetCDF-CF DSG Simple Geometry file into an sp object.
 }
 \references{
-https://github.com/bekozi/netCDF-CF-simple-geometry
+https://github.com/twhiteaker/netCDF-CF-simple-geometry
 }

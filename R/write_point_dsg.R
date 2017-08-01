@@ -46,7 +46,7 @@ write_point_dsg = function(nc_file, lats, lons, alts, times, data, data_units=re
 		times = as.POSIXct(times)
 	}
 	
-	nc_file <- write_instance_data(nc_file=nc_file, attData = data, instanceDimName = "obs", units = data_units, ...)
+	nc_file <- write_instance_data(nc_file=nc_file, attData = data, instance_dim_name = "obs", units = data_units, ...)
 	
 	nc <- nc_open(nc_file, write = TRUE)
 	

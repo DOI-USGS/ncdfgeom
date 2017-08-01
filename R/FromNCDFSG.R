@@ -7,10 +7,12 @@
 #'Attemps to convert a NetCDF-CF DSG Simple Geometry file into an sp object.
 #'
 #'@references
-#'https://github.com/bekozi/netCDF-CF-simple-geometry
+#'https://github.com/twhiteaker/netCDF-CF-simple-geometry
 #'
 #'@importFrom ncdf4 nc_open nc_close ncvar_get ncatt_get
 #'@importFrom sp Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame CRS Line Lines SpatialLines SpatialLinesDataFrame SpatialPointsDataFrame
+#'
+#'@return sp object containing spatial geometry of type found in the NetCDF-CF DSG file.
 #'
 #'@export
 FromNCDFSG = function(nc_file) {
@@ -20,12 +22,14 @@ FromNCDFSG = function(nc_file) {
   checkVals <- checkNCDF(nc)
 
   instance_id<-checkVals$instance_id
-  instanceDim<-checkVals$instanceDim
+  instance_dim<-checkVals$instance_dim
   geom_container <- checkVals$geom_container
   variable_list <- checkVals$variable_list
   crs <- checkVals$crs
 
-  line<-FALSE; poly<-FALSE; point<-FALSE
+  line<-FALSE 
+  poly<-FALSE 
+  point<-FALSE
   if(grepl("polygon", geom_container$geom_type)) { poly<-TRUE
   } else if(grepl("line", geom_container$geom_type)) { line<-TRUE
   } else point <- TRUE
@@ -42,7 +46,7 @@ FromNCDFSG = function(nc_file) {
   if(point) {
     point_data <- matrix(c(xCoords,
                            yCoords), ncol=2)
-    dataFrame <- read_instance_data(nc, instanceDim)
+    dataFrame <- read_instance_data(nc, instance_dim)
     if(geom_container$geom_type == "multipoint") {
       stop("reading multipoint is not supported yet.")
       # This is where handling for multipoint would go.
@@ -100,7 +104,7 @@ FromNCDFSG = function(nc_file) {
         Srl <- append(Srl, Lines(srl, as.character(geom)))
       }
     }
-    dataFrame <- read_instance_data(nc, instanceDim)
+    dataFrame <- read_instance_data(nc, instance_dim)
 
     for(varName in names(dataFrame)) {
       if(!varName %in% variable_list) {
@@ -109,10 +113,10 @@ FromNCDFSG = function(nc_file) {
     }
 
     if(poly) {
-      SPGeom <- SpatialPolygonsDataFrame(SpatialPolygons(Srl, proj4string = CRS("+proj=longlat +datum=WGS84")),
+      SPGeom <- SpatialPolygonsDataFrame(SpatialPolygons(Srl, proj4string = CRS(prj)),
                                          dataFrame, match.ID = FALSE)
     } else if(line) {
-      SPGeom <- SpatialLinesDataFrame(SpatialLines(Srl, proj4string = CRS("+proj=longlat +datum=WGS84")),
+      SPGeom <- SpatialLinesDataFrame(SpatialLines(Srl, proj4string = CRS(prj)),
                                       dataFrame, match.ID = FALSE)
     }
   }

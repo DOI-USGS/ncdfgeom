@@ -8,7 +8,7 @@ test_that("line", {
   checkVals <- checkNCDF(nc)
 
   expect_equal(checkVals$instance_id, NULL)
-  expect_equal(checkVals$instanceDim, pkg.env$instance_dim_name)
+  expect_equal(checkVals$instance_dim, pkg.env$instance_dim_name)
   expect_equal(checkVals$geom_container$geom_type, "line")
   expect_equal(checkVals$geom_container$node_count, pkg.env$node_count_var_name)
   expect_equal(checkVals$geom_container$part_node_count, 0)
@@ -62,7 +62,7 @@ test_that("basic point works", {
 
   checkVals <- checkNCDF(nc)
 
-  expect_equal(checkVals$instanceDim, pkg.env$instance_dim_name)
+  expect_equal(checkVals$instance_dim, pkg.env$instance_dim_name)
 })
 
 test_that("a crs gets found correctly", {
