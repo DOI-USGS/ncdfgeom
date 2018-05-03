@@ -5,7 +5,7 @@ context("NCDF SG Base Fixture Tests")
 # Data Prep - this could be included in tests, but then rgeos would be required for tests.
 library(jsonlite)
 library(rgeos)
-fixtureData<-fromJSON(readLines(system.file('extdata','fixture_wkt.json', package = 'NCDFSG'),warn = FALSE))
+fixtureData<-fromJSON(readLines(system.file('extdata','fixture_wkt.json', package = 'netcdf.dsg'),warn = FALSE))
 p <- "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +units=m +no_defs"
 multipointData <- readWKT(fixtureData[["2d"]]$multipoint, p4s = p)
 pointData <- readWKT(fixtureData[["2d"]]$point, p4s = p)
