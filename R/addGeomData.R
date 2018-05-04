@@ -129,8 +129,8 @@ addGeomData<-function(nc_file, geomData, instance_dim_name, variables = c()) {
 	ncvar_put(nc = nc, varid = 'y', vals = yVals)
 	ncatt_put(nc = nc, varid = 'x', attname = 'standard_name', attval = 'longitude')
 	ncatt_put(nc = nc, varid = 'y', attname = 'standard_name', attval = 'latitude')
-	ncatt_put(nc = nc, varid = 'x', attname = 'cf_role', attval = 'geometry_x_node')
-	ncatt_put(nc = nc, varid = 'y', attname = 'cf_role', attval = 'geometry_y_node')
+	ncatt_put(nc = nc, varid = 'x', attname = "axis", attval = "X")
+	ncatt_put(nc = nc, varid = 'y', attname = "axis", attval = "Y")
 	
 	geom_container <- ncvar_def(name = pkg.env$geom_container_var_name, units = '', dim = list())
 	ncvar_add(nc, geom_container)

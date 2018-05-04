@@ -28,10 +28,10 @@ test_that("data for basic polygon", {
   expect_equivalent(ncatt_get(nc, "y","standard_name")$value,
                     "latitude")
 
-  expect_equal(ncatt_get(nc, "x","cf_role")$value,
-               pkg.env$x_cf_role)
-  expect_equal(ncatt_get(nc, "y","cf_role")$value,
-               pkg.env$y_cf_role)
+  expect_equal(ncatt_get(nc, "x","axis")$value,
+               pkg.env$x_axis)
+  expect_equal(ncatt_get(nc, "y","axis")$value,
+               pkg.env$y_axis)
 
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$node_coordinates)$value,
                     "x y")
