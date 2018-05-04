@@ -47,7 +47,7 @@ test_that("multiPoint_timeSeries", {
   expect_equal(nc$dim$instance$vals,c(1))
 
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name)$value,
-                    "multipoint")
+                    "point")
 
   expect_equal(as.numeric(ncvar_get(nc,'y')),
                as.numeric(multipointData@coords[,2]))

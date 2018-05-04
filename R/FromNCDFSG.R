@@ -47,7 +47,7 @@ FromNCDFSG = function(nc_file) {
     point_data <- matrix(c(xCoords,
                            yCoords), ncol=2)
     dataFrame <- read_instance_data(nc, instance_dim)
-    if(geom_container$geom_type == "multipoint") {
+    if(nrow(dataFrame) != nrow(point_data)) {
       stop("reading multipoint is not supported yet.")
       # This is where handling for multipoint would go.
     }
