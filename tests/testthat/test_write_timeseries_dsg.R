@@ -73,4 +73,5 @@ test_that('soilmoisturetools data writes as expected', {
 	
 	nc <- nc_open(nc_file)
 	
+	expect_equal(1,1)
 })

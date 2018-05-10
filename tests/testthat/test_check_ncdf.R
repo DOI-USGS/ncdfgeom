@@ -23,7 +23,7 @@ test_that("line", {
   nc<-nc_open(nc_file)
 
   checkVals <- checkNCDF(nc)
-  expect_equal(checkVals$geom_container$geom_type, "multiline")
+  expect_equal(checkVals$geom_container$geom_type, "line")
   expect_equal(checkVals$geom_container$node_count, pkg.env$node_count_var_name)
   expect_equal(checkVals$geom_container$part_node_count, pkg.env$part_node_count_var_name)
   expect_equal(checkVals$geom_container$part_type, 0)
@@ -36,7 +36,7 @@ test_that("multi polygon holes", {
 
   checkVals <- checkNCDF(nc)
 
-  expect_equal(checkVals$geom_container$geom_type, "multipolygon")
+  expect_equal(checkVals$geom_container$geom_type, "polygon")
   expect_equal(checkVals$geom_container$node_count, pkg.env$node_count_var_name)
   expect_equal(checkVals$geom_container$part_node_count, pkg.env$part_node_count_var_name)
   expect_equal(checkVals$geom_container$part_type, pkg.env$part_type_var_name)

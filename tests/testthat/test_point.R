@@ -18,10 +18,10 @@ test_that("Point_timeSeries", {
   expect_equal(as.numeric(ncvar_get(nc,'x')),
                as.numeric(multipointData@coords[,1]))
 
-  expect_equal(ncatt_get(nc,varid="y","cf_role")$value,
-               "geometry_y_node")
-  expect_equal(ncatt_get(nc,varid="x","cf_role")$value,
-               "geometry_x_node")
+  expect_equal(ncatt_get(nc,varid="y","axis")$value,
+  						 pkg.env$y_axis)
+  expect_equal(ncatt_get(nc,varid="x","axis")$value,
+  						 pkg.env$x_axis)
 
   expect_equivalent(ncatt_get(nc,varid=0,"Conventions")$value,
                     "CF-1.8")
@@ -47,7 +47,7 @@ test_that("multiPoint_timeSeries", {
   expect_equal(nc$dim$instance$vals,c(1))
 
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name)$value,
-                    "multipoint")
+                    "point")
 
   expect_equal(as.numeric(ncvar_get(nc,'y')),
                as.numeric(multipointData@coords[,2]))

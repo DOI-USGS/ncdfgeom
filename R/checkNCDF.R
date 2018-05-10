@@ -46,14 +46,14 @@ checkNCDF <- function(nc) {
     node_coordinates <- strsplit(ncatt_get(nc, geom_container_var, pkg.env$node_coordinates)$value, " ")[[1]]
 
     for(v in node_coordinates) {
-      att <- ncatt_get(nc, v, "cf_role")
+      att <- ncatt_get(nc, v, "axis")
       if(att$hasatt) {
-        if(att$value == pkg.env$x_cf_role) {
+        if(att$value == pkg.env$x_axis) {
           geom_container$x <- v
-        } else if(att$value == pkg.env$y_cf_role) {
+        } else if(att$value == pkg.env$y_axis) {
           geom_container$y <- v
         } else {
-          stop(paste("unexpected cf_role attribute", pkg.env$x_cf_role, "and", pkg.env$y_cf_role, "are allowed."))
+          stop(paste("unexpected axis attribute", pkg.env$x_axis, "and", pkg.env$y_axis, "are allowed."))
         }
       }
     }
