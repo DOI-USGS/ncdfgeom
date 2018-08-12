@@ -53,6 +53,8 @@ ToNCDFSG = function(nc_file, geomData = NULL, instance_names = NULL, instance_di
   } else if(class(geomData) == "SpatialPointsDataFrame") {
     pointsMode<-TRUE
     attData<-geomData@data
+  } else if(class(geomData) == "SpatialMultiPointsDataFrame" | class(geomData) == "SpatialMultiPoints") {
+  	stop("Multi point not supported yet.")
   } else if(!is.null(lats)) {
     pointsMode<-TRUE
     geomData <- SpatialPoints(as.data.frame(list(x=lons, y=lats)),proj4string = CRS("+proj=longlat +datum=WGS84"))

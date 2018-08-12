@@ -51,7 +51,7 @@ GPFN.azimuthal_equidistant <- function(gm) {
                     getGeoDatum(gm))
 }
 # GPFN.geostationary <- function(gm) {
-#   #+proj=geos +lon_0=0 +h=-0 +x_0=0 +y_0=0 +units=m +no_defs
+#   #+proj=geos +lon_0=0 +h=-0 +x_0=0 +y_0=0 +no_defs
 # projargs <- paste("+proj=geos",
 #                   latProjOrig(gm),
 #                   lonProjOrig(gm),
@@ -194,17 +194,17 @@ getGeoDatum <- function(gm) {
     geoDatum <- paste0("+a=", gm$semi_major_axis,
                        " +f=", (1/gm$inverse_flattening),
                        " +pm=", gm$longitude_of_prime_meridian,
-                       " +units=m +no_defs")
+                       " +no_defs")
   } else if(!is.null(gm$semi_minor_axis)) {
     geoDatum <- paste0("+a=", gm$semi_major_axis,
                        " +b=", gm$semi_minor_axis,
                        " +pm=", gm$longitude_of_prime_meridian,
-                       " +units=m +no_defs")
+                       " +no_defs")
   } else {
     geoDatum <- paste0("+a=", gm$semi_major_axis,
                        " +b=", gm$semi_major_axis,
                        " +pm=", gm$longitude_of_prime_meridian,
-                       " +units=m +no_defs")
+                       " +no_defs")
   }
   return(geoDatum)
 }
@@ -225,8 +225,9 @@ oneStandPar <- function(gm) {
 
 falseEastNorth <- function(gm) {
   options(scipen=2)
-  outString <- paste0("+x_0=", gm$false_easting,
-                      " +y_0=", gm$false_northing)
+	outString <- paste0("+x_0=", gm$false_easting,
+											" +y_0=", gm$false_northing,
+											" +units=m")
 }
 
 latProjOrig <- function(gm) {

@@ -17,7 +17,7 @@
 #' @export
 #'
 #' @examples
-#' prj <- "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +units=m +no_defs"
+#' prj <- "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"
 #' grid_mapping <- getGmFromPrj(prj)
 #'
 getGmFromPrj <- function(prj) {
