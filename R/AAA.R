@@ -40,3 +40,10 @@ pkg.env$part_node_count_attr_name <- "part_node_count"
 pkg.env$part_type_attr_name <- "interior_ring"
 pkg.env$geometry_container_att_name <- "geometry"
 pkg.env$crs <- "grid_mapping"
+
+check_geomData <- function(geomData) {
+	if (any(c("sf", "sfc") %in% class(geomData))) {
+		geomData <- sf::as_Spatial(geomData)
+	}
+	return(geomData)
+}

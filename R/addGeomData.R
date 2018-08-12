@@ -3,9 +3,9 @@
 #'
 #'@param nc_file A string file path to the nc file to be created. It must already have
 #'an instance dimension.
-#'@param geomData An object of class \code{SpatialLines} or \code{SpatialPolygons} with
-#'WGS84 lon in the x coordinate and lat in the y coordinate.
-#'Note that three dimensional geometries is not supported.
+#'@param geomData An object of class \code{SpatialLines}, \code{SpatialPolygons}
+#'or their sf with WGS84 lon in the x coordinate and lat in the y coordinate.
+#'Note that three dimensional geometries are not supported.
 #'@param instance_dim_name A string to name the instance dimension.  Defaults to "instance"
 #'@param variables A character vector of variable names that the geometry data
 #'container variable name will be added to.
@@ -21,6 +21,8 @@
 #'
 #'@export
 addGeomData<-function(nc_file, geomData, instance_dim_name, variables = c()) {
+	
+	geomData <- check_geomData(geomData)
 	
 	node_dim_name <- pkg.env$node_dim_name
 	

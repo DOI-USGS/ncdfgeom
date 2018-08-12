@@ -9,6 +9,7 @@ Description: Tools to create discrete sampling geometry NetCDF files from R.
 Imports:
     ncdf4,
     sp,
+    sf,
   	rgdal,
     methods
 Depends:

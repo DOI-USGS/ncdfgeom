@@ -11,9 +11,9 @@ ToNCDFSG(nc_file, geomData = NULL, instance_names = NULL,
 \arguments{
 \item{nc_file}{A string file path to the nc file to be created.}
 
-\item{geomData}{An object of class \code{SpatialPoints}, \code{SpatialLines} or
-\code{SpatialPolygons} with WGS84 lon in the x coordinate and lat in the y coordinate.
-Note that three dimensional geometries is not supported.}
+\item{geomData}{An object of class \code{SpatialLines}, \code{SpatialPolygons}
+or their sf with WGS84 lon in the x coordinate and lat in the y coordinate.
+Note that three dimensional geometries are not supported.}
 
 \item{instance_names}{A character vector of names for geometries.
 If NULL, integers are used. If the geomData has a data frame, this is not used.}

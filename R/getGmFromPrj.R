@@ -192,10 +192,25 @@ getGeoDatum_gm <- function(al) {
     list(semi_major_axis = 6378137,
          inverse_flattening = 298.257223563,
          longitude_of_prime_meridian = 0)
-  } else {
+  } else if(!is.null(al$ellps) && 
+  					!is.null(al$towgs84) && 
+  					al$towgs84 == "0,0,0,0,0,0,0") {
+  	list(semi_major_axis = 6378137,
+  			 inverse_flattening = 298.257223563,
+  			 longitude_of_prime_meridian = 0)
+  } else if(!is.null(al$a) && !is.null(al$f) && !is.null(al$pm)) {
     list(semi_major_axis = as.numeric(al$a),
         inverse_flattening = (1/as.numeric(al$f)),
         longitude_of_prime_meridian = as.numeric(al$pm))
+  } else if(!is.null(al$a) && !is.null(al$b) && !is.null(al$pm)) {
+  	list(semi_major_axis = as.numeric(al$a),
+  			 inverse_flattening = (1/as.numeric(al$b)),
+  			 longitude_of_prime_meridian = as.numeric(al$pm))
+  } else {
+  	warning("no datum information found assuming WGS84")
+  	list(semi_major_axis = 6378137,
+  			 inverse_flattening = 298.257223563,
+  			 longitude_of_prime_meridian = 0)
   }
 }
 
