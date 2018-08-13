@@ -7,7 +7,7 @@
 #'@param instance_dim_name If the file provided already has an instance dimension,
 #'it needs to be provided as a character string otherwise a new instance dim may be created.
 #'@param geomData An object of class \code{SpatialLines}, \code{SpatialPolygons}
-#'or their sf with WGS84 lon in the x coordinate and lat in the y coordinate.
+#'or their sf equivalents with WGS84 lon in the x coordinate and lat in the y coordinate.
 #'Note that three dimensional geometries are not supported.
 #'@param lats Vector of WGS84 latitudes
 #'@param lons Vector of WGS84 longitudes

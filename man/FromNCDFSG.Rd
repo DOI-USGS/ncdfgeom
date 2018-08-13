@@ -2,7 +2,7 @@
 % Please edit documentation in R/FromNCDFSG.R
 \name{FromNCDFSG}
 \alias{FromNCDFSG}
-\title{Convert NetCDF to sp objects}
+\title{Convert NetCDF Spatial Geometries to sf}
 \usage{
 FromNCDFSG(nc_file)
 }
@@ -10,10 +10,31 @@ FromNCDFSG(nc_file)
 \item{nc_file}{A string file path to the nc file to be read.}
 }
 \value{
-sp object containing spatial geometry of type found in the NetCDF-CF DSG file.
+sf data.frame containing spatial geometry of type found in the NetCDF-CF DSG file.
 }
 \description{
-Attemps to convert a NetCDF-CF DSG Simple Geometry file into an sp object.
+Attemps to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame.
+}
+\examples{
+huc_eta_nc <- tempfile()
+file.copy(system.file('extdata','example_huc_eta.nc', package = 'netcdf.dsg'), 
+         huc_eta_nc, overwrite = TRUE)
+         
+hucTimeseries <- ncdf4::nc_open(huc_eta_nc)
+
+hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package = 'netcdf.dsg'))
+plot(sf::st_geometry(hucPolygons))
+names(hucPolygons)
+
+hucPolygons_nc <- netcdf.dsg::ToNCDFSG(nc_file=huc_eta_nc, 
+                                      geomData = hucPolygons, 
+                                      instance_names = hucPolygons$HUC12, 
+                                      instance_dim_name = "station", 
+                                      variables = hucTimeseries$var)
+huc_poly <- FromNCDFSG(huc_eta_nc)
+plot(sf::st_geometry(huc_poly))
+names(huc_poly)
+
 }
 \references{
 https://github.com/twhiteaker/netCDF-CF-simple-geometry
