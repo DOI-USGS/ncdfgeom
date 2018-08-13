@@ -4,8 +4,8 @@
 \alias{write_point_dsg}
 \title{Create point data NCDF file}
 \usage{
-write_point_dsg(nc_file, lats, lons, alts, times, data, data_units = rep("",
-  ncol(data)), feature_names = NULL, ...)
+write_point_dsg(nc_file, lats, lons, alts, times, data,
+  data_units = rep("", ncol(data)), feature_names = NULL, ...)
 }
 \arguments{
 \item{nc_file}{A string file path to the nc file to be created.}

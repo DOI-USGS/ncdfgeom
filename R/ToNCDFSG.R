@@ -6,9 +6,9 @@
 #'If NULL, integers are used. If the geomData has a data frame, this is not used.
 #'@param instance_dim_name If the file provided already has an instance dimension,
 #'it needs to be provided as a character string otherwise a new instance dim may be created.
-#'@param geomData An object of class \code{SpatialPoints}, \code{SpatialLines} or
-#'\code{SpatialPolygons} with WGS84 lon in the x coordinate and lat in the y coordinate.
-#'Note that three dimensional geometries is not supported.
+#'@param geomData An object of class \code{SpatialLines}, \code{SpatialPolygons}
+#'or their sf with WGS84 lon in the x coordinate and lat in the y coordinate.
+#'Note that three dimensional geometries are not supported.
 #'@param lats Vector of WGS84 latitudes
 #'@param lons Vector of WGS84 longitudes
 #'@param variables If a an existing netcdf files is provided, this list of strings is used
@@ -27,6 +27,8 @@
 #'@export
 ToNCDFSG = function(nc_file, geomData = NULL, instance_names = NULL, instance_dim_name = NULL, lats = NULL, lons = NULL, variables = list()){
 
+	geomData <- check_geomData(geomData)
+	
   pointsMode <- FALSE
 
   if(is.null(instance_names) && !is.null(geomData)) {
@@ -51,6 +53,8 @@ ToNCDFSG = function(nc_file, geomData = NULL, instance_names = NULL, instance_di
   } else if(class(geomData) == "SpatialPointsDataFrame") {
     pointsMode<-TRUE
     attData<-geomData@data
+  } else if(class(geomData) == "SpatialMultiPointsDataFrame" | class(geomData) == "SpatialMultiPoints") {
+  	stop("Multi point not supported yet.")
   } else if(!is.null(lats)) {
     pointsMode<-TRUE
     geomData <- SpatialPoints(as.data.frame(list(x=lons, y=lats)),proj4string = CRS("+proj=longlat +datum=WGS84"))
@@ -70,10 +74,12 @@ ToNCDFSG = function(nc_file, geomData = NULL, instance_names = NULL, instance_di
   }
 
   if(exists("attData")) {
-    itemp <- sapply(attData, is.factor)
-    attData[itemp] <- lapply(attData[itemp], as.character)
-    nc_file <- write_instance_data(nc_file, attData, instance_dim_name)
-    variables <- c(variables, names(attData))
+  	if(ncol(attData) > 0) {
+  		itemp <- sapply(attData, is.factor)
+  		attData[itemp] <- lapply(attData[itemp], as.character)
+  		nc_file <- write_instance_data(nc_file, attData, instance_dim_name)
+  		variables <- c(variables, names(attData))
+  	}
   }
 
   nc_file <- addGeomData(nc_file, geomData, instance_dim_name, variables = variables)

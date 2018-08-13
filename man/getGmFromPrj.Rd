@@ -22,7 +22,7 @@ https://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus
 http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
 }
 \examples{
-prj <- "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +units=m +no_defs"
+prj <- "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"
 grid_mapping <- getGmFromPrj(prj)
 
 }

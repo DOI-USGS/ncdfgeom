@@ -9,15 +9,21 @@ Description: Tools to create discrete sampling geometry NetCDF files from R.
 Imports:
     ncdf4,
     sp,
+    sf,
   	rgdal,
-    methods
+    methods,
+    dplyr
 Depends:
   R (>= 3.0)
 Suggests: 
 		testthat,
 		geoknife,
     maptools,
-    rgeos
+    rgeos,
+    knitr,
+    rmarkdown
 License: CC0
 LazyData: TRUE
-RoxygenNote: 6.0.1
+Encoding: UTF-8
+VignetteBuilder: knitr
+RoxygenNote: 6.1.0

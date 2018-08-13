@@ -48,7 +48,7 @@ FromNCDFSG = function(nc_file) {
                            yCoords), ncol=2)
     dataFrame <- read_instance_data(nc, instance_dim)
     if(nrow(dataFrame) != nrow(point_data)) {
-      stop("reading multipoint is not supported yet.")
+      stop("Reading multipoint is not supported yet.")
       # This is where handling for multipoint would go.
     }
     SPGeom <- SpatialPointsDataFrame(point_data, proj4string = CRS(prj),

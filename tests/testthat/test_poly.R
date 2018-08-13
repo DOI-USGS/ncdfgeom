@@ -12,13 +12,13 @@ test_that("data for basic polygon", {
   expect_equal(nc$dim$instance$vals,c(1))
 
   expect_equal(as.numeric(ncvar_get(nc,'x')),
-               as.numeric(polygonData@polygons[[1]]@Polygons[[1]]@coords[5:1,1]))
+               as.numeric(st_coordinates(polygonData)[,"X"]))
 
   expect_equal(as.numeric(ncvar_get(nc,'y')),
-               as.numeric(polygonData@polygons[[1]]@Polygons[[1]]@coords[5:1,2]))
+               as.numeric(st_coordinates(polygonData)[,"Y"]))
 
   expect_equal(as.numeric(ncvar_get(nc,'node_count')),
-               length(polygonData@polygons[[1]]@Polygons[[1]]@coords[,2]))
+               nrow(st_coordinates(polygonData)))
 
   expect_equivalent(ncatt_get(nc, 0,"Conventions")$value,
                     pkg.env$cf_version)
@@ -47,7 +47,6 @@ test_that("data for basic polygon", {
 
   returnPolyData<-FromNCDFSG(nc_file)
   compareSP(polygonData, returnPolyData)
-  expect_equal(polygonData@polygons[[1]]@Polygons[[1]]@ringDir, returnPolyData@polygons[[1]]@Polygons[[1]]@ringDir)
 })
 
 test_that("polygon with a hole.", {
@@ -58,8 +57,8 @@ test_that("polygon with a hole.", {
   expect_equal(nc$dim$instance$vals,c(1))
 
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$node_count_var_name)),
-               (length(polygonData@polygons[[1]]@Polygons[[1]]@coords[,2]) +
-                 length(polygonData@polygons[[1]]@Polygons[[2]]@coords[,2])))
+               (nrow(st_geometry(polygonData)[[1]][[1]]) +
+                	nrow(st_geometry(polygonData)[[1]][[2]])))
 
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$part_node_count_attr_name)$value,
                     pkg.env$part_node_count_var_name)
@@ -75,8 +74,6 @@ test_that("polygon with a hole.", {
 
   returnPolyData<-FromNCDFSG(nc_file)
   compareSP(polygonData, returnPolyData)
-  expect_equal(polygonData@polygons[[1]]@Polygons[[1]]@ringDir, returnPolyData@polygons[[1]]@Polygons[[1]]@ringDir)
-  expect_equal(polygonData@polygons[[1]]@Polygons[[2]]@ringDir, returnPolyData@polygons[[1]]@Polygons[[2]]@ringDir)
 })
 
 test_that("multipolygon.", {
@@ -85,12 +82,12 @@ test_that("multipolygon.", {
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$node_count_var_name)),
-               (length(polygonData@polygons[[1]]@Polygons[[1]]@coords[,2]) +
-                  length(polygonData@polygons[[1]]@Polygons[[2]]@coords[,2])))
+  						 (nrow(st_geometry(polygonData)[[1]][[1]][[1]]) +
+  						  	nrow(st_geometry(polygonData)[[1]][[2]][[1]])))
 
   expect_equal(as.numeric(ncvar_get(nc, pkg.env$part_node_count_var_name)),
-               c(length(polygonData@polygons[[1]]@Polygons[[1]]@coords[,2]),
-                 length(polygonData@polygons[[1]]@Polygons[[2]]@coords[,2])))
+               c(nrow(st_geometry(polygonData)[[1]][[1]][[1]]),
+               		nrow(st_geometry(polygonData)[[1]][[2]][[1]])))
 
   returnPolyData<-FromNCDFSG(nc_file)
   compareSP(polygonData, returnPolyData)
@@ -102,14 +99,14 @@ test_that("multipolygon with a hole.", {
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$node_count_var_name)),
-               (length(polygonData@polygons[[1]]@Polygons[[1]]@coords[,2]) +
-                length(polygonData@polygons[[1]]@Polygons[[2]]@coords[,2]) +
-                length(polygonData@polygons[[1]]@Polygons[[3]]@coords[,2])))
-
+  						 (nrow(st_geometry(polygonData)[[1]][[1]][[1]]) +
+  						  nrow(st_geometry(polygonData)[[1]][[2]][[1]]) +
+  						  	nrow(st_geometry(polygonData)[[1]][[2]][[2]])))
+  
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$part_node_count_var_name)),
-               c(length(polygonData@polygons[[1]]@Polygons[[1]]@coords[,2]),
-                  length(polygonData@polygons[[1]]@Polygons[[2]]@coords[,2]),
-                  length(polygonData@polygons[[1]]@Polygons[[3]]@coords[,2])))
+               c(nrow(st_geometry(polygonData)[[1]][[1]][[1]]),
+               		nrow(st_geometry(polygonData)[[1]][[2]][[1]]),
+               		nrow(st_geometry(polygonData)[[1]][[2]][[2]])))
 
   expect_equal(as.numeric(ncvar_get(nc, pkg.env$part_type_var_name)),
                c(pkg.env$multi_val, pkg.env$multi_val, pkg.env$hole_val))
