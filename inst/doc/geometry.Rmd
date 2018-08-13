@@ -1,0 +1,186 @@
+---
+title: "netcdf.dsg geometry tools"
+author: "David Blodgett"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{netcdf.dsg geometry tools}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r load, echo=FALSE, message=FALSE, warning=FALSE}
+library(sp)
+file.copy(system.file('extdata','example_huc_eta.nc', package = 'netcdf.dsg'), 
+					"hucPolygons.nc", 
+					overwrite = TRUE) -> quiet
+```
+Below is a demo that shows how to add polygon data to a NetCDF DSG TimeSeries file, read the polygon data from the NetCDF file, and write it to a shapefile format.
+
+First, we load up a NetCDF file and some geoJson data containing polygons.
+```{r libs}
+hucTimeseries <- ncdf4::nc_open("hucPolygons.nc")
+
+hucPolygons <- rgdal::readOGR(system.file('extdata','example_huc_eta.json', 
+																					package = 'netcdf.dsg'),
+															"OGRGeoJSON", 
+															stringsAsFactors = FALSE, verbose = FALSE)
+plot(hucPolygons)
+```
+
+Now we have the polygons as shown above and a NetCDF file with a header that looks like:
+
+```
+netcdf hucPolygons {
+dimensions:
+	maxStrlen64 = 64 ;
+	station = 2 ;
+	time = 25 ;
+variables:
+	double lat(station) ;
+		lat:units = "degrees_north" ;
+		lat:missing_value = -999. ;
+		lat:long_name = "latitude of the observation" ;
+		lat:standard_name = "latitude" ;
+	double lon(station) ;
+		lon:units = "degrees_east" ;
+		lon:missing_value = -999. ;
+		lon:long_name = "longitude of the observation" ;
+		lon:standard_name = "longitude" ;
+	double time(time) ;
+		time:units = "days since 1970-01-01 00:00:00" ;
+		time:missing_value = -999. ;
+		time:long_name = "time of measurement" ;
+		time:standard_name = "time" ;
+	char station_name(station, maxStrlen64) ;
+		station_name:units = "" ;
+		station_name:missing_value = "" ;
+		station_name:long_name = "Station Names" ;
+		station_name:cf_role = "timeseries_id" ;
+		station_name:standard_name = "station_id" ;
+	int et(station, time) ;
+		et:units = "mm" ;
+		et:missing_value = -999 ;
+		et:long_name = "Area Weighted Mean Actual Evapotranspiration" ;
+		et:coordinates = "time lat lon" ;
+
+// global attributes:
+		:Conventions = "CF-1.7" ;
+		:featureType = "timeSeries" ;
+		:cdm_data_type = "Station" ;
+		:standard_name_vocabulary = "CF-1.7" ;
+}
+```
+
+Now we can use the `write_geometry` function to add the polygon data to the NetCDF file.
+```{r demo}
+hucPolygons_nc <- netcdf.dsg::ToNCDFSG(nc_file="hucPolygons.nc", 
+																			 geomData = hucPolygons, 
+																			 instance_names = hucPolygons$HUC12, 
+																			 instance_dim_name = "station", 
+																			 variables = hucTimeseries$var)
+```
+
+Now the header of the NetCDF file looks like: (note some variables removed to be more concise)
+```
+netcdf hucPolygons {
+dimensions:
+	maxStrlen64 = 64 ;
+	station = 2 ;
+	time = 25 ;
+	char = 38 ;
+	node = 2628 ;
+variables:
+	double lat(station) ;
+		lat:units = "degrees_north" ;
+		lat:missing_value = -999. ;
+		lat:long_name = "latitude of the observation" ;
+		lat:standard_name = "latitude" ;
+		lat:grid_mapping = "grid_mapping" ;
+		lat:geometry = "geometry_container" ;
+	double lon(station) ;
+		lon:units = "degrees_east" ;
+		lon:missing_value = -999. ;
+		lon:long_name = "longitude of the observation" ;
+		lon:standard_name = "longitude" ;
+		lon:grid_mapping = "grid_mapping" ;
+		lon:geometry = "geometry_container" ;
+	double time(time) ;
+		time:units = "days since 1970-01-01 00:00:00" ;
+		time:missing_value = -999. ;
+		time:long_name = "time of measurement" ;
+		time:standard_name = "time" ;
+	char station_name(station, maxStrlen64) ;
+		station_name:units = "" ;
+		station_name:missing_value = "" ;
+		station_name:long_name = "Station Names" ;
+		station_name:cf_role = "timeseries_id" ;
+		station_name:standard_name = "station_id" ;
+		station_name:grid_mapping = "grid_mapping" ;
+		station_name:geometry = "geometry_container" ;
+	int et(station, time) ;
+		et:units = "mm" ;
+		et:missing_value = -999 ;
+		et:long_name = "Area Weighted Mean Actual Evapotranspiration" ;
+		et:coordinates = "time lat lon" ;
+		et:grid_mapping = "grid_mapping" ;
+		et:geometry = "geometry_container" ;
+	double AREASQKM(station) ;
+		AREASQKM:units = "unknown" ;
+		AREASQKM:_FillValue = NaN ;
+		AREASQKM:grid_mapping = "grid_mapping" ;
+		AREASQKM:geometry = "geometry_container" ;
+	char STATES(station, char) ;
+		STATES:units = "unknown" ;
+		STATES:grid_mapping = "grid_mapping" ;
+		STATES:geometry = "geometry_container" ;
+	char HUC12(station, char) ;
+		HUC12:units = "unknown" ;
+		HUC12:grid_mapping = "grid_mapping" ;
+		HUC12:geometry = "geometry_container" ;
+	char NAME(station, char) ;
+		NAME:units = "unknown" ;
+		NAME:grid_mapping = "grid_mapping" ;
+		NAME:geometry = "geometry_container" ;
+	double x(node) ;
+		x:units = "degrees_east" ;
+		x:standard_name = "longitude" ;
+		x:cf_role = "geometry_x_node" ;
+	double y(node) ;
+		y:units = "degrees_north" ;
+		y:standard_name = "latitude" ;
+		y:cf_role = "geometry_y_node" ;
+	float geometry_container ;
+		geometry_container:geometry_type = "polygon" ;
+		geometry_container:node_count = "node_count" ;
+		geometry_container:node_coordinates = "x y" ;
+		geometry_container:grid_mapping = "grid_mapping" ;
+	int node_count(station) ;
+		node_count:long_name = "count of coordinates in each instance geometry" ;
+	float grid_mapping ;
+		grid_mapping:grid_mapping_name = "latitude_longitude" ;
+		grid_mapping:semi_major_axis = 6378137. ;
+		grid_mapping:inverse_flattening = 298.257223563 ;
+		grid_mapping:longitude_of_prime_meridian = 0. ;
+
+// global attributes:
+		:Conventions = "CF-1.8" ;
+		:featureType = "timeSeries" ;
+		:cdm_data_type = "Station" ;
+		:standard_name_vocabulary = "CF-1.7" ;
+}
+```
+
+Now we can read the polygon data from the file.
+
+```{r read, warning=F}
+hucPolygons_sp <- netcdf.dsg::FromNCDFSG("hucPolygons.nc")
+
+hucPolygons_shp <- rgdal::writeOGR(hucPolygons_sp, 
+																	 "hucPolygons.shp", 
+																	 layer = "hucPolygons", 
+																	 driver = "ESRI Shapefile")
+```
+
+```{r cleanup, echo=F}
+temp <- file.remove("hucPolygons.nc", "hucPolygons.dbf", "hucPolygons.prj", "hucPolygons.shp", "hucPolygons.shx")
+```
