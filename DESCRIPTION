@@ -19,7 +19,8 @@ Suggests:
 		geoknife,
     maptools,
     rgeos,
-    knitr
+    knitr,
+    rmarkdown
 License: CC0
 LazyData: TRUE
 Encoding: UTF-8
