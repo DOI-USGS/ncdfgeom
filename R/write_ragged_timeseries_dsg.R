@@ -54,6 +54,7 @@
 #'}
 #'
 #'@import ncdf4
+#'@importFrom dplyr left_join
 #'
 #'@export
 write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), data_longnames=list(), attributes=list()){
@@ -72,27 +73,25 @@ write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), dat
 		all_data$time = as.POSIXct(all_data$time)
 	}
 	
-	#Lets prep station names and
-	
 	all_data = all_data[order(all_data$station_name), ]
 	
 	sta_obs = rle(all_data$station_name)
-	sta_obs = data.frame(station_name=sta_obs$values, row_size=sta_obs$lengths)
+	sta_obs = data.frame(station_name=sta_obs$values, row_size=sta_obs$lengths, stringsAsFactors = FALSE)
 	
 	sta_metadata = all_data[, c('station_name', 'lat', 'lon', 'alt')]
-	sta_obs = merge(sta_obs, unique(sta_metadata), all.x=TRUE, all.y=FALSE)
+	sta_obs = dplyr::left_join(sta_obs, dplyr::distinct(sta_metadata), by = "station_name")
 	
-	n = nrow(all_data)
-	n_sta = nrow(sta_obs)
+	num_rows = nrow(all_data)
+	num_stations = nrow(sta_obs)
 	
 	#Lay the foundation. This is a ragged array. Which has two dimensions, "obs" and "station"
-	obs_dim = ncdim_def('obs', '', 1:n, create_dimvar=FALSE)
-	station_dim = ncdim_def('station', '', 1:n_sta, create_dimvar=FALSE)
+	obs_dim = ncdim_def('obs', '', 1:num_rows, create_dimvar=FALSE)
+	station_dim = ncdim_def('station', '', 1:num_stations, create_dimvar=FALSE)
 	
 	strlen_dim = ncdim_def('name_strlen', '', 1:max(sapply(all_data$station_name, nchar)), create_dimvar=FALSE)
 	
 	#Setup our spatial and time info
-	station_var = ncvar_def('station_name', '', list(strlen_dim, station_dim), missval='', prec='char', longname='Station Names')
+	station_var = ncvar_def('station_name', '', list(strlen_dim, station_dim), prec='char', longname='Station Names')
 	row_var     = ncvar_def('row_size', '', station_dim, missval=0, prec='integer', longname='number of observations for this station')
 	time_var 		= ncvar_def('time','days since 1970-01-01 00:00:00', obs_dim, -999, prec='double', longname='time of measurement')
 	lat_var 		= ncvar_def('lat', 'degrees_north', station_dim, -999, prec='double', longname = 'latitude of the observation')
@@ -100,8 +99,8 @@ write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), dat
 	alt_var 		= ncvar_def('alt', 'm', station_dim, -999, prec='double', longname='vertical distance above the surface')
 	
 	#now do the observation data itself
-	data = all_data[, !(names(all_data) %in% required_cols)]
-	data_names = names(data)
+	timeseries_data = all_data[, !(names(all_data) %in% required_cols)]
+	data_names = names(timeseries_data)
 	data_vars = list()
 	
 	for(i in 1:length(data_names)){
@@ -125,16 +124,19 @@ write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), dat
 	ncatt_put(nc, 0,'cdm_data_type','Station')
 	ncatt_put(nc, 0,'standard_name_vocabulary','CF-1.7')
 	
+	nc_close(nc)
+	nc <- nc_open(nc_file, write = TRUE)
+	
 	#Put data in NC file
-	ncvar_put(nc, 'time', as.numeric(all_data$time)/86400, count=n) #convert to days since 1970-01-01
-	ncvar_put(nc, 'lat', sta_obs$lat, count=n_sta)
-	ncvar_put(nc, 'lon', sta_obs$lon, count=n_sta)
-	ncvar_put(nc, 'alt', sta_obs$alt, count=n_sta)
-	ncvar_put(nc, 'row_size', sta_obs$row_size, count=n_sta)
+	ncvar_put(nc, 'time', as.numeric(all_data$time)/86400, count=num_rows) #convert to days since 1970-01-01
+	ncvar_put(nc, 'lat', sta_obs$lat, count=num_stations)
+	ncvar_put(nc, 'lon', sta_obs$lon, count=num_stations)
+	ncvar_put(nc, 'alt', sta_obs$alt, count=num_stations)
+	ncvar_put(nc, 'row_size', sta_obs$row_size, count=num_stations)
 	
-	ncvar_put(nc, 'station_name', sta_obs$station_name, count=c(-1,n_sta))
+	ncvar_put(nc, 'station_name', sta_obs$station_name, count=c(-1,num_stations))
 	
-	data_names = names(data)
+	data_names = names(timeseries_data)
 	data_vars = list()
 	
 	for(i in 1:length(data_names)){	
@@ -143,7 +145,7 @@ write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), dat
 		ncatt_put(nc, data_names[i], 'standard_name', data_name)
 		ncatt_put(nc, data_names[i], 'coordinates', 'time lat lon')
 		
-		ncvar_put(nc, data_names[i], data[, data_names[i]], start=1, count=n)
+		ncvar_put(nc, data_names[i], timeseries_data[, data_names[i]], start=1, count=num_rows)
 	}
 	
 	#Add the optional global attributes
