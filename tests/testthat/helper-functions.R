@@ -1,3 +1,7 @@
+library(ncdf4)
+library(sf)
+library(sp)
+
 compareSP <- function(polygonData, returnPolyData) {
 	polygonData <- check_geomData(polygonData)
 	returnPolyData <- check_geomData(returnPolyData)	
@@ -44,4 +48,50 @@ checkAllPoly <- function(polygonData, node_count, part_node_count = NULL, part_t
     }
     expect_equal(node_count[g],j)
   }
+}
+
+get_fixture_data <- function(geom_type) {
+  fixtureData <- jsonlite::fromJSON("data/fixture_wkt.json")
+  
+  return(sf::st_sf(geom = sf::st_as_sfc(fixtureData[["2d"]][geom_type]), 
+                   crs = "+init=epsg:4326"))
+}
+
+get_sample_timeseries_data <- function() {
+  
+  yahara <- sf::read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp")
+  lon_lat <- yahara %>%
+    sf::st_set_agr("constant") %>%
+    sf::st_centroid() %>%
+    sf::st_transform(4326) %>%
+    sf::st_coordinates()
+  
+  lats<-lon_lat[,"Y"]
+  lons<-lon_lat[,"X"]
+  alts<-rep(1,length(lats))
+  
+  all_data <- geoknife::parseTimeseries("data/yahara_alb_gdp_file.csv",
+                                        delim=',',with.units=TRUE)
+  var_data <- all_data[2:(ncol(all_data)-3)]
+  
+  units <- all_data$units[1]
+  
+  time <- all_data$DateTime
+  
+  long_name=paste(all_data$variable[1], 'area weighted', 
+                  all_data$statistic[1], 'in', 
+                  all_data$units[1], sep=' ')
+  
+  meta<-list(name=all_data$variable[1],
+             long_name=long_name)
+  
+  return(list(all_data = all_data,
+              var_data = var_data,
+              time = time,
+              long_name = long_name,
+              meta = meta,
+              lons = lons,
+              lats = lats,
+              alts = alts,
+              units = units))
 }

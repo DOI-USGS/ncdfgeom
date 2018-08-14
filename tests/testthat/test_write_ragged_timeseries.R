@@ -1,7 +1,5 @@
-library(dplyr)
-library(ncdf4)
 
-context("write_ragged_timeseries")
+context("ragged netcdf timeseries")
 
 test_that("characterization testing for write_ragged_timeseries", { 
 	

@@ -1,7 +1,7 @@
-context("NCDF check NC tests")
+context("checkncdf")
 
 test_that("line", {
-  lineData <- readRDS("data/lineData.rds")
+  lineData <- get_fixture_data("linestring")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = lineData)
   nc<-nc_open(nc_file)
 
@@ -18,7 +18,7 @@ test_that("line", {
 })
 
 test_that("line", {
-  lineData <- readRDS("data/multiLineData.rds")
+  lineData <- get_fixture_data("multilinestring")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = lineData)
   nc<-nc_open(nc_file)
 
@@ -30,7 +30,7 @@ test_that("line", {
 })
 
 test_that("multi polygon holes", {
-  polygonData <- readRDS("data/multipolygons_holes.rds")
+  polygonData <- get_fixture_data("multipolygons_holes")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
@@ -42,8 +42,8 @@ test_that("multi polygon holes", {
   expect_equal(checkVals$geom_container$part_type, pkg.env$part_type_var_name)
 })
 
-test_that("multi polygon holes", {
-  polygonData <- readRDS("data/polygonData.rds")
+test_that("polygon", {
+  polygonData <- get_fixture_data("polygon")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
@@ -56,8 +56,8 @@ test_that("multi polygon holes", {
 })
 
 test_that("basic point works", {
-  multipointData <- readRDS("data/pointData.rds")
-  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = multipointData)
+  pointData <- get_fixture_data("point")
+  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = pointData)
   nc<-nc_open(nc_file)
 
   checkVals <- checkNCDF(nc)
@@ -66,7 +66,7 @@ test_that("basic point works", {
 })
 
 test_that("a crs gets found correctly", {
-  polygonData <- readRDS("data/yahara_shapefile_data.rds")
+  polygonData <- sf::read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
   checkVals <- checkNCDF(nc)
@@ -83,8 +83,8 @@ test_that("a crs gets found correctly", {
 })
 
 test_that("errors", {
-  multipointData <- readRDS("data/pointData.rds")
-  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = multipointData)
+  pointData <- get_fixture_data("point")
+  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = pointData)
   nc <- nc_open(nc_file, write = TRUE)
   ncatt_put(nc, nc$var$y, pkg.env$geom_type_attr_name, "garbage")
   nc_close(nc)
@@ -96,12 +96,12 @@ test_that("errors", {
   # ncatt_put(nc, nc$var$lat, "cf_role", "timeseries_id")
   # expect_error(checkNCDF(nc), 'multiple timeseries id variables were found.')
 
-  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = multipointData)
+  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = pointData)
   nc <- nc_open(nc_file, write = TRUE)
   ncatt_put(nc, 0,"Conventions", "garbage")
   expect_warning(checkNCDF(nc), 'File does not advertise CF conventions, unexpected behavior may result.')
 
-  # lineData <- readRDS("data/multiLineData.rds")
+  # lineData <- get_fixture_data("multilinestring")
   # nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = lineData)
   # nc<-nc_open(nc_file, write = TRUE)
   # ncatt_put(nc, nc$var$instance_name, "node_coordinates", "x y")
@@ -109,7 +109,7 @@ test_that("errors", {
   # nc<-nc_open(nc_file, write = TRUE)
   # expect_error(checkNCDF(nc), "only one node_coordinates index is supported, this file has more than one.")
   #
-  # lineData <- readRDS("data/multiLineData.rds")
+  # lineData <- get_fixture_data("multilinestring")
   # nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = lineData)
   # nc<-nc_open(nc_file, write = TRUE)
   # ncatt_put(nc, nc$var$x, "contiguous_ragged_dimension", "coordinate_index")
@@ -117,7 +117,7 @@ test_that("errors", {
   # nc<-nc_open(nc_file, write = TRUE)
   # expect_error(checkNCDF(nc), "only one contiquous ragged dimension index is supported, this file has more than one.")
   #
-  # multipointData <- readRDS("data/pointData.rds")
+  # multipointData <- get_fixture_data("multipoint")
   # nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = multipointData)
   # nc <- nc_open(nc_file, write = TRUE)
   # ncatt_put(nc, nc$var$lat, "standard_name", "garbage")
