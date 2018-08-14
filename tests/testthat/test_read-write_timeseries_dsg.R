@@ -1,5 +1,4 @@
-context("Create Station Timeseries DSG File")
-library(ncdf4)
+context("orthoganal netcdf timeseries")
 
 test_that("Create basic DSG file",{
   nc_summary<-'test summary'
@@ -80,8 +79,6 @@ test_that('soilmoisturetools data writes as expected', {
   
   expect_equal(1,1)
 })
-
-context("Read Station Timeseries DSG File")
 
 test_that("Read basic DSG file",{
 	

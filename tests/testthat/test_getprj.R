@@ -1,7 +1,6 @@
-context("Test get proj from netcdf")
+context("prj and grid mappings")
 
 test_that("getGmFromPrj works for a CRS class and not just a string", {
-  library(sp)
   p <- "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"
 
   c <- list(grid_mapping_name="latitude_longitude",

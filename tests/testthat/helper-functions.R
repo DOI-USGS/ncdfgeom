@@ -1,3 +1,7 @@
+library(ncdf4)
+library(sf)
+library(sp)
+
 compareSP <- function(polygonData, returnPolyData) {
 	polygonData <- check_geomData(polygonData)
 	returnPolyData <- check_geomData(returnPolyData)	

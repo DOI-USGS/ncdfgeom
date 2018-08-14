@@ -1,7 +1,5 @@
-library("ncdf4")
-library("sp")
 
-context("Test adding instance data to an new or existing netcdf file.")
+context("instance attributes")
 
 test_that("A dataframe can be round tripped to netCDF.", {
   dataFrame <- sf::st_set_geometry(sf::read_sf("data/NHDLine/NHDLine.shp"), NULL)

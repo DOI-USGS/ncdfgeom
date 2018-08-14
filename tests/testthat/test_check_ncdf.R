@@ -1,4 +1,4 @@
-context("NCDF check NC tests")
+context("checkncdf")
 
 test_that("line", {
   lineData <- get_fixture_data("linestring")
