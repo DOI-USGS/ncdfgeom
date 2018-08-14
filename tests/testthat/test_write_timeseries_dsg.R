@@ -15,11 +15,16 @@ test_that("Create basic DSG file",{
 	
 	nc_file<-'data/test_output.nc'
 	
-	# See test_read_timeseries_dsg.R for how this data was created.
-	load("data/yahara_test_data.rda")
+	test_data <- get_sample_timeseries_data()
 	
-	testnc<-write_timeseries_dsg(nc_file, names(data_frame), lats, lons, time, data_frame, 
-															 alts, data_unit=data$units[1],	data_prec='double',data_metadata=meta,
+	testnc<-write_timeseries_dsg(nc_file, 
+	                             names(test_data$var_data), 
+	                             test_data$lats, test_data$lons, 
+	                             test_data$time, test_data$var, 
+	                             test_data$alts, 
+	                             data_unit=test_data$units,	
+	                             data_prec='double',
+	                             data_metadata=test_data$meta,
 															 attributes=global_attributes)
 	testnc<-nc_open(nc_file)
 	
@@ -32,10 +37,10 @@ test_that("Create basic DSG file",{
 	expect_equivalent(ncatt_get(testnc,varid="time","standard_name")$value,"time")
 	expect_equivalent(ncatt_get(testnc,varid="lat","standard_name")$value,"latitude")
 	expect_equivalent(ncatt_get(testnc,varid="lon","standard_name")$value,"longitude")
-	expect_equivalent(ncatt_get(testnc,varid=data$variable[1],'long_name')$value,long_name)
+	expect_equivalent(ncatt_get(testnc,varid=test_data$all_data$variable[1],'long_name')$value,test_data$long_name)
 	expect_equivalent(ncvar_get(testnc,varid="station_name")[1],"1")
-	expect_equivalent(ncvar_get(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,1],data$`1`)
-	expect_equivalent(ncvar_get(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,71],data$`71`)
+	expect_equivalent(ncvar_get(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,1],test_data$all_data$`1`)
+	expect_equivalent(ncvar_get(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,71],test_data$all_data$`71`)
 	expect_equivalent(testnc$var$`BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1`$units,"mm/d")
 	expect_equivalent(ncatt_get(testnc,varid=0,"summary")$value,'test summary')
 })

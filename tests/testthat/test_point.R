@@ -3,9 +3,10 @@ library(ncdf4)
 context("NCDF SG point tests")
 
 test_that("Point_timeSeries", {
-  expect_error(ToNCDFSG("test"),regexp = "Did not find supported spatial data.")
+  expect_error(ToNCDFSG("test"),
+               regexp = "Did not find supported spatial data.")
 
-  pointData <- readRDS("data/pointData.rds")
+  pointData <- get_fixture_data("point")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = pointData)
   nc<-nc_open(nc_file)
 
@@ -42,7 +43,7 @@ test_that("Point_timeSeries", {
 })
 
 test_that("multiPoint_timeSeries", {
-  multipointData <- readRDS("data/multipointData.rds")
+  multipointData <- get_fixture_data("multipoint")
 
 	expect_error(ToNCDFSG(nc_file=tempfile(), geomData = multipointData),
 							 "Multi point not supported yet.")
@@ -51,7 +52,7 @@ test_that("multiPoint_timeSeries", {
 })
 
 test_that("point lat lon", {
-  multipointData <- readRDS("data/multipointData.rds")
+  multipointData <- get_fixture_data("multipoint")
   lat<-st_coordinates(multipointData)[, "Y"]
   lon<-st_coordinates(multipointData)[, "X"]
   nc_file <- ToNCDFSG(nc_file=tempfile(), lons = lon, lats = lat)

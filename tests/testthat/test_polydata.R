@@ -2,15 +2,8 @@ library("ncdf4")
 
 context("NCDF SG polygonData tests")
 
-# data prep.
-# library(rgdal)
-# shapeData<-readOGR(dsn = "data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp",
-#                    layer = "Yahara_River_HRUs_alb_eq",
-#                    stringsAsFactors = FALSE)
-# saveRDS(shapeData,file="data/yahara_shapefile_data.rds")
-
 test_that("A whole shapefile can be written", {
-  polygonData <- readRDS("data/yahara_shapefile_data.rds")
+  polygonData <- read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 

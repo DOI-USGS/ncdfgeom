@@ -3,7 +3,7 @@ library(ncdf4)
 context("NCDF SG polygon tests")
 
 test_that("data for basic polygon", {
-  polygonData <- readRDS("data/polygonData.rds")
+  polygonData <- get_fixture_data("polygon")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
@@ -50,7 +50,7 @@ test_that("data for basic polygon", {
 })
 
 test_that("polygon with a hole.", {
-  polygonData <- readRDS("data/polygon_holeData.rds")
+  polygonData <- get_fixture_data("polygon_hole")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
@@ -77,7 +77,7 @@ test_that("polygon with a hole.", {
 })
 
 test_that("multipolygon.", {
-  polygonData <- readRDS("data/multipolygonData.rds")
+  polygonData <- get_fixture_data("multipolygon")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
@@ -94,7 +94,7 @@ test_that("multipolygon.", {
 })
 
 test_that("multipolygon with a hole.", {
-  polygonData <- readRDS("data/multipolygon_holeData.rds")
+  polygonData <-get_fixture_data("multipolygon_hole")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
@@ -126,7 +126,7 @@ test_that("multipolygon with a hole.", {
 })
 
 test_that("multipolygons with holes.", {
-  polygonData <- readRDS("data/multipolygons_holes.rds")
+  polygonData <- get_fixture_data("multipolygons_holes")
   nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
