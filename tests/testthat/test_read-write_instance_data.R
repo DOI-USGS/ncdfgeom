@@ -23,10 +23,10 @@ test_that("A dataframe can be round tripped to netCDF.", {
   })
 
 test_that("instance data can be added to an existing netcdf file.", {
-	hucPolygons <- read_sf(system.file('extdata','example_huc_eta.json', package = 'netcdf.dsg'))
+	hucPolygons <- read_sf(system.file('extdata','example_huc_eta.json', package = 'ncdfgeom'))
 	hucPolygons <- st_set_geometry(hucPolygons, NULL)
 	outFile <- tempfile()
-	c <- file.copy(system.file('extdata','hucDemo/example_huc_eta.nc', package = 'netcdf.dsg'), outFile)
+	c <- file.copy(system.file('extdata','hucDemo/example_huc_eta.nc', package = 'ncdfgeom'), outFile)
 	nc_file <- write_instance_data(outFile, hucPolygons, "station")
 	nc <- nc_open(nc_file)
 	expect_true(all(names(hucPolygons) %in% names(nc$var)))

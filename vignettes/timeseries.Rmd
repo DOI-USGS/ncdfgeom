@@ -1,5 +1,5 @@
 ---
-title: "netcdf.dsg"
+title: "ncdfgeom"
 author: "David Blodgett"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The netcdf.dsg package provides functions to read and write NetCDF-CF Discrete Sampling Geometries point and timeseries feature types as well as NetCDF-CF spatial geometries. These utilities are meant to be general, but were designed to support working with typical geospatial feature data with linked attributes and time series in NetCDF. Supported data types include:  
+The ncdfgeom package provides functions to read and write NetCDF-CF Discrete Sampling Geometries point and timeseries feature types as well as NetCDF-CF spatial geometries. These utilities are meant to be general, but were designed to support working with typical geospatial feature data with linked attributes and time series in NetCDF. Supported data types include:  
 
 - Variables from R `data.frame` tables with one row per geometry are read from or written to NetCDF variables.
 - `data.frame` tables with a time series per collumn are read from or written as NetCDF-CF DSG TimeSeries FeatureType data.
@@ -23,7 +23,7 @@ Additional read / write functions to include additional DSG feature types will b
 First, we'll load up some time series data. 
 
 ```{r attributes}
-attribute_file<-system.file('extdata/yahara_alb_attributes.csv', package = "netcdf.dsg")
+attribute_file<-system.file('extdata/yahara_alb_attributes.csv', package = "ncdfgeom")
 
 # Grab some attributes
 attributes <- read.csv(attribute_file,colClasses='character')
@@ -35,7 +35,7 @@ alts <- rep(1,length(lats)) # Making up altitude for the sake of demonstration.
 We now have vectors of latitudes, longitudes, altitudes for each of our time series.
 
 ```{r timeseries}
-timeseries_file<-system.file('extdata/yahara_alb_gdp_file.csv', package = "netcdf.dsg")
+timeseries_file<-system.file('extdata/yahara_alb_gdp_file.csv', package = "ncdfgeom")
 raw_data <- geoknife::parseTimeseries(timeseries_file,delim=',',with.units=TRUE)
 timeseries_data <- raw_data[2:(ncol(raw_data)-3)]
 time <- raw_data$DateTime
@@ -50,14 +50,14 @@ nc_summary<-'example summary'
 nc_date_create<-'2099-01-01'
 nc_creator_name='example creator'
 nc_creator_email='example@test.com'
-nc_project='example netcdf.dsg'
+nc_project='example ncdfgeom'
 nc_proc_level='just an example no processing'
 nc_title<-'example title'
 global_attributes<-list(title = nc_title, summary = nc_summary, date_created=nc_date_create,
 												creator_name=nc_creator_name,creator_email=nc_creator_email,
 												project=nc_project, processing_level=nc_proc_level)
 
-nc_file <- netcdf.dsg::write_timeseries_dsg(nc_file = "demo_nc.nc", 
+nc_file <- ncdfgeom::write_timeseries_dsg(nc_file = "demo_nc.nc", 
 																						station_names = names(timeseries_data),
 																						lats = lats, lons = lons, times = time, alts = alts,
 																						data = timeseries_data,
@@ -137,14 +137,14 @@ variables:
 		:date_created = "2099-01-01" ;
 		:creator_name = "example creator" ;
 		:creator_email = "example@test.com" ;
-		:project = "example netcdf.dsg" ;
+		:project = "example ncdfgeom" ;
 		:processing_level = "just an example no processing" ;
 }
 ```
 This file can be read back into R with the function `read_timeseries_dsg`. The response is a list of variables as shown below.
 
 ```{r read}
-timeseries_dataset <- netcdf.dsg::read_timeseries_dsg(nc_file)
+timeseries_dataset <- ncdfgeom::read_timeseries_dsg(nc_file)
 names(timeseries_dataset)
 ```
 `time`, `lats`, `lons`, and `alts` are vectors that apply to the whole dataset. `varmeta` has one entry per timeseries variable read from the NetCDF file and contains the `name` and `long_name` attribute of each variable. `data_unit` and `data_prec` contain units and precision metadata for each variable. `data_frames` is a list containing one `data.frame` for each variable read from the NetCDF file. `global_attributes` contains standard glabal attributes found in the file. All of the variables that have one element per timeseries variable, are named the same as the NetCDF variable names so they can be accessed by name like this:

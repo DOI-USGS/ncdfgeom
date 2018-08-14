@@ -1,11 +1,12 @@
-Package: netcdf.dsg
+Package: ncdfgeom
 Type: Package
 Title: Discrete Sampling Geometry NetCDF
 Version: 0.4.0
 Date: 2017-07-17
-Author: Luke Winslow, Dave Blodgett
-Maintainer: David Blodgett <dblodgett@usgs.gov>
-Description: Tools to create discrete sampling geometry NetCDF files from R.
+Authors@R: c(person("David", "Blodgett", role = c("aut", "cre"), 
+                    email = "dblodgett@usgs.gov"),
+             person("Luke", "Winslow", role = "ctb"))
+Description: Tools to create discrete sampling geometry and spatial geometry NetCDF files.
 Imports:
     ncdf4,
     sp,
@@ -21,7 +22,9 @@ Suggests:
     maptools,
     rgeos,
     knitr,
-    rmarkdown
+    rmarkdown,
+    pkgdown,
+    leaflet
 License: CC0
 LazyData: TRUE
 Encoding: UTF-8

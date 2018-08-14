@@ -1,9 +1,9 @@
 ---
-title: "netcdf.dsg geometry tools"
+title: "ncdfgeom geometry tools"
 author: "David Blodgett"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{netcdf.dsg geometry tools}
+  %\VignetteIndexEntry{ncdfgeom geometry tools}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,7 +19,7 @@ options(scipen = 9999)
 ```
 
 ```{r load, echo=FALSE, message=FALSE, warning=FALSE}
-file.copy(system.file('extdata','example_huc_eta.nc', package = 'netcdf.dsg'), 
+file.copy(system.file('extdata','example_huc_eta.nc', package = 'ncdfgeom'), 
 					"hucPolygons.nc", 
 					overwrite = TRUE) -> quiet
 ```
@@ -30,7 +30,7 @@ First, we load up a NetCDF file and some geoJson data containing polygons.
 hucTimeseries <- ncdf4::nc_open("hucPolygons.nc")
 
 hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json',
-                                       package = 'netcdf.dsg'))
+                                       package = 'ncdfgeom'))
 plot(sf::st_geometry(hucPolygons))
 ```
 
@@ -80,7 +80,7 @@ variables:
 
 Now we can use the `write_geometry` function to add the polygon data to the NetCDF file.
 ```{r demo}
-hucPolygons_nc <- netcdf.dsg::ToNCDFSG(nc_file="hucPolygons.nc",
+hucPolygons_nc <- ncdfgeom::ToNCDFSG(nc_file="hucPolygons.nc",
                                        geomData = hucPolygons, 
                                        instance_names = hucPolygons$HUC12, 
                                        instance_dim_name = "station", 
@@ -180,7 +180,7 @@ variables:
 Now we can read the polygon data from the file.
 
 ```{r read, warning=F}
-hucPolygons_sf <- netcdf.dsg::FromNCDFSG("hucPolygons.nc")
+hucPolygons_sf <- ncdfgeom::FromNCDFSG("hucPolygons.nc")
 
 plot(sf::st_geometry(hucPolygons_sf))
 hucPolygons_shp <- sf::write_sf(hucPolygons_sf, "hucPolygons.gpkg")
@@ -189,3 +189,9 @@ hucPolygons_shp <- sf::write_sf(hucPolygons_sf, "hucPolygons.gpkg")
 ```{r cleanup, echo=F}
 temp <- file.remove("hucPolygons.nc", "hucPolygons.gpkg")
 ```
+
+## Geometry Types
+
+`ncdfgeom` works with a set of geometry types. 
+
+```{r examples, child="../tests/testthat/data/geom_examples.md"}

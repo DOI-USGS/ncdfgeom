@@ -99,7 +99,7 @@ test_that("shapefile_point", {
 })
 
 test_that("Point data can be written", {
-  dataFrame <- read.csv(system.file("extdata/yahara_alb_attributes.csv", package = "netcdf.dsg"))
+  dataFrame <- read.csv(system.file("extdata/yahara_alb_attributes.csv", package = "ncdfgeom"))
   nc_file <- write_point_dsg(nc_file=tempfile(), lats = dataFrame$YCOORD, lons = dataFrame$XCOORD, 
                              alts = rep(0, length(dataFrame$XCOORD)), times = as.POSIXct("1970-01-01 00:00:00 GMT"),
                              feature_names = dataFrame$ID,
