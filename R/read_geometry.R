@@ -31,15 +31,15 @@
 #'                                       instance_names = hucPolygons$HUC12, 
 #'                                       instance_dim_name = "station", 
 #'                                       variables = hucTimeseries$var)
-#'huc_poly <- FromNCDFSG(huc_eta_nc)
+#'huc_poly <- read_geometry(huc_eta_nc)
 #'plot(sf::st_geometry(huc_poly))
 #'names(huc_poly)
 #'
-FromNCDFSG = function(nc_file) {
+read_geometry = function(nc_file) {
 
   nc <- nc_open(nc_file)
 
-  checkVals <- checkNCDF(nc)
+  checkVals <- check_netcdf(nc)
 
   instance_id<-checkVals$instance_id
   instance_dim<-checkVals$instance_dim
@@ -60,13 +60,13 @@ FromNCDFSG = function(nc_file) {
   if(length(crs) == 0) {
     prj <- "+proj=longlat +datum=WGS84"
   } else {
-    prj <- getPrjFromNCDF(crs)
+    prj <- get_prj(crs)
   }
 
   if(point) {
     point_data <- matrix(c(xCoords,
                            yCoords), ncol=2)
-    dataFrame <- read_instance_data(nc, instance_dim)
+    dataFrame <- read_attribute_data(nc, instance_dim)
     if(nrow(dataFrame) != nrow(point_data)) {
       stop("Reading multipoint is not supported yet.")
       # This is where handling for multipoint would go.
@@ -124,7 +124,7 @@ FromNCDFSG = function(nc_file) {
         Srl <- append(Srl, Lines(srl, as.character(geom)))
       }
     }
-    dataFrame <- read_instance_data(nc, instance_dim)
+    dataFrame <- read_attribute_data(nc, instance_dim)
 
     for(varName in names(dataFrame)) {
       if(!varName %in% variable_list) {

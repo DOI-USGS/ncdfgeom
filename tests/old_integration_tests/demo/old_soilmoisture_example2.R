@@ -10,7 +10,7 @@
 #'
 #'names(all_data) = c('station_name', 'time', 'soil_moisture', 
 #'                    'soil_moisture_depth', 'lat', 'lon', 'alt')
-#'write_ragged_timeseries_dsg('test.nc', 
+#'write_timeseries_ragged_dsg('test.nc', 
 #'                             all_data,list(soil_moisture='%', 
 #'                             soil_moisture_depth='inches'))
 #'

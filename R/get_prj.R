@@ -25,9 +25,9 @@
 #'             longitude_of_prime_meridian = 0,
 #'             semi_major_axis = 6378137,
 #'             inverse_flattening = 298)
-#' prj <- getPrjFromNCDF(crs)
+#' prj <- get_prj(crs)
 #'
-getPrjFromNCDF <- function(gm) {
+get_prj <- function(gm) {
   class(gm) <- gm$grid_mapping_name
   GPFN(gm)
 }

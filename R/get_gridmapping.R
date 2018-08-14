@@ -18,9 +18,9 @@
 #'
 #' @examples
 #' prj <- "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"
-#' grid_mapping <- getGmFromPrj(prj)
+#' grid_mapping <- get_gridmapping(prj)
 #'
-getGmFromPrj <- function(prj) {
+get_gridmapping <- function(prj) {
   al <- prepCRS(prj)
   if(is.null(al)) {
     return(list()) } else {

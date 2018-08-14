@@ -31,13 +31,13 @@ hucPolygons <- read_sf(system.file('extdata','example_huc_eta.json',
 
 leaflet(hucPolygons) %>% addTiles() %>% addPolygons()
 
-hucPolygons_nc <- ncdfgeom::ToNCDFSG(nc_file="hucPolygons.nc", 
+hucPolygons_nc <- ncdfgeom::write_geometry(nc_file="hucPolygons.nc", 
 																			 geomData = hucPolygons, 
 																			 instance_names = hucPolygons$HUC12, 
 																			 instance_dim_name = "station", 
 																			 variables = hucTimeseries$var)
 
-hucPolygons_sf <- ncdfgeom::FromNCDFSG("hucPolygons.nc")
+hucPolygons_sf <- ncdfgeom::read_geometry("hucPolygons.nc")
 
 hucPolygons_gpkg <- write_sf(hucPolygons_sf, "hucPolygons.gpkg")
 unlink("hucPolygons.nc")

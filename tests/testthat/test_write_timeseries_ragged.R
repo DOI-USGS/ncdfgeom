@@ -12,7 +12,7 @@ test_that("characterization testing for write_ragged_timeseries", {
 											"lat" = "latitude", "lon" = "longitude", "alt" = "elevation")
 	
 	test_file <- tempfile()
-	write_ragged_timeseries_dsg(nc_file = test_file, 
+	write_timeseries_ragged_dsg(nc_file = test_file, 
 															all_data = ok, 
 															data_units = list(soil_moisture='%', 
 																								soil_moisture_depth='inches'))

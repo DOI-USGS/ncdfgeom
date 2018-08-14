@@ -14,8 +14,9 @@
 #'
 #'@importFrom ncdf4 ncatt_get
 #'
-#'@export
-checkNCDF <- function(nc) {
+#'@noRd
+#'
+check_netcdf <- function(nc) {
 
   instance_id<-NULL
   instance_dim<-NULL

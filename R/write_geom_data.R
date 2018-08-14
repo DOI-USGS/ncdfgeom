@@ -20,7 +20,7 @@
 #'@importFrom ncdf4 nc_open ncvar_add nc_close ncvar_def ncvar_put ncatt_put ncdim_def nc_create
 #'
 #'@export
-addGeomData<-function(nc_file, geomData, instance_dim_name, variables = c()) {
+write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c()) {
 	
 	geomData <- check_geomData(geomData)
 	
@@ -161,7 +161,7 @@ addGeomData<-function(nc_file, geomData, instance_dim_name, variables = c()) {
 	
 	ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$node_coordinates, attval = 'x y')
 	
-	crs <- getGmFromPrj(geomData@proj4string)
+	crs <- get_gridmapping(geomData@proj4string)
 	
 	if(length(crs) == 0) {
 		crs <- list(grid_mapping_name = "latitude_longitude",

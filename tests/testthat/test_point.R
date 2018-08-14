@@ -2,11 +2,11 @@
 context("point")
 
 test_that("Point_timeSeries", {
-  expect_error(ToNCDFSG("test"),
+  expect_error(write_geometry("test"),
                regexp = "Did not find supported spatial data.")
 
   pointData <- get_fixture_data("point")
-  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = pointData)
+  nc_file <- write_geometry(nc_file=tempfile(), geomData = pointData)
   nc<-nc_open(nc_file)
 
   expect_equal(nc$dim$instance$vals,
@@ -34,7 +34,7 @@ test_that("Point_timeSeries", {
   expect_equivalent(ncatt_get(nc,varid="x","standard_name")$value,
                     "longitude")
 
-  returnPointData<-FromNCDFSG(nc_file)
+  returnPointData<-read_geometry(nc_file)
   expect_equal(as.numeric(st_coordinates(pointData)), 
   						 as.numeric(st_coordinates(st_as_sf(returnPointData))))
   expect_equal(as.numeric(st_bbox(pointData)), 
@@ -44,17 +44,17 @@ test_that("Point_timeSeries", {
 test_that("multiPoint_timeSeries", {
   multipointData <- get_fixture_data("multipoint")
 
-	expect_error(ToNCDFSG(nc_file=tempfile(), geomData = multipointData),
+	expect_error(write_geometry(nc_file=tempfile(), geomData = multipointData),
 							 "Multi point not supported yet.")
   
-  # expect_error(FromNCDFSG(nc_file), "Reading multipoint is not supported yet.")
+  # expect_error(read_geometry(nc_file), "Reading multipoint is not supported yet.")
 })
 
 test_that("point lat lon", {
   multipointData <- get_fixture_data("multipoint")
   lat<-st_coordinates(multipointData)[, "Y"]
   lon<-st_coordinates(multipointData)[, "X"]
-  nc_file <- ToNCDFSG(nc_file=tempfile(), lons = lon, lats = lat)
+  nc_file <- write_geometry(nc_file=tempfile(), lons = lon, lats = lat)
   nc<-nc_open(nc_file)
 
   expect_equal(nc$dim$instance$vals,
@@ -69,7 +69,7 @@ test_that("point lat lon", {
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name)$value,
                     "point")
 
-  returnPointData<-FromNCDFSG(nc_file)
+  returnPointData<-read_geometry(nc_file)
   expect_equal(as.numeric(st_coordinates(multipointData)[,c("X", "Y")]), 
   						 as.numeric(st_coordinates(st_as_sf(returnPointData))[,c("X", "Y")]))
   expect_equal(as.numeric(st_bbox(multipointData)), 
@@ -79,7 +79,7 @@ test_that("point lat lon", {
 test_that("shapefile_point", {
   pointData <- sf::read_sf("data/se_sites/se_sitest.shp")
   instance_names <- pointData$station_nm
-  nc_file <- ToNCDFSG(nc_file = tempfile(), geomData = pointData, instance_names = instance_names)
+  nc_file <- write_geometry(nc_file = tempfile(), geomData = pointData, instance_names = instance_names)
   nc <- nc_open(nc_file)
   pointData_nogeo <- sf::st_set_geometry(pointData, NULL)
   
@@ -92,7 +92,7 @@ test_that("shapefile_point", {
   expect_equal(as.character(ncvar_get(nc, nc$var$site_no)), pointData$site_no)
   expect_equal(as.numeric(ncvar_get(nc, nc$var$drain_area)), pointData$drain_area)
   
-  returnPointData<-FromNCDFSG(nc_file)
+  returnPointData<-read_geometry(nc_file)
   
   expect_equal(as.numeric(sf::st_coordinates(pointData)), as.numeric(sf::st_coordinates(returnPointData)))
   expect_equal(as.numeric(sf::st_bbox(pointData)), as.numeric(sf::st_bbox(returnPointData)))

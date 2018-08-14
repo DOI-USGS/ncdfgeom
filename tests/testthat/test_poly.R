@@ -3,7 +3,7 @@ context("polygon")
 
 test_that("data for basic polygon", {
   polygonData <- get_fixture_data("polygon")
-  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(class(nc),"ncdf4")
@@ -44,13 +44,13 @@ test_that("data for basic polygon", {
   expect_false(ncatt_get(nc, pkg.env$geom_container_var_name, "part_node_count")$hasatt)
   expect_false(ncatt_get(nc, pkg.env$geom_container_var_name, "part_type")$hasatt)
 
-  returnPolyData<-FromNCDFSG(nc_file)
+  returnPolyData<-read_geometry(nc_file)
   compareSP(polygonData, returnPolyData)
 })
 
 test_that("polygon with a hole.", {
   polygonData <- get_fixture_data("polygon_hole")
-  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(nc$dim$instance$vals,c(1))
@@ -71,13 +71,13 @@ test_that("polygon with a hole.", {
   expect_equal(as.numeric(ncvar_get(nc, varid = pkg.env$part_type_var_name)),
                c(pkg.env$multi_val,pkg.env$hole_val))
 
-  returnPolyData<-FromNCDFSG(nc_file)
+  returnPolyData<-read_geometry(nc_file)
   compareSP(polygonData, returnPolyData)
 })
 
 test_that("multipolygon.", {
   polygonData <- get_fixture_data("multipolygon")
-  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$node_count_var_name)),
@@ -88,13 +88,13 @@ test_that("multipolygon.", {
                c(nrow(st_geometry(polygonData)[[1]][[1]][[1]]),
                		nrow(st_geometry(polygonData)[[1]][[2]][[1]])))
 
-  returnPolyData<-FromNCDFSG(nc_file)
+  returnPolyData<-read_geometry(nc_file)
   compareSP(polygonData, returnPolyData)
 })
 
 test_that("multipolygon with a hole.", {
   polygonData <-get_fixture_data("multipolygon_hole")
-  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$node_count_var_name)),
@@ -120,13 +120,13 @@ test_that("multipolygon with a hole.", {
                ncvar_get(nc,pkg.env$part_node_count_var_name),
                ncvar_get(nc,pkg.env$part_type_var_name))
 
-  returnPolyData<-FromNCDFSG(nc_file)
+  returnPolyData<-read_geometry(nc_file)
   compareSP(polygonData, returnPolyData)
 })
 
 test_that("multipolygons with holes.", {
   polygonData <- get_fixture_data("multipolygons_holes")
-  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc, pkg.env$part_type_var_name)),
@@ -143,13 +143,13 @@ test_that("multipolygons with holes.", {
                ncvar_get(nc,pkg.env$part_node_count_var_name),
                ncvar_get(nc,pkg.env$part_type_var_name))
 
-  returnPolyData<-FromNCDFSG(nc_file)
+  returnPolyData<-read_geometry(nc_file)
   compareSP(polygonData, returnPolyData)
 })
 
 test_that("A whole shapefile can be written", {
   polygonData <- read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp")
-  nc_file <- ToNCDFSG(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
   
   crs <- list(grid_mapping_name = "albers_conical_equal_area",
@@ -202,7 +202,7 @@ test_that("A whole shapefile can be written", {
                ncvar_get(nc,pkg.env$part_node_count_var_name),
                ncvar_get(nc,pkg.env$part_type_var_name))
   
-  returnPolyData<-FromNCDFSG(nc_file)
+  returnPolyData<-read_geometry(nc_file)
   compareSP(polygonData, returnPolyData)
   for(name in names(sf::st_set_geometry(polygonData, NULL))) {
     expect_equal(as.character(polygonData[name]), as.character(returnPolyData[name]))

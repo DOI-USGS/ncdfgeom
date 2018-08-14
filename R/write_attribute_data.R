@@ -17,7 +17,7 @@
 #'@importFrom methods is
 #'
 #'@export
-write_instance_data <- function(nc_file, attData, instance_dim_name = "instance", units = rep("unknown", ncol(attData)), ...) {
+write_attribute_data <- function(nc_file, attData, instance_dim_name = "instance", units = rep("unknown", ncol(attData)), ...) {
 	
 	n <- nrow(attData)
 	

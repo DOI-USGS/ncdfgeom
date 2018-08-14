@@ -1,6 +1,6 @@
 context("prj and grid mappings")
 
-test_that("getGmFromPrj works for a CRS class and not just a string", {
+test_that("get_gridmapping works for a CRS class and not just a string", {
   p <- "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"
 
   c <- list(grid_mapping_name="latitude_longitude",
@@ -10,15 +10,15 @@ test_that("getGmFromPrj works for a CRS class and not just a string", {
 
   pCRS_class <- CRS(projargs = p)
 
-  crs <- getGmFromPrj(pCRS_class)
+  crs <- get_gridmapping(pCRS_class)
 
   expect_equal(crs, c[names(crs)])
 })
 
-test_that("getGmFromPrj returns an empty list if no mapping exists", {
+test_that("get_gridmapping returns an empty list if no mapping exists", {
   p <- ""
 
-  expect_warning(crs <- getGmFromPrj(p), "not a valid crs, returning an empty crs list")
+  expect_warning(crs <- get_gridmapping(p), "not a valid crs, returning an empty crs list")
 
   expect_equal(crs, list())
 })
@@ -31,15 +31,15 @@ test_that("wgs 84 lat lon", {
               semi_major_axis = 6378137,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs, c[names(crs)])
 })
@@ -57,11 +57,11 @@ test_that("albers equal area epsg:5070", {
               inverse_flattening = 298.257223563,
               longitude_of_prime_meridian = 0)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs, c[names(crs)])
 })
@@ -79,7 +79,7 @@ test_that("albers equal area epsg:5070 with datum instead of a b", {
             inverse_flattening = 298.257222101,
             longitude_of_prime_meridian = 0)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs, c[names(crs)])
 })
@@ -96,11 +96,11 @@ test_that("Azimuthal Equidistant", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs[names(c)], c)
 
@@ -119,11 +119,11 @@ test_that("lambert conformal conic daymet", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs[names(c)], c)
 
@@ -141,11 +141,11 @@ test_that("lambert_azimuthal_equal_area", {
               semi_minor_axis = 6371228,
               longitude_of_prime_meridian = 0.0)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   c <- list(grid_mapping_name = "lambert_azimuthal_equal_area",
               longitude_of_projection_origin = 0,
@@ -155,11 +155,11 @@ test_that("lambert_azimuthal_equal_area", {
               longitude_of_prime_meridian = 0.0,
               semi_major_axis = 6371228)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs[names(c)], c)
 
@@ -178,11 +178,11 @@ test_that("lambert_cylindrical_equal_area", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs[names(c)], c)
 
@@ -200,11 +200,11 @@ test_that("mercator", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs[names(c)], c)
 
@@ -219,11 +219,11 @@ test_that("mercator", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs[names(c)], c)
 
@@ -244,11 +244,11 @@ test_that("oblique_mercator", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs[names(c)], c)
 
@@ -266,11 +266,11 @@ test_that("orthographic", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs[names(c)], c)
 
@@ -289,11 +289,11 @@ test_that("polar_stereographic", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  # crs <- getGmFromPrj(p)
+  # crs <- get_gridmapping(p)
   #
   # expect_equal(crs[names(c)], c)
 
@@ -309,11 +309,11 @@ test_that("polar_stereographic", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  # crs <- getGmFromPrj(p)
+  # crs <- get_gridmapping(p)
   #
   # expect_equal(crs[names(c)], c)
 
@@ -330,7 +330,7 @@ test_that("sinusoidal", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
@@ -349,11 +349,11 @@ test_that("stereographic", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs[names(c)], c)
 
@@ -373,11 +373,11 @@ test_that("transverse_mercator", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563)
 
-  prj <- getPrjFromNCDF(c)
+  prj <- get_prj(c)
 
   expect_equal(prj, p)
 
-  crs <- getGmFromPrj(p)
+  crs <- get_gridmapping(p)
 
   expect_equal(crs[names(c)], c)
 

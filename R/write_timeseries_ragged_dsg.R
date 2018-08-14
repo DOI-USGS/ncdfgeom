@@ -57,7 +57,7 @@
 #'@importFrom dplyr left_join
 #'
 #'@export
-write_ragged_timeseries_dsg = function(nc_file, all_data, data_units=list(), data_longnames=list(), attributes=list()){
+write_timeseries_ragged_dsg = function(nc_file, all_data, data_units=list(), data_longnames=list(), attributes=list()){
 	
 	#building this with the convention shown here:
 	# http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#idp9804080

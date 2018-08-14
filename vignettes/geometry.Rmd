@@ -80,7 +80,7 @@ variables:
 
 Now we can use the `write_geometry` function to add the polygon data to the NetCDF file.
 ```{r demo}
-hucPolygons_nc <- ncdfgeom::ToNCDFSG(nc_file="hucPolygons.nc",
+hucPolygons_nc <- ncdfgeom::write_geometry(nc_file="hucPolygons.nc",
                                        geomData = hucPolygons, 
                                        instance_names = hucPolygons$HUC12, 
                                        instance_dim_name = "station", 
@@ -180,7 +180,7 @@ variables:
 Now we can read the polygon data from the file.
 
 ```{r read, warning=F}
-hucPolygons_sf <- ncdfgeom::FromNCDFSG("hucPolygons.nc")
+hucPolygons_sf <- ncdfgeom::read_geometry("hucPolygons.nc")
 
 plot(sf::st_geometry(hucPolygons_sf))
 hucPolygons_shp <- sf::write_sf(hucPolygons_sf, "hucPolygons.gpkg")

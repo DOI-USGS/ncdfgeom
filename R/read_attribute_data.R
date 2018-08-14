@@ -11,7 +11,7 @@
 #'
 #'@export
 #'
-read_instance_data <- function(nc, instance_dim) {
+read_attribute_data <- function(nc, instance_dim) {
 	
 	if(!any(grepl(instance_dim, names(nc$dim)))) {
 		stop("The instance dimension was not found in the provided NetCDF object.")
