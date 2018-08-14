@@ -4,7 +4,7 @@ library("sp")
 context("Test adding instance data to an new or existing netcdf file.")
 
 test_that("A dataframe can be round tripped to netCDF.", {
-  dataFrame <- st_set_geometry(readRDS("data/NHDline_data.rds"), NULL)
+  dataFrame <- sf::st_set_geometry(sf::read_sf("data/NHDLine/NHDLine.shp"), NULL)
   units<-c("unitless","date","unitless","unitless","unitless","km","unitless","unitless","unknown")
   nc_file <- write_instance_data(nc_file=tempfile(), attData = dataFrame, instance_dim_name = "instance", units = units)
   nc <- nc_open(nc_file)
