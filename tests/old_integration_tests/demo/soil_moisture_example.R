@@ -1,6 +1,6 @@
 library(soilmoisturetools)
 library(dplyr)
-library(netcdf.dsg)
+library(ncdfgeom)
 library(reshape2)
 
 ok = ok_data() %>% filter(depth_in < 2)

@@ -1,2 +1,2 @@
 library(testthat)
-test_check("netcdf.dsg")
+test_check("ncdfgeom")

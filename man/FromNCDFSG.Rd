@@ -17,16 +17,16 @@ Attemps to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame.
 }
 \examples{
 huc_eta_nc <- tempfile()
-file.copy(system.file('extdata','example_huc_eta.nc', package = 'netcdf.dsg'), 
+file.copy(system.file('extdata','example_huc_eta.nc', package = 'ncdfgeom'), 
          huc_eta_nc, overwrite = TRUE)
          
 hucTimeseries <- ncdf4::nc_open(huc_eta_nc)
 
-hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package = 'netcdf.dsg'))
+hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package = 'ncdfgeom'))
 plot(sf::st_geometry(hucPolygons))
 names(hucPolygons)
 
-hucPolygons_nc <- netcdf.dsg::ToNCDFSG(nc_file=huc_eta_nc, 
+hucPolygons_nc <- ncdfgeom::ToNCDFSG(nc_file=huc_eta_nc, 
                                       geomData = hucPolygons, 
                                       instance_names = hucPolygons$HUC12, 
                                       instance_dim_name = "station", 

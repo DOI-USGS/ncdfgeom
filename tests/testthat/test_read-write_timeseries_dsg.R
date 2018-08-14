@@ -5,7 +5,7 @@ test_that("Create basic DSG file",{
   nc_date_create<-'2099-01-01'
   nc_creator_name='test creator'
   nc_creator_email='test@test.com'
-  nc_project='testthat netcdf.dsg'
+  nc_project='testthat ncdfgeom'
   nc_proc_level='just a test no processing'
   nc_title<-'test title'
   global_attributes<-list(title = nc_title, summary = nc_summary, date_created=nc_date_create, 
@@ -100,7 +100,7 @@ test_that("Read basic DSG file",{
 	expect_equivalent(testlist$global_attributes$nc_date_created,'2099-01-01')
 	expect_equivalent(testlist$global_attributes$nc_creator_name,'test creator')
 	expect_equivalent(testlist$global_attributes$nc_creator_email,'test@test.com')
-	expect_equivalent(testlist$global_attributes$nc_project,'testthat netcdf.dsg')
+	expect_equivalent(testlist$global_attributes$nc_project,'testthat ncdfgeom')
 	expect_equivalent(testlist$global_attributes$nc_proc_level,'just a test no processing')
 	expect_equivalent(testlist$global_attributes$nc_title,'test title')
 	expect_equivalent(testlist$data_frames[1][[1]],test_data$var_data) # Plan to have the dataframes work for 1 to many variables.
