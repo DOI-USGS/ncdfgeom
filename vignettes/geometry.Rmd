@@ -189,3 +189,9 @@ hucPolygons_shp <- sf::write_sf(hucPolygons_sf, "hucPolygons.gpkg")
 ```{r cleanup, echo=F}
 temp <- file.remove("hucPolygons.nc", "hucPolygons.gpkg")
 ```
+
+## Geometry Types
+
+`netcdf.dsg` works with a set of geometry types. 
+
+```{r examples, child="../tests/testthat/data/geom_examples.md"}
