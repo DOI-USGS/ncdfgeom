@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get Dataframe from NetCDF-DSG File — read_attribute_data • ncdfgeom</title>
+<title>Create point data NCDF file — write_point_dsg • ncdfgeom</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,14 +30,13 @@
 
 
 
-<meta property="og:title" content="Get Dataframe from NetCDF-DSG File — read_attribute_data" />
+<meta property="og:title" content="Create point data NCDF file — write_point_dsg" />
 
-<meta property="og:description" content="Gets instance data from a NetCDF-DSG file and returns it in a data.frame.
-This function is intended as a convenience to be used within workflows where
-the netCDF file is already open and well understood." />
+<meta property="og:description" content="This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
+Can pass in netcdf creation options like force_v4 to pass on." />
 <meta name="twitter:card" content="summary" />
 
-
+<meta name="robots" content="noindex">
 
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -63,7 +62,7 @@ the netCDF file is already open and well understood." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development package">0.5.0</span>
       </span>
     </div>
 
@@ -117,33 +116,68 @@ the netCDF file is already open and well understood." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get Dataframe from NetCDF-DSG File</h1>
-    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/read_attribute_data.R'><code>R/read_attribute_data.R</code></a></small>
-    <div class="hidden name"><code>read_attribute_data.Rd</code></div>
+    <h1>Create point data NCDF file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/write_point_dsg.R'><code>R/write_point_dsg.R</code></a></small>
+    <div class="hidden name"><code>write_point_dsg.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Gets instance data from a NetCDF-DSG file and returns it in a <code>data.frame</code>.
-This function is intended as a convenience to be used within workflows where
-the netCDF file is already open and well understood.</p>
+    <p>This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
+Can pass in netcdf creation options like force_v4 to pass on.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>read_attribute_data</span>(<span class='no'>nc</span>, <span class='no'>instance_dim</span>)</pre>
+    <pre class="usage"><span class='fu'>write_point_dsg</span>(<span class='no'>nc_file</span>, <span class='no'>lats</span>, <span class='no'>lons</span>, <span class='no'>alts</span>, <span class='no'>times</span>, <span class='no'>data</span>,
+  <span class='kw'>data_units</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='st'>""</span>, <span class='fu'>ncol</span>(<span class='no'>data</span>)), <span class='kw'>feature_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>nc</th>
-      <td><p>A open ncdf4 object.</p></td>
+      <th>nc_file</th>
+      <td><p>A string file path to the nc file to be created.</p></td>
     </tr>
     <tr>
-      <th>instance_dim</th>
-      <td><p>The NetCDF instance/station dimension.</p></td>
+      <th>lats</th>
+      <td><p>Vector of latitudes</p></td>
+    </tr>
+    <tr>
+      <th>lons</th>
+      <td><p>Vector of longitudes</p></td>
+    </tr>
+    <tr>
+      <th>alts</th>
+      <td><p>Vector of altitudes</p></td>
+    </tr>
+    <tr>
+      <th>times</th>
+      <td><p>Vector of times, one per point, if length is one, will use the same time for each point. 
+Must be of type <code>POSIXct</code> or an attempt to convert it will be made using <code>as.POSIXct(times)</code>.</p></td>
+    </tr>
+    <tr>
+      <th>data</th>
+      <td><p><code>data.frame</code> with each column corresponding to a observation. Column 
+names are used as names in the NCDF file</p></td>
+    </tr>
+    <tr>
+      <th>data_units</th>
+      <td><p>Character vector of observation units. Length must be the same as number 
+of columns in <code>data</code> parameter</p></td>
+    </tr>
+    <tr>
+      <th>feature_names</th>
+      <td><p><code>vector</code> of identifiers for features or stations.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>additional arguments to be passed on nc_create.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html</p>
     
 
   </div>
@@ -151,7 +185,9 @@ the netCDF file is already open and well understood.</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#references">References</a></li>
+          </ul>
 
   </div>
 </div>

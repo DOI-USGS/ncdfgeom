@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create point data NCDF file — write_point_dsg • ncdfgeom</title>
+<title>Function reference • ncdfgeom</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,13 +30,9 @@
 
 
 
-<meta property="og:title" content="Create point data NCDF file — write_point_dsg" />
+<meta property="og:title" content="Function reference" />
 
-<meta property="og:description" content="This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
-Can pass in netcdf creation options like force_v4 to pass on." />
-<meta name="twitter:card" content="summary" />
-
-
+<meta name="robots" content="noindex">
 
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -50,7 +46,7 @@ Can pass in netcdf creation options like force_v4 to pass on." />
   </head>
 
   <body>
-    <div class="container template-reference-topic">
+    <div class="container template-reference-index">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -62,7 +58,7 @@ Can pass in netcdf creation options like force_v4 to pass on." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development package">0.5.0</span>
       </span>
     </div>
 
@@ -114,81 +110,96 @@ Can pass in netcdf creation options like force_v4 to pass on." />
       </header>
 
 <div class="row">
-  <div class="col-md-9 contents">
+  <div class="contents col-md-9">
     <div class="page-header">
-    <h1>Create point data NCDF file</h1>
-    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/write_point_dsg.R'><code>R/write_point_dsg.R</code></a></small>
-    <div class="hidden name"><code>write_point_dsg.Rd</code></div>
+      <h1>Reference</h1>
     </div>
 
-    <div class="ref-description">
-    
-    <p>This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
-Can pass in netcdf creation options like force_v4 to pass on.</p>
-    
-    </div>
+    <table class="ref-index">
 
-    <pre class="usage"><span class='fu'>write_point_dsg</span>(<span class='no'>nc_file</span>, <span class='no'>lats</span>, <span class='no'>lons</span>, <span class='no'>alts</span>, <span class='no'>times</span>, <span class='no'>data</span>,
-  <span class='kw'>data_units</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='st'>""</span>, <span class='fu'>ncol</span>(<span class='no'>data</span>)), <span class='kw'>feature_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>nc_file</th>
-      <td><p>A string file path to the nc file to be created.</p></td>
-    </tr>
-    <tr>
-      <th>lats</th>
-      <td><p>Vector of latitudes</p></td>
-    </tr>
-    <tr>
-      <th>lons</th>
-      <td><p>Vector of longitudes</p></td>
-    </tr>
-    <tr>
-      <th>alts</th>
-      <td><p>Vector of altitudes</p></td>
-    </tr>
-    <tr>
-      <th>times</th>
-      <td><p>Vector of times, one per point, if length is one, will use the same time for each point. 
-Must be of type <code>POSIXct</code> or an attempt to convert it will be made using <code>as.POSIXct(times)</code>.</p></td>
-    </tr>
-    <tr>
-      <th>data</th>
-      <td><p><code>data.frame</code> with each column corresponding to a observation. Column 
-names are used as names in the NCDF file</p></td>
-    </tr>
-    <tr>
-      <th>data_units</th>
-      <td><p>Character vector of observation units. Length must be the same as number 
-of columns in <code>data</code> parameter</p></td>
-    </tr>
-    <tr>
-      <th>feature_names</th>
-      <td><p><code>vector</code> of identifiers for features or stations.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>additional arguments to be passed on nc_create.</p></td>
-    </tr>
+    <colgroup>
+      
+      <col class="alias" />
+      <col class="title" />
+    </colgroup>
+
+    <tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="get_gridmapping.html">get_gridmapping()</a></code> </p>
+        </td>
+        <td><p>Get NetCDF-CF Grid Mapping from Projection</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_prj.html">get_prj()</a></code> </p>
+        </td>
+        <td><p>Get projection from NetCDF-CF Grid Mapping</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_attribute_data.html">read_attribute_data()</a></code> </p>
+        </td>
+        <td><p>Get Dataframe from NetCDF-DSG File</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_geometry.html">read_geometry()</a></code> </p>
+        </td>
+        <td><p>Convert NetCDF Spatial Geometries to sf</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_timeseries_dsg.html">read_timeseries_dsg()</a></code> </p>
+        </td>
+        <td><p>Read timeseries NCDF file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_attribute_data.html">write_attribute_data()</a></code> </p>
+        </td>
+        <td><p>Put attribute / instance data in a NetCDF-CF File</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_geometry.html">write_geometry()</a></code> </p>
+        </td>
+        <td><p>Convert sp objects to NetCDF</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_point_dsg.html">write_point_dsg()</a></code> </p>
+        </td>
+        <td><p>Create point data NCDF file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_timeseries_dsg.html">write_timeseries_dsg()</a></code> </p>
+        </td>
+        <td><p>Create timeseries NCDF file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_timeseries_ragged_dsg.html">write_timeseries_ragged_dsg()</a></code> </p>
+        </td>
+        <td><p>Create ragged array timeseries NCDF file</p></td>
+      </tr>
+    </tbody>
     </table>
-    
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html</p>
-    
-
   </div>
+
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#references">References</a></li>
-          </ul>
-
+      <li><a href="#section-all-functions">All functions</a></li>
+    </ul>
   </div>
 </div>
 

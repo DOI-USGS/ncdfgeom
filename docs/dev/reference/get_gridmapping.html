@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create ragged array timeseries NCDF file — write_timeseries_ragged_dsg • ncdfgeom</title>
+<title>Get NetCDF-CF Grid Mapping from Projection — get_gridmapping • ncdfgeom</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,12 +30,13 @@
 
 
 
-<meta property="og:title" content="Create ragged array timeseries NCDF file — write_timeseries_ragged_dsg" />
+<meta property="og:title" content="Get NetCDF-CF Grid Mapping from Projection — get_gridmapping" />
 
-<meta property="og:description" content="This creates a ragged array timeseries discrete sampling features NCDF file" />
+<meta property="og:description" content="This function takes a proj4 string and returns a NetCDF-CF projection container as
+a named list of attributes." />
 <meta name="twitter:card" content="summary" />
 
-
+<meta name="robots" content="noindex">
 
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -61,7 +62,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development package">0.5.0</span>
       </span>
     </div>
 
@@ -115,88 +116,55 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create ragged array timeseries NCDF file</h1>
-    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/write_timeseries_ragged_dsg.R'><code>R/write_timeseries_ragged_dsg.R</code></a></small>
-    <div class="hidden name"><code>write_timeseries_ragged_dsg.Rd</code></div>
+    <h1>Get NetCDF-CF Grid Mapping from Projection</h1>
+    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/get_gridmapping.R'><code>R/get_gridmapping.R</code></a></small>
+    <div class="hidden name"><code>get_gridmapping.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This creates a ragged array timeseries discrete sampling features NCDF file</p>
+    <p>This function takes a proj4 string and returns a NetCDF-CF projection container as
+a named list of attributes.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>write_timeseries_ragged_dsg</span>(<span class='no'>nc_file</span>, <span class='no'>all_data</span>, <span class='kw'>data_units</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>data_longnames</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>attributes</span> <span class='kw'>=</span> <span class='fu'>list</span>())</pre>
+    <pre class="usage"><span class='fu'>get_gridmapping</span>(<span class='no'>prj</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>nc_file</th>
-      <td><p>A string file path to the nc file to be created.</p></td>
-    </tr>
-    <tr>
-      <th>all_data</th>
-      <td><p>A data.frame object containing all station and observation data. See 
-description for further information</p></td>
-    </tr>
-    <tr>
-      <th>data_units</th>
-      <td><p>Optional list of observation units.  Names must correspond
-to names of observation columns in <code>all_data</code>. Not required. Columns without 
-supplied data unit are given a unit of empty string.</p></td>
-    </tr>
-    <tr>
-      <th>data_longnames</th>
-      <td><p>Optional named list of observation long names. Names must correspond
-to names of observation columns in <code>all_data</code>. Not required. Columns without 
-supplied long name are given a long name of empty string.</p></td>
-    </tr>
-    <tr>
-      <th>attributes</th>
-      <td><p>An optional list of attributes that will be added at the global level. 
-See details for useful attributes.</p></td>
+      <th>prj</th>
+      <td><p>A proj.4 string as returned from the sp CRS function.</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A named list containing attributes required for that grid_mapping.</p>
+    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>It's challenging to create a function that accepts the style of data that could go into
-the ragged array timeseries DSG. This is one attempt, though ideas and feedback are welcome.</p>
-<p>The all_data data.frame is the heart of the data passed. It <em>must</em> have the following
-columns.</p><ul>
-<li><p>station_name</p></li>
-<li><p>lat</p></li>
-<li><p>lon</p></li>
-<li><p>alt</p></li>
-<li><p>time</p></li>
-<li><p>observation1</p></li>
-<li><p>...</p></li>
-<li><p>observationN</p></li>
-</ul>
-    <p>observation1 and observationN are just placeholders. Observations should be described with 
-a descriptive name. There can be any number of observations, but their names must be unique.</p>
-<p>Attributes allow for addition, non-core metadata to be included. Must be a named list. All
-items in the list will be added as global attributes to the NC file with the supplied name/value 
-pair.</p>
-<p>Here are some common important attributes that could be added.</p><ul>
-<li><p>title = "title"</p></li>
-<li><p>abstract = "history"</p></li>
-<li><p>provider site = "institution"</p></li>
-<li><p>provider name ="source"</p></li>
-<li><p>description = "description"</p></li>
-</ul>
+    <p>https://en.wikibooks.org/wiki/PROJ.4
+https://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus
+http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>prj</span> <span class='kw'>&lt;-</span> <span class='st'>"+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"</span>
+<span class='no'>grid_mapping</span> <span class='kw'>&lt;-</span> <span class='fu'>get_gridmapping</span>(<span class='no'>prj</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
       <li><a href="#details">Details</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Put attribute / instance data in a NetCDF-CF File — write_attribute_data • ncdfgeom</title>
+<title>Create timeseries NCDF file — write_timeseries_dsg • ncdfgeom</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,16 +30,12 @@
 
 
 
-<meta property="og:title" content="Put attribute / instance data in a NetCDF-CF File — write_attribute_data" />
+<meta property="og:title" content="Create timeseries NCDF file — write_timeseries_dsg" />
 
-<meta property="og:description" content="Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 
-Use to create the start of a NetCDF-DSG file. One character length dimension is created
-long enough to contain the longest provided character string.
-This function does not implement any CF convention attributes or standard names.
-Any columns of class date will be converted to character." />
+<meta property="og:description" content="This creates a timeseries discrete sampling geometry NCDF file" />
 <meta name="twitter:card" content="summary" />
 
-
+<meta name="robots" content="noindex">
 
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -65,7 +61,7 @@ Any columns of class date will be converted to character." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
+        <span class="label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development package">0.5.0</span>
       </span>
     </div>
 
@@ -119,48 +115,93 @@ Any columns of class date will be converted to character." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Put attribute / instance data in a NetCDF-CF File</h1>
-    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/write_attribute_data.R'><code>R/write_attribute_data.R</code></a></small>
-    <div class="hidden name"><code>write_attribute_data.Rd</code></div>
+    <h1>Create timeseries NCDF file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/write_timeseries_dsg.R'><code>R/write_timeseries_dsg.R</code></a></small>
+    <div class="hidden name"><code>write_timeseries_dsg.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 
-Use to create the start of a NetCDF-DSG file. One character length dimension is created
-long enough to contain the longest provided character string.
-This function does not implement any CF convention attributes or standard names.
-Any columns of class date will be converted to character.</p>
+    <p>This creates a timeseries discrete sampling geometry NCDF file</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>write_attribute_data</span>(<span class='no'>nc_file</span>, <span class='no'>attData</span>, <span class='kw'>instance_dim_name</span> <span class='kw'>=</span> <span class='st'>"instance"</span>,
-  <span class='kw'>units</span> <span class='kw'>=</span> <span class='fu'>rep</span>(<span class='st'>"unknown"</span>, <span class='fu'>ncol</span>(<span class='no'>attData</span>)), <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>write_timeseries_dsg</span>(<span class='no'>nc_file</span>, <span class='no'>station_names</span>, <span class='no'>lats</span>, <span class='no'>lons</span>, <span class='no'>times</span>, <span class='no'>data</span>,
+  <span class='kw'>alts</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>data_unit</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>data_prec</span> <span class='kw'>=</span> <span class='st'>"double"</span>,
+  <span class='kw'>data_metadata</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"data"</span>, <span class='kw'>long_name</span> <span class='kw'>=</span> <span class='st'>"unnamed data"</span>),
+  <span class='kw'>attributes</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>add_to_existing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>nc_file</th>
-      <td><p>A string file path to the nc file to be created. It must already have an instance dimension.</p></td>
+      <td><p>A string file path to the nc file to be created.</p></td>
     </tr>
     <tr>
-      <th>attData</th>
-      <td><p>A <code>data.frame</code> as included in a spatial dataFrame.</p></td>
+      <th>station_names</th>
+      <td><p>A vector of names for each station to be added to the file.</p></td>
     </tr>
     <tr>
-      <th>instance_dim_name</th>
-      <td><p>A string to name the instance dimension. Defaults to "instance"</p></td>
+      <th>lats</th>
+      <td><p>Vector of latitudes</p></td>
     </tr>
     <tr>
-      <th>units</th>
-      <td><p>A character <code>vector</code> with units for each column of attData. Default is "unknown" for all.</p></td>
+      <th>lons</th>
+      <td><p>Vector of longitudes</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>additional arguments to be passed on nc_create.</p></td>
+      <th>times</th>
+      <td><p>A vector of times. Must be of type <code>POSIXct</code> or an attempt to 
+convert it will be made using <code>as.POSIXct(times)</code>.</p></td>
+    </tr>
+    <tr>
+      <th>data</th>
+      <td><p><code>data.frame</code> with each column corresponding to a station. Rows correspond to 
+time steps. nrow must be the same length as times. Column names must match station names.</p></td>
+    </tr>
+    <tr>
+      <th>alts</th>
+      <td><p>Vector of altitudes (Optional)</p></td>
+    </tr>
+    <tr>
+      <th>data_unit</th>
+      <td><p>Character vector of observation units. Length must be the same as number 
+of columns in <code>data</code> parameter</p></td>
+    </tr>
+    <tr>
+      <th>data_prec</th>
+      <td><p>Precision of observation data in NCDF file. 
+Valid options: 'short' 'integer' 'float' 'double' 'char'.</p></td>
+    </tr>
+    <tr>
+      <th>data_metadata</th>
+      <td><p>A named list of strings: list(name='ShortVarName', long_name='A Long Name')</p></td>
+    </tr>
+    <tr>
+      <th>attributes</th>
+      <td><p>An optional list of attributes that will be added at the global level. 
+See details for useful attributes.</p></td>
+    </tr>
+    <tr>
+      <th>add_to_existing</th>
+      <td><p>boolean If TRUE and the file already exists, variables will be added to the existing file. 
+Note that this should be used to add variables not stations or time steps. All inputs should be the same as are 
+already in the file.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>title = "title"
+abstract = "history"
+provider site = "institution"
+provider name ="source"
+description = "description"</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html</p>
     
 
   </div>
@@ -168,7 +209,11 @@ Any columns of class date will be converted to character.</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#references">References</a></li>
+          </ul>
 
   </div>
 </div>
