@@ -12,45 +12,59 @@ write_timeseries_dsg(nc_file, instance_names, lats, lons, times, data,
 \arguments{
 \item{nc_file}{A string file path to the nc file to be created.}
 
-\item{instance_names}{A vector of names for each station to be added to the file.}
+\item{instance_names}{A vector of names for each instance 
+(e.g. station or geometry) to be added to the file.}
 
-\item{lats}{Vector of latitudes}
+\item{lats}{numeric vector of latitudes}
 
-\item{lons}{Vector of longitudes}
+\item{lons}{numeric vector of longitudes}
 
-\item{times}{A vector of times. Must be of type \code{POSIXct} or an attempt to 
+\item{times}{vector of times. Must be of type \code{POSIXct} or an attempt to 
 convert it will be made using \code{as.POSIXct(times)}.}
 
-\item{data}{\code{data.frame} with each column corresponding to a station. Rows correspond to 
-time steps. nrow must be the same length as times. Column names must match station names.}
+\item{data}{\code{data.frame} with each column corresponding to an instance. Rows correspond to 
+time steps. nrow must be the same length as times. Column names must match instance names.}
 
-\item{alts}{Vector of altitudes (Optional)}
+\item{alts}{Vector of altitudes (m above sea level) (Optional)}
 
-\item{data_unit}{Character vector of observation units. Length must be the same as number 
-of columns in \code{data} parameter}
+\item{data_unit}{character vector of observation units. Length must be the same as number 
+of columns in \code{data} parameter.}
 
-\item{data_prec}{Precision of observation data in NCDF file. 
+\item{data_prec}{character Precision of observation data in NCDF file. 
 Valid options: 'short' 'integer' 'float' 'double' 'char'.}
 
-\item{data_metadata}{A named list of strings: list(name='ShortVarName', long_name='A Long Name')}
+\item{data_metadata}{list A named list of strings: list(name='ShortVarName', long_name='A Long Name')}
 
-\item{attributes}{An optional list of attributes that will be added at the global level. 
+\item{attributes}{list An optional list of attributes that will be added at the global level. 
 See details for useful attributes.}
 
-\item{add_to_existing}{boolean If TRUE and the file already exists, variables will be added to the existing file. 
-Note that this should be used to add variables not stations or time steps. All inputs should be the same as are 
-already in the file.}
+\item{add_to_existing}{boolean If TRUE and the file already exists, 
+variables will be added to the existing file. See details for more.}
 }
 \description{
-This creates a timeseries discrete sampling geometry NCDF file
+This function creates a timeseries discrete sampling geometry NetCDF file.
+It uses the orthogonal array encoding to write one \code{data.frame} per
+function call. This encoding is best suited to data with the same number of
+timesteps per instance (e.g. geometry or station).
 }
 \details{
-title = "title"
-abstract = "history"
-provider site = "institution"
-provider name ="source"
-description = "description"
+Suggested Global Variables:
+c(title = "title", 
+abstract = "history", 
+provider site = "institution", 
+provider name ="source", 
+description = "description")
+
+Note regarding add_to_existing:
+add_to_existing = TRUE should only be used to add variables to an existing 
+NetCDF discrete sampling geometry file. All other inputs should be the 
+same as are already in the file. If the functions is called with 
+add_to_existing=FALSE (the default), it will overwrite an existing file 
+with the same name. The expected usage is to call this function repeatedly 
+only changing the data, data_unit, data_prec and data_metadata inputs.
 }
 \references{
 http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
+http://cfconventions.org/cf-conventions/cf-conventions.html#_orthogonal_multidimensional_array_representation
+http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data
 }

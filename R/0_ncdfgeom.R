@@ -18,9 +18,15 @@ pkg.env <- new.env()
 pkg.env$multi_val <- 0
 pkg.env$hole_val <- 1
 
-pkg.env$instance_dim_name <- "instance"
-
 # Arbitrary dim and variable names assumed in code.
+pkg.env$instance_dim_name <- "instance"
+pkg.env$time_dim_name <- "time"
+pkg.env$time_var_name <- "time"
+pkg.env$lat_coord_var_name <- "lat"
+pkg.env$lon_coord_var_name <- "lon"
+pkg.env$alt_coord_var_name <- "alt"
+pkg.env$str_len_dim <- "name_strlen"
+pkg.env$dsg_timeseries_id <- "instance_name"
 pkg.env$node_dim_name <- "node"
 pkg.env$x_nodes <- "x_nodes"
 pkg.env$y_nodes <- "y_nodes"
@@ -42,6 +48,11 @@ pkg.env$part_node_count_attr_name <- "part_node_count"
 pkg.env$part_type_attr_name <- "interior_ring"
 pkg.env$geometry_container_att_name <- "geometry"
 pkg.env$crs <- "grid_mapping"
+pkg.env$time_var_standard_name <- "time"
+pkg.env$lat_coord_var_standard_name <- "latitude"
+pkg.env$lon_coord_var_standard_name <- "longitude"
+pkg.env$alt_coord_var_standard_name <- "height"
+pkg.env$timeseries_id_cf_role <- "timeseries_id"
 
 check_geomData <- function(geomData) {
 	if (any(c("sf", "sfc") %in% class(geomData))) {

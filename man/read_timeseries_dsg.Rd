@@ -21,7 +21,7 @@ The current implementation checks several NetCDF-CF specific conventions prior t
 read the file. The Conventions, featureType, and cdm_data_type global attributes are checked but not
 strictly required. 
 
-Variables with standard_name and/or cf_rol of station_id and/or timeseries_id are 
+Variables with standard_name and/or cf_role of station_id and/or timeseries_id are 
 searched for to indicate which variable is the 'station identifier'. The function stops 
 if one is not found.
 
