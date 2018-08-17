@@ -57,17 +57,17 @@ read_timeseries_dsg = function(nc_file){
 	# Look for 'coordinates' that match variable names. http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/ch09s05.html
 	coord_vars<-list()
 	data_vars<-list()
-	data_var<-FALSE
 	for(var in nc$var) {
-		for(coord_var in append(nc$var,nc$dim)) {
-			if(grepl(coord_var$name,ncatt_get(nc,var$name,'coordinates')$value)) {
-				coord_vars<-append(coord_vars,coord_var$name)
-				data_var<-TRUE
+	  data_var <- FALSE
+		for (coord_var in append(nc$var,nc$dim)) {
+			if (grepl(coord_var$name, ncatt_get(nc, var$name, 'coordinates')$value)) {
+				coord_vars <- append(coord_vars,coord_var$name)
+				data_var <- TRUE
 			}
 		}
-		if(data_var) { data_vars<-append(data_vars,var$name) }
+		if (data_var) { data_vars<-append(data_vars,var$name) }
 	}
-	if(length(coord_vars)==0) { stop('No coordinates declarations were found in the file.') }
+	if (length(coord_vars)==0) { stop('No coordinates declarations were found in the file.') }
 	
 	# Given the coordinates found look for one and only one variable with standard name time, latitude, and longitude. OR (worst case maybe don't support) units like 'days since 1970-01-01 00:00:00', or 'degrees_east', or 'degrees_north'
 	lat<-NULL
