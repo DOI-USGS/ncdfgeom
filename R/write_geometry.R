@@ -2,10 +2,8 @@
 #'
 #'
 #'@param nc_file A string file path to the nc file to be created.
-#'@param instance_names A character vector of names for geometries.
-#'If NULL, integers are used. If the geomData has a data frame, this is not used.
-#'@param instance_dim_name If the file provided already has an instance dimension,
-#'it needs to be provided as a character string otherwise a new instance dim may be created.
+#'@param instance_dim_name Not required if adding geometry to a NetCDF-CF Discrete Sampling Geometries 
+#'timeSeries file. For a new file, will use package default -- "instance" -- if not supplied.
 #'@param geomData An object of class \code{SpatialLines}, \code{SpatialPolygons}
 #'or their sf equivalents with WGS84 lon in the x coordinate and lat in the y coordinate.
 #'Note that three dimensional geometries are not supported.
@@ -25,19 +23,11 @@
 #'@importFrom sp SpatialLinesDataFrame polygons SpatialPoints
 #'
 #'@export
-write_geometry = function(nc_file, geomData = NULL, instance_names = NULL, instance_dim_name = NULL, lats = NULL, lons = NULL, variables = list()){
+write_geometry = function(nc_file, geomData = NULL, instance_dim_name = NULL, lats = NULL, lons = NULL, variables = list()){
 
 	geomData <- check_geomData(geomData)
 	
   pointsMode <- FALSE
-
-  if(is.null(instance_names) && !is.null(geomData)) {
-    if(class(geomData)=="SpatialPoints" || class(geomData)=="SpatialPointsDataFrame") {
-      instance_names <- as.character(unique(attributes(geomData@coords)$dimnames[[1]]))
-    } else {
-      instance_names <- as.character(c(1:length(geomData)))
-    }
-  }
 
   if(class(geomData) == "SpatialPolygonsDataFrame") {
     attData<-geomData@data
@@ -47,7 +37,7 @@ write_geometry = function(nc_file, geomData = NULL, instance_names = NULL, insta
   } else if(class(geomData) == "SpatialPolygons") {
     geomData<-polygons(geomData)
   } else if(class(geomData) == "SpatialLines") {
-    geomData<-SpatialLinesDataFrame(geomData,data=as.data.frame(instance_names,stringsAsFactors = FALSE))
+    geomData<-geomData
   } else if(class(geomData) == "SpatialPoints") {
     pointsMode<-TRUE
   } else if(class(geomData) == "SpatialPointsDataFrame") {
@@ -58,15 +48,8 @@ write_geometry = function(nc_file, geomData = NULL, instance_names = NULL, insta
   } else if(!is.null(lats)) {
     pointsMode<-TRUE
     geomData <- SpatialPoints(as.data.frame(list(x=lons, y=lats)),proj4string = CRS("+proj=longlat +datum=WGS84"))
-    if(is.null(instance_names)) {
-      instance_names<-as.character(c(1:length(lats)))
-    }
   } else {
     stop("Did not find supported spatial data.")
-  }
-
-  if(!pointsMode && !is.null(geomData)) {
-    if(length(instance_names)!=length(geomData)) stop('instance_names must be same length as data')
   }
 
   if(is.null(instance_dim_name)) {

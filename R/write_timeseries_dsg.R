@@ -2,7 +2,7 @@
 #'
 #'
 #'@param nc_file A string file path to the nc file to be created.
-#'@param station_names A vector of names for each station to be added to the file.
+#'@param instance_names A vector of names for each station to be added to the file.
 #'@param times A vector of times. Must be of type \code{POSIXct} or an attempt to 
 #'convert it will be made using \code{as.POSIXct(times)}.
 #'@param lats Vector of latitudes 
@@ -38,7 +38,7 @@
 #'@importFrom methods is
 #'
 #'@export
-write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data, alts=NA, data_unit='',
+write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data, alts=NA, data_unit='',
 																data_prec='double',data_metadata=list(name='data',long_name='unnamed data'),
 																attributes=list(),add_to_existing=FALSE){
 	
@@ -51,13 +51,13 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		times = as.POSIXct(times)
 	}
 	
-	n = length(station_names)
+	n = length(instance_names)
 	if(length(lats)!=n || length(lons)!=n){
-		stop('station_names, lats, and lons must all be vectors of the same length')
+		stop('instance_names, lats, and lons must all be vectors of the same length')
 	}
 	
 	if(!is.na(alts[1]) && length(alts)!=n){
-		stop('station_names and alts must all be vectors of the same length')
+		stop('instance_names and alts must all be vectors of the same length')
 	}
 	
 	if(ncol(data)!=n){
@@ -92,7 +92,7 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		#obs_dim = ncdim_def('obs', '', 1:n, unlim = TRUE, create_dimvar=FALSE)
 		station_dim = ncdim_def('station', '', 1:n, create_dimvar=FALSE)
 		time_dim = ncdim_def('time', '', 1:nt, unlim=FALSE, create_dimvar=FALSE)
-		strlen_dim = ncdim_def('name_strlen', '', 1:max(sapply(station_names, nchar)), create_dimvar=FALSE)
+		strlen_dim = ncdim_def('name_strlen', '', 1:max(sapply(instance_names, nchar)), create_dimvar=FALSE)
 		
 		#Setup our spatial and time info
 		station_var = ncvar_def('station_name', '', dim=list(strlen_dim, station_dim), missval=NULL, prec='char', longname='Station Names')
@@ -149,7 +149,7 @@ write_timeseries_dsg = function(nc_file, station_names, lats, lons, times, data,
 		if(!is.na(alts[1])){
 			ncvar_put(nc, alt_var, alts, count=n)
 		}
-		ncvar_put(nc, station_var, station_names, count=c(-1,n))
+		ncvar_put(nc, station_var, instance_names, count=c(-1,n))
 		
 		putDataInNC(nc,nt,n,data_name,data)
 		

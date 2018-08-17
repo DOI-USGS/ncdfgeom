@@ -28,7 +28,6 @@
 #'
 #'hucPolygons_nc <- ncdfgeom::ToNCDFSG(nc_file=huc_eta_nc, 
 #'                                       geomData = hucPolygons, 
-#'                                       instance_names = hucPolygons$HUC12, 
 #'                                       instance_dim_name = "station", 
 #'                                       variables = hucTimeseries$var)
 #'huc_poly <- read_geometry(huc_eta_nc)
@@ -75,11 +74,7 @@ read_geometry = function(nc_file) {
                                      data = dataFrame, match.ID = FALSE)
   } else {
     node_count <- c(ncvar_get(nc, geom_container$node_count))
-    if(!is.null(instance_id)) {
-      instance_names <- ncvar_get(nc, instance_id)
-    } else {
-      instance_names <- as.character(c(1:length(node_count)))
-    }
+    
     if(is.character(geom_container$part_node_count)) {
       part_node_count <- ncvar_get(nc, geom_container$part_node_count)
     } else {

@@ -62,7 +62,7 @@ test_that('soilmoisturetools data writes as expected', {
   )
   nc_file <- write_timeseries_dsg(
     nc_file = tempfile(),
-    station_names = ok$station,
+    instance_names = ok$station,
     lats = ok_meta$latitude,
     lons = ok_meta$longitude,
     alts = ok_meta$elevation,

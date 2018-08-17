@@ -78,8 +78,7 @@ test_that("point lat lon", {
 
 test_that("shapefile_point", {
   pointData <- sf::read_sf("data/se_sites/se_sitest.shp")
-  instance_names <- pointData$station_nm
-  nc_file <- write_geometry(nc_file = tempfile(), geomData = pointData, instance_names = instance_names)
+  nc_file <- write_geometry(nc_file = tempfile(), geomData = pointData)
   nc <- nc_open(nc_file)
   pointData_nogeo <- sf::st_set_geometry(pointData, NULL)
   

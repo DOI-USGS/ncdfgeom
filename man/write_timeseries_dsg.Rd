@@ -4,7 +4,7 @@
 \alias{write_timeseries_dsg}
 \title{Create timeseries NCDF file}
 \usage{
-write_timeseries_dsg(nc_file, station_names, lats, lons, times, data,
+write_timeseries_dsg(nc_file, instance_names, lats, lons, times, data,
   alts = NA, data_unit = "", data_prec = "double",
   data_metadata = list(name = "data", long_name = "unnamed data"),
   attributes = list(), add_to_existing = FALSE)
@@ -12,7 +12,7 @@ write_timeseries_dsg(nc_file, station_names, lats, lons, times, data,
 \arguments{
 \item{nc_file}{A string file path to the nc file to be created.}
 
-\item{station_names}{A vector of names for each station to be added to the file.}
+\item{instance_names}{A vector of names for each station to be added to the file.}
 
 \item{lats}{Vector of latitudes}
 

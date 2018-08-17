@@ -4,9 +4,8 @@
 \alias{write_geometry}
 \title{Convert sp objects to NetCDF}
 \usage{
-write_geometry(nc_file, geomData = NULL, instance_names = NULL,
-  instance_dim_name = NULL, lats = NULL, lons = NULL,
-  variables = list())
+write_geometry(nc_file, geomData = NULL, instance_dim_name = NULL,
+  lats = NULL, lons = NULL, variables = list())
 }
 \arguments{
 \item{nc_file}{A string file path to the nc file to be created.}
@@ -15,11 +14,8 @@ write_geometry(nc_file, geomData = NULL, instance_names = NULL,
 or their sf equivalents with WGS84 lon in the x coordinate and lat in the y coordinate.
 Note that three dimensional geometries are not supported.}
 
-\item{instance_names}{A character vector of names for geometries.
-If NULL, integers are used. If the geomData has a data frame, this is not used.}
-
-\item{instance_dim_name}{If the file provided already has an instance dimension,
-it needs to be provided as a character string otherwise a new instance dim may be created.}
+\item{instance_dim_name}{Not required if adding geometry to a NetCDF-CF Discrete Sampling Geometries 
+timeSeries file. For a new file, will use package default -- "instance" -- if not supplied.}
 
 \item{lats}{Vector of WGS84 latitudes}
 

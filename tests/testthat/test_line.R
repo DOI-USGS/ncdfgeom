@@ -37,8 +37,7 @@ test_that("multiline data frame works", {
   lineData <- get_fixture_data("multilinestring")
   testdata<-as.data.frame(list("name"=c("test_name"), "id"=c(1)), stringsAsFactors = FALSE)
   lineData <- dplyr::bind_cols(lineData, testdata)
-  instance_names <- lineData$name
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = lineData, instance_names = instance_names)
+  nc_file <- write_geometry(nc_file=tempfile(), geomData = lineData)
 
   nc<-nc_open(nc_file)
   expect_equal(class(nc),"ncdf4")
@@ -49,10 +48,8 @@ test_that("multiline data frame works", {
 
 test_that("shapefile line data works", {
   lineData <- sf::st_zm(sf::read_sf("data/NHDLine/NHDLine.shp"))
-  instance_names <- as.character(lineData$COMID)
   nc_file <- write_geometry(nc_file=tempfile(), 
-                      geomData = lineData, 
-                      instance_names = instance_names)
+                      geomData = lineData)
   nc<-nc_open(nc_file)
   returnLineData<-read_geometry(nc_file)
   compareSL(lineData, returnLineData)

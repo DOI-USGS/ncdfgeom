@@ -28,7 +28,6 @@ names(hucPolygons)
 
 hucPolygons_nc <- ncdfgeom::ToNCDFSG(nc_file=huc_eta_nc, 
                                       geomData = hucPolygons, 
-                                      instance_names = hucPolygons$HUC12, 
                                       instance_dim_name = "station", 
                                       variables = hucTimeseries$var)
 huc_poly <- read_geometry(huc_eta_nc)
