@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_geometry.R
 \name{write_geometry}
 \alias{write_geometry}
-\title{Convert sp objects to NetCDF}
+\title{Write sp or sf geometries and attributes to NetCDF-CF}
 \usage{
 write_geometry(nc_file, geomData = NULL, instance_dim_name = NULL,
   lats = NULL, lons = NULL, variables = list())

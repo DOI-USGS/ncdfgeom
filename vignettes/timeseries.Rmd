@@ -1,10 +1,9 @@
 ---
-title: "ncdfgeom"
+title: "Reading and Writing Timeseries"
 author: "David Blodgett"
-date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Reading and Writing Timeseries}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -58,7 +57,7 @@ global_attributes<-list(title = nc_title, summary = nc_summary, date_created=nc_
 												project=nc_project, processing_level=nc_proc_level)
 
 nc_file <- ncdfgeom::write_timeseries_dsg(nc_file = "demo_nc.nc", 
-																						station_names = names(timeseries_data),
+																						instance_names = names(timeseries_data),
 																						lats = lats, lons = lons, times = time, alts = alts,
 																						data = timeseries_data,
 																						data_unit = raw_data$units[1],

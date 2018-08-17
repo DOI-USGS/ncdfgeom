@@ -1,5 +1,4 @@
-#'@title Convert sp objects to NetCDF
-#'
+#'@title Write sp or sf geometries and attributes to NetCDF-CF
 #'
 #'@param nc_file A string file path to the nc file to be created.
 #'@param instance_dim_name Not required if adding geometry to a NetCDF-CF Discrete Sampling Geometries 

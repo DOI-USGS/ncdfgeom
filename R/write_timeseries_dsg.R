@@ -1,4 +1,4 @@
-#'@title Create timeseries NCDF file
+#'@title Write orthoganal array time series to NetCDF-CF
 #'
 #'@param nc_file A string file path to the nc file to be created.
 #'@param instance_names A vector of names for each instance 

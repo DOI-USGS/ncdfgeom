@@ -120,7 +120,7 @@ climdiv_centroids <- climdiv_poly %>%
 nc_file <- "climdiv_prcp.nc"
 
 write_timeseries_dsg(nc_file = nc_file, 
-                     station_names = climdiv_poly$CLIMDIV, 
+                     instance_names = climdiv_poly$CLIMDIV, 
                      lats = climdiv_centroids$Y, 
                      lons = climdiv_centroids$X, 
                      times = prcp_data$date, 
@@ -266,7 +266,8 @@ variables:
 		:_Format = "classic" ;
 }
 ```
-For more information about the polygon and timeseries data structures used here, see the [NetCDF-CF standard.](http://cfconventions.org/cf-conventions/cf-conventions.html)
+For more information about the polygon and timeseries data structures used here, see the [NetCDF-CF standard.](http://cfconventions.org/cf-conventions/cf-conventions.html)  
+
 ## Read Data
 
 Now that we have all our data in a single file, we can read it back in.
@@ -321,7 +322,7 @@ climdiv_poly <- climdiv_poly %>%
 
 title <- paste0("\n Sum of: ", prcp_data$varmeta$climdiv_prcp_inches$long_name, "\n", 
                 format(prcp_data$time[1], 
-                         "%Y-%m", tz = "UTC"), "-", 
+                         "%Y-%m", tz = "UTC"), " - ", 
                 format(prcp_data$time[length(prcp_data$time)], 
                          "%Y-%m", tz = "UTC"))
 

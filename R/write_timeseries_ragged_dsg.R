@@ -1,4 +1,4 @@
-#'@title Create ragged array timeseries NCDF file
+#'@title Write ragged array timeseries to NetCDF-CF
 #'
 #'
 #'@param nc_file A string file path to the nc file to be created.

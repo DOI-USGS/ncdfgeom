@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_timeseries_dsg.R
 \name{write_timeseries_dsg}
 \alias{write_timeseries_dsg}
-\title{Create timeseries NCDF file}
+\title{Write orthoganal array time series to NetCDF-CF}
 \usage{
 write_timeseries_dsg(nc_file, instance_names, lats, lons, times, data,
   alts = NA, data_unit = "", data_prec = "double",

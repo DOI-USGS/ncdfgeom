@@ -1,4 +1,4 @@
-#'@title Convert NetCDF Spatial Geometries to sf
+#'@title Read NetCDF-CF spatial geometries
 #'
 #'@param nc_file A string file path to the nc file to be read.
 #'

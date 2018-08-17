@@ -1,9 +1,9 @@
 ---
-title: "ncdfgeom geometry tools"
+title: "Reading and Writing Geometry"
 author: "David Blodgett"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{ncdfgeom geometry tools}
+  %\VignetteIndexEntry{Reading and Writing Geometry}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,15 +18,14 @@ knitr::opts_chunk$set(
 options(scipen = 9999)
 ```
 
-```{r load, echo=FALSE, message=FALSE, warning=FALSE}
+This vignette shows how to add polygon data to a NetCDF DSG TimeSeries file, read the polygon data from the NetCDF file, and write it to a shapefile format.
+
+First, we open a NetCDF file and some geojson data containing polygons. These files are both included in "extdata" of `ncdfgeom`.
+```{r libs}
 file.copy(system.file('extdata','example_huc_eta.nc', package = 'ncdfgeom'), 
 					"hucPolygons.nc", 
 					overwrite = TRUE) -> quiet
-```
-Below is a demo that shows how to add polygon data to a NetCDF DSG TimeSeries file, read the polygon data from the NetCDF file, and write it to a shapefile format.
 
-First, we load up a NetCDF file and some geoJson data containing polygons.
-```{r libs}
 hucTimeseries <- ncdf4::nc_open("hucPolygons.nc")
 
 hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json',
@@ -77,14 +76,12 @@ variables:
 		:standard_name_vocabulary = "CF-1.7" ;
 }
 ```
-
 Now we can use the `write_geometry` function to add the polygon data to the NetCDF file.
 ```{r demo}
 hucPolygons_nc <- ncdfgeom::write_geometry(nc_file="hucPolygons.nc",
-                                       geomData = hucPolygons, 
-                                       instance_names = hucPolygons$HUC12, 
-                                       instance_dim_name = "station", 
-                                       variables = hucTimeseries$var)
+                                           geomData = hucPolygons, 
+                                           instance_dim_name = "station", 
+                                           variables = hucTimeseries$var)
 ```
 
 Now the header of the NetCDF file looks like: (note some variables removed to be more concise)

@@ -1,11 +1,10 @@
-#'@title Get Dataframe from NetCDF-DSG File
-#'
+#'@title Read attribute dataframe from NetCDF-DSG file
 #'
 #'@param nc A open ncdf4 object.
 #'@param instance_dim The NetCDF instance/station dimension.
 #'
 #'@description
-#'Gets instance data from a NetCDF-DSG file and returns it in a \code{data.frame}.
+#'Gets attribute data from a NetCDF-DSG file and returns it in a \code{data.frame}.
 #'This function is intended as a convenience to be used within workflows where
 #'the netCDF file is already open and well understood.
 #'

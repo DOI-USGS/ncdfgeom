@@ -2,27 +2,32 @@
 % Please edit documentation in R/get_gridmapping.R
 \name{get_gridmapping}
 \alias{get_gridmapping}
-\title{Get NetCDF-CF Grid Mapping from Projection}
+\title{Get NetCDF-CF grid mapping from projection}
 \usage{
 get_gridmapping(prj)
 }
 \arguments{
-\item{prj}{A proj.4 string as returned from the sp CRS function.}
+\item{prj}{A proj.4 string as returned from sp::CRS() or
+the sf::st_crs().}
 }
 \value{
 A named list containing attributes required for that grid_mapping.
 }
 \description{
-This function takes a proj4 string and returns a NetCDF-CF projection container as
+Takes a proj4 string and returns a NetCDF-CF projection as
 a named list of attributes.
 }
-\details{
+\examples{
+sample_data <- sf::read_sf(system.file("shape/nc.shp", package = "sf"))
+get_gridmapping(sf::st_crs(sample_data)$proj4string)
+get_gridmapping(sf::st_crs("+init=epsg:5070")$proj4string)
+sample_data <- sf::as_Spatial(sample_data)
+get_gridmapping(sample_data@proj4string)
+grid_mapping <- get_gridmapping("+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs")
+
+}
+\references{
 https://en.wikibooks.org/wiki/PROJ.4
 https://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus
 http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
-}
-\examples{
-prj <- "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"
-grid_mapping <- get_gridmapping(prj)
-
 }

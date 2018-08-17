@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_timeseries_ragged_dsg.R
 \name{write_timeseries_ragged_dsg}
 \alias{write_timeseries_ragged_dsg}
-\title{Create ragged array timeseries NCDF file}
+\title{Write ragged array timeseries to NetCDF-CF}
 \usage{
 write_timeseries_ragged_dsg(nc_file, all_data, data_units = list(),
   data_longnames = list(), attributes = list())

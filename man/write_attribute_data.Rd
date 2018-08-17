@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_attribute_data.R
 \name{write_attribute_data}
 \alias{write_attribute_data}
-\title{Put attribute / instance data in a NetCDF-CF File}
+\title{Write attribute data to NetCDF-CF}
 \usage{
 write_attribute_data(nc_file, attData, instance_dim_name = "instance",
   units = rep("unknown", ncol(attData)), ...)

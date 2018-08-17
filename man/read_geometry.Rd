@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_geometry.R
 \name{read_geometry}
 \alias{read_geometry}
-\title{Convert NetCDF Spatial Geometries to sf}
+\title{Read NetCDF-CF spatial geometries}
 \usage{
 read_geometry(nc_file)
 }

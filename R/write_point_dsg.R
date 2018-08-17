@@ -1,4 +1,4 @@
-#'@title Create point data NCDF file
+#'@title Write NetCDF-CF point featuretype
 #'
 #'
 #'@param nc_file A string file path to the nc file to be created.

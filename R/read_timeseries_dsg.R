@@ -1,5 +1,4 @@
-#'@title Read timeseries NCDF file
-#'
+#'@title Read NetCDF-CF timeSeries featuretype
 #'
 #'@param nc_file A string file path to the nc file to be created.
 #'

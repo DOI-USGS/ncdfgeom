@@ -1,4 +1,4 @@
-#'@title Put attribute / instance data in a NetCDF-CF File
+#'@title Write attribute data to NetCDF-CF
 #'
 #'@param nc_file A string file path to the nc file to be created. It must already have an instance dimension.
 #'@param attData A \code{data.frame} as included in a spatial dataFrame.

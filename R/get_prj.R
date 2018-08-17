@@ -4,7 +4,7 @@
 #' a proj4 string.
 #'
 #' The WGS84 datum is used as a default if one os not provided
-#' in the projectiuon container, warnings will be provided in that case.
+#' in the projection container, warnings will be provided in that case.
 #'
 #' If only a semi_major axis is provided, a sperical earch is assumed.
 #'

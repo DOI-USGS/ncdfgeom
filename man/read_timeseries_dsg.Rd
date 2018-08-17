@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_timeseries_dsg.R
 \name{read_timeseries_dsg}
 \alias{read_timeseries_dsg}
-\title{Read timeseries NCDF file}
+\title{Read NetCDF-CF timeSeries featuretype}
 \usage{
 read_timeseries_dsg(nc_file)
 }

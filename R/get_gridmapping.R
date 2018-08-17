@@ -1,14 +1,10 @@
-#' Get NetCDF-CF Grid Mapping from Projection
+#' Get NetCDF-CF grid mapping from projection
 #'
-#' This function takes a proj4 string and returns a NetCDF-CF projection container as
+#' Takes a proj4 string and returns a NetCDF-CF projection as
 #' a named list of attributes.
 #'
-#' https://en.wikibooks.org/wiki/PROJ.4
-#' https://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus
-#' http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
-#'
-#'
-#' @param prj A proj.4 string as returned from the sp CRS function.
+#' @param prj A proj.4 string as returned from sp::CRS() or
+#' the sf::st_crs().
 #'
 #' @return A named list containing attributes required for that grid_mapping.
 #'
@@ -17,8 +13,17 @@
 #' @export
 #'
 #' @examples
-#' prj <- "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"
-#' grid_mapping <- get_gridmapping(prj)
+#' sample_data <- sf::read_sf(system.file("shape/nc.shp", package = "sf"))
+#' get_gridmapping(sf::st_crs(sample_data)$proj4string)
+#' get_gridmapping(sf::st_crs("+init=epsg:5070")$proj4string)
+#' sample_data <- sf::as_Spatial(sample_data)
+#' get_gridmapping(sample_data@proj4string)
+#' grid_mapping <- get_gridmapping("+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs")
+#' 
+#' @references 
+#' https://en.wikibooks.org/wiki/PROJ.4
+#' https://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus
+#' http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
 #'
 get_gridmapping <- function(prj) {
   al <- prepCRS(prj)
@@ -191,6 +196,10 @@ getGeoDatum_gm <- function(al) {
   } else if(!is.null(al$datum) && al$datum == "WGS84") {
     list(semi_major_axis = 6378137,
          inverse_flattening = 298.257223563,
+         longitude_of_prime_meridian = 0)
+  } else if(!is.null(al$datum) && al$datum == "NAD27") {
+    list(semi_major_axis = 6378206.4,
+         inverse_flattening = 294.978698214,
          longitude_of_prime_meridian = 0)
   } else if(!is.null(al$ellps) && 
   					!is.null(al$towgs84) && 

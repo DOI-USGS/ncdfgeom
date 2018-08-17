@@ -44,6 +44,25 @@ test_that("wgs 84 lat lon", {
   expect_equal(crs, c[names(crs)])
 })
 
+test_that("NAD27 lat lon", {
+  p <- "+proj=longlat +datum=NAD27 +no_defs"
+  
+  p2 <- "+proj=longlat +a=6378206.4 +f=0.00339007530392762 +pm=0 +no_defs"
+  
+  c <- list(grid_mapping_name="latitude_longitude",
+            longitude_of_prime_meridian = 0,
+            semi_major_axis = 6378206.4,
+            inverse_flattening = 294.978698214)
+  
+  prj <- get_prj(c)
+  
+  expect_equal(prj, p2)
+  
+  crs <- get_gridmapping(p)
+  
+  expect_equal(crs, c[names(crs)])
+})
+
 test_that("albers equal area epsg:5070", {
   p <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +units=m +lat_0=23 +lon_0=-96 +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"
 

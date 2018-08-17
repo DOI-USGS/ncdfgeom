@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_attribute_data.R
 \name{read_attribute_data}
 \alias{read_attribute_data}
-\title{Get Dataframe from NetCDF-DSG File}
+\title{Read attribute dataframe from NetCDF-DSG file}
 \usage{
 read_attribute_data(nc, instance_dim)
 }
@@ -12,7 +12,7 @@ read_attribute_data(nc, instance_dim)
 \item{instance_dim}{The NetCDF instance/station dimension.}
 }
 \description{
-Gets instance data from a NetCDF-DSG file and returns it in a \code{data.frame}.
+Gets attribute data from a NetCDF-DSG file and returns it in a \code{data.frame}.
 This function is intended as a convenience to be used within workflows where
 the netCDF file is already open and well understood.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_point_dsg.R
 \name{write_point_dsg}
 \alias{write_point_dsg}
-\title{Create point data NCDF file}
+\title{Write NetCDF-CF point featuretype}
 \usage{
 write_point_dsg(nc_file, lats, lons, alts, times, data,
   data_units = rep("", ncol(data)), feature_names = NULL, ...)
