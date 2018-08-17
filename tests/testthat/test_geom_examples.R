@@ -15,7 +15,7 @@ test_that("create geom_examples.md", {
               "Multiple MultiPolygons with Interior Rings (2D)")
   
   sink(geom_examples)
-  cat(paste("# Examples - Contiguous Ragged Arrays  \nCreated",Sys.time(),"  \n\n"))
+  cat(paste("# Examples - Contiguous Ragged Arrays  \n\n"))
   
   for(geom in 1:length(namesstr)) {
     cat(paste0("## ", namesstr[geom],"  \nWell Known Text (WKT): ```",fixtureData[["2d"]][order[geom]]),"```  \n")

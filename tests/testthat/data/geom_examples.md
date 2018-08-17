@@ -1,5 +1,4 @@
 # Examples - Contiguous Ragged Arrays  
-Created 2018-08-16 20:54:04   
 
 ## Point (2D)  
 Well Known Text (WKT): ```POINT (30 10) ```  

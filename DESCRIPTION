@@ -7,10 +7,12 @@ Authors@R: c(person("David", "Blodgett", role = c("aut", "cre"),
                     email = "dblodgett@usgs.gov"),
              person("Luke", "Winslow", role = "ctb"))
 Description: Tools to create discrete sampling geometry and spatial geometry NetCDF files.
+URL: https://github.com/USGS-R/ncdfgeom#readme
+BugReports: https://github.com/USGS-R/ncdfgeom/issues
 Imports:
     ncdf4,
-    sp,
     sf,
+    sp,
   	rgdal,
     methods,
     dplyr
@@ -24,7 +26,7 @@ Suggests:
     knitr,
     rmarkdown,
     pkgdown,
-    leaflet
+    tidyr
 License: CC0
 LazyData: TRUE
 Encoding: UTF-8
