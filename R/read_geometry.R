@@ -112,7 +112,7 @@ read_geometry = function(nc_file) {
         if(poly) { tsrl<-Polygon(coords, hole=hole)
         } else if(line) { tsrl<-Line(coords) }
 
-        dimnames(tsrl@coords) <- list(NULL, c("x", "y"))
+        dimnames(tsrl@coords) <- list(NULL, c(pkg.env$x_nodes, pkg.env$y_nodes))
 
         srl <- append(srl, tsrl)
 

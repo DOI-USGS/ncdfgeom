@@ -22,6 +22,8 @@ pkg.env$instance_dim_name <- "instance"
 
 # Arbitrary dim and variable names assumed in code.
 pkg.env$node_dim_name <- "node"
+pkg.env$x_nodes <- "x_nodes"
+pkg.env$y_nodes <- "y_nodes"
 pkg.env$part_dim_name <- "part"
 pkg.env$part_node_count_var_name <- "part_node_count"
 pkg.env$part_type_var_name <- "interior_ring"

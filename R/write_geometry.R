@@ -199,8 +199,8 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
   }
   
   node_dim<-ncdim_def(node_dim_name, '', 1:length(xVals), create_dimvar=FALSE)
-  xVar <- ncvar_def(name = "x", units = 'degrees_east', dim = node_dim, prec = "double")
-  yVar <- ncvar_def(name = "y", units = 'degrees_north', dim = node_dim, prec = "double")
+  xVar <- ncvar_def(name = pkg.env$x_nodes, units = 'degrees_east', dim = node_dim, prec = "double")
+  yVar <- ncvar_def(name = pkg.env$y_nodes, units = 'degrees_north', dim = node_dim, prec = "double")
   
   if(file.exists(nc_file)) {
     new_file <- TRUE
@@ -216,12 +216,12 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
   nc <- nc_open(nc_file,write = TRUE)
   
   
-  ncvar_put(nc = nc, varid = 'x', vals = xVals)
-  ncvar_put(nc = nc, varid = 'y', vals = yVals)
-  ncatt_put(nc = nc, varid = 'x', attname = 'standard_name', attval = 'longitude')
-  ncatt_put(nc = nc, varid = 'y', attname = 'standard_name', attval = 'latitude')
-  ncatt_put(nc = nc, varid = 'x', attname = "axis", attval = "X")
-  ncatt_put(nc = nc, varid = 'y', attname = "axis", attval = "Y")
+  ncvar_put(nc = nc, varid = pkg.env$x_nodes, vals = xVals)
+  ncvar_put(nc = nc, varid = pkg.env$y_nodes, vals = yVals)
+  ncatt_put(nc = nc, varid = pkg.env$x_nodes, attname = 'standard_name', attval = 'longitude')
+  ncatt_put(nc = nc, varid = pkg.env$y_nodes, attname = 'standard_name', attval = 'latitude')
+  ncatt_put(nc = nc, varid = pkg.env$x_nodes, attname = "axis", attval = "X")
+  ncatt_put(nc = nc, varid = pkg.env$y_nodes, attname = "axis", attval = "Y")
   
   geom_container <- ncvar_def(name = pkg.env$geom_container_var_name, units = '', dim = list())
   ncvar_add(nc, geom_container)
@@ -248,7 +248,7 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
     ncvar_put(nc = nc, varid = pkg.env$node_count_var_name, vals = node_count)
   }
   
-  ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$node_coordinates, attval = 'x y')
+  ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$node_coordinates, attval = paste(pkg.env$x_nodes, pkg.env$y_nodes))
   
   crs <- get_gridmapping(geomData@proj4string)
   

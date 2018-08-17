@@ -5,8 +5,8 @@ test_that("linedata works", {
   nc_file <- write_geometry(nc_file=tempfile(), geomData = lineData)
   nc<-nc_open(nc_file)
 
-  expect_equal(as.numeric(ncvar_get(nc, "x")), st_coordinates(lineData)[,"X"])
-  expect_equal(as.numeric(ncvar_get(nc, "y")), st_coordinates(lineData)[,"Y"])
+  expect_equal(as.numeric(ncvar_get(nc, pkg.env$x_nodes)), st_coordinates(lineData)[,"X"])
+  expect_equal(as.numeric(ncvar_get(nc, pkg.env$y_nodes)), st_coordinates(lineData)[,"Y"])
 
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name)$value,
                     "line")

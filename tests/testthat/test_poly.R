@@ -10,10 +10,10 @@ test_that("data for basic polygon", {
 
   expect_equal(nc$dim$instance$vals,c(1))
 
-  expect_equal(as.numeric(ncvar_get(nc,'x')),
+  expect_equal(as.numeric(ncvar_get(nc,pkg.env$x_nodes)),
                as.numeric(st_coordinates(polygonData)[,"X"]))
 
-  expect_equal(as.numeric(ncvar_get(nc,'y')),
+  expect_equal(as.numeric(ncvar_get(nc,pkg.env$y_nodes)),
                as.numeric(st_coordinates(polygonData)[,"Y"]))
 
   expect_equal(as.numeric(ncvar_get(nc,'node_count')),
@@ -22,18 +22,18 @@ test_that("data for basic polygon", {
   expect_equivalent(ncatt_get(nc, 0,"Conventions")$value,
                     pkg.env$cf_version)
 
-  expect_equivalent(ncatt_get(nc, "x","standard_name")$value,
+  expect_equivalent(ncatt_get(nc, pkg.env$x_nodes,"standard_name")$value,
                     "longitude")
-  expect_equivalent(ncatt_get(nc, "y","standard_name")$value,
+  expect_equivalent(ncatt_get(nc, pkg.env$y_nodes,"standard_name")$value,
                     "latitude")
 
-  expect_equal(ncatt_get(nc, "x","axis")$value,
+  expect_equal(ncatt_get(nc, pkg.env$x_nodes,"axis")$value,
                pkg.env$x_axis)
-  expect_equal(ncatt_get(nc, "y","axis")$value,
+  expect_equal(ncatt_get(nc, pkg.env$y_nodes,"axis")$value,
                pkg.env$y_axis)
 
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$node_coordinates)$value,
-                    "x y")
+                    paste(pkg.env$x_nodes, pkg.env$y_nodes))
 
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name)$value,
                     "polygon")
@@ -113,8 +113,8 @@ test_that("multipolygon with a hole.", {
   expect_equal(length(nc$dim$node$vals), as.numeric(sum(ncvar_get(nc,pkg.env$node_count_var_name))))
   expect_equal(length(nc$dim$node$vals), as.numeric(sum(ncvar_get(nc,pkg.env$part_node_count_var_name))))
 
-  expect_equal(length(ncvar_get(nc,"x")), as.numeric(sum(ncvar_get(nc,pkg.env$node_count_var_name))))
-  expect_equal(length(ncvar_get(nc,"x")), as.numeric(sum(ncvar_get(nc,pkg.env$part_node_count_var_name))))
+  expect_equal(length(ncvar_get(nc,pkg.env$x_nodes)), as.numeric(sum(ncvar_get(nc,pkg.env$node_count_var_name))))
+  expect_equal(length(ncvar_get(nc,pkg.env$x_nodes)), as.numeric(sum(ncvar_get(nc,pkg.env$part_node_count_var_name))))
 
   checkAllPoly(polygonData, ncvar_get(nc,pkg.env$node_count_var_name),
                ncvar_get(nc,pkg.env$part_node_count_var_name),
@@ -136,8 +136,8 @@ test_that("multipolygons with holes.", {
   expect_equal(length(nc$dim$node$vals), as.numeric(sum(ncvar_get(nc,pkg.env$node_count_var_name))))
   expect_equal(length(nc$dim$node$vals), as.numeric(sum(ncvar_get(nc,pkg.env$part_node_count_var_name))))
 
-  expect_equal(length(ncvar_get(nc,"x")), as.numeric(sum(ncvar_get(nc,pkg.env$node_count_var_name))))
-  expect_equal(length(ncvar_get(nc,"x")), as.numeric(sum(ncvar_get(nc,pkg.env$part_node_count_var_name))))
+  expect_equal(length(ncvar_get(nc,pkg.env$x_nodes)), as.numeric(sum(ncvar_get(nc,pkg.env$node_count_var_name))))
+  expect_equal(length(ncvar_get(nc,pkg.env$x_nodes)), as.numeric(sum(ncvar_get(nc,pkg.env$part_node_count_var_name))))
 
   checkAllPoly(polygonData, ncvar_get(nc,pkg.env$node_count_var_name),
                ncvar_get(nc,pkg.env$part_node_count_var_name),
@@ -176,9 +176,9 @@ test_that("A whole shapefile can be written", {
   
   coords<-sf::st_coordinates(sf::st_geometry(polygonData)[[1]])[, c("X", "Y")]
   expect_equal(as.numeric(coords[nrow(coords):1,1]),
-               as.numeric(ncvar_get(nc, varid = "x", start = c(1), count = c(118))))
+               as.numeric(ncvar_get(nc, varid = pkg.env$x_nodes, start = c(1), count = c(118))))
   expect_equal(as.numeric(coords[nrow(coords):1,2]),
-               as.numeric(ncvar_get(nc, varid = "y", start = c(1), count = c(118))))
+               as.numeric(ncvar_get(nc, varid = pkg.env$y_nodes, start = c(1), count = c(118))))
   # Check to make sure a hole is encoded correctly.
   node_count <- ncvar_get(nc, pkg.env$node_count_var_name)
   part_node_count <- ncvar_get(nc, pkg.env$part_node_count_var_name)

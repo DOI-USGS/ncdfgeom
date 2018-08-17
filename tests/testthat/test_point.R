@@ -12,15 +12,15 @@ test_that("Point_timeSeries", {
   expect_equal(nc$dim$instance$vals,
                c(1))
 
-  expect_equal(as.numeric(ncvar_get(nc,'y')),
+  expect_equal(as.numeric(ncvar_get(nc,pkg.env$y_nodes)),
                as.numeric(st_coordinates(pointData)[,"Y"]))
 
-  expect_equal(as.numeric(ncvar_get(nc,'x')),
+  expect_equal(as.numeric(ncvar_get(nc,pkg.env$x_nodes)),
                as.numeric(st_coordinates(pointData)[,"X"]))
 
-  expect_equal(ncatt_get(nc,varid="y","axis")$value,
+  expect_equal(ncatt_get(nc,varid=pkg.env$y_nodes,"axis")$value,
   						 pkg.env$y_axis)
-  expect_equal(ncatt_get(nc,varid="x","axis")$value,
+  expect_equal(ncatt_get(nc,varid=pkg.env$x_nodes,"axis")$value,
   						 pkg.env$x_axis)
 
   expect_equivalent(ncatt_get(nc,varid=0,"Conventions")$value,
@@ -29,9 +29,9 @@ test_that("Point_timeSeries", {
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name)$value,
                     "point")
 
-  expect_equivalent(ncatt_get(nc,varid="y","standard_name")$value,
+  expect_equivalent(ncatt_get(nc,varid=pkg.env$y_nodes,"standard_name")$value,
                     "latitude")
-  expect_equivalent(ncatt_get(nc,varid="x","standard_name")$value,
+  expect_equivalent(ncatt_get(nc,varid=pkg.env$x_nodes,"standard_name")$value,
                     "longitude")
 
   returnPointData<-read_geometry(nc_file)
@@ -60,10 +60,10 @@ test_that("point lat lon", {
   expect_equal(nc$dim$instance$vals,
                c(1,2,3,4))
 
-  expect_equal(as.numeric(ncvar_get(nc,'y')),
+  expect_equal(as.numeric(ncvar_get(nc,pkg.env$y_nodes)),
                as.numeric(st_coordinates(multipointData)[, "Y"]))
 
-  expect_equal(as.numeric(ncvar_get(nc,'x')),
+  expect_equal(as.numeric(ncvar_get(nc,pkg.env$x_nodes)),
                as.numeric(st_coordinates(multipointData)[, "X"]))
 
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name)$value,
@@ -117,5 +117,3 @@ test_that("Point data can be written", {
   expect_equal(ncatt_get(nc, nc$var$GRIDCODE, "coordinates")$value, "lat lon alt time")
   expect_equal(ncatt_get(nc, nc$var$Y_COORD, "units")$value, "m")
 })
-
-
