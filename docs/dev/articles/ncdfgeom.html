@@ -56,10 +56,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/geometry.html">ncdfgeom geometry tools</a>
+      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
     </li>
     <li>
-      <a href="../articles/timeseries.html">ncdfgeom</a>
+      <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
     </li>
   </ul>
 </li>
@@ -144,7 +144,7 @@ devtools::install_github("USGS-R/ncdfgeom")</code></pre>
 <a class="sourceLine" id="cb12-9" data-line-number="9">nc_file &lt;-<span class="st"> "climdiv_prcp.nc"</span></a>
 <a class="sourceLine" id="cb12-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb12-11" data-line-number="11"><span class="kw"><a href="../reference/write_timeseries_dsg.html">write_timeseries_dsg</a></span>(<span class="dt">nc_file =</span> nc_file, </a>
-<a class="sourceLine" id="cb12-12" data-line-number="12">                     <span class="dt">station_names =</span> climdiv_poly<span class="op">$</span>CLIMDIV, </a>
+<a class="sourceLine" id="cb12-12" data-line-number="12">                     <span class="dt">instance_names =</span> climdiv_poly<span class="op">$</span>CLIMDIV, </a>
 <a class="sourceLine" id="cb12-13" data-line-number="13">                     <span class="dt">lats =</span> climdiv_centroids<span class="op">$</span>Y, </a>
 <a class="sourceLine" id="cb12-14" data-line-number="14">                     <span class="dt">lons =</span> climdiv_centroids<span class="op">$</span>X, </a>
 <a class="sourceLine" id="cb12-15" data-line-number="15">                     <span class="dt">times =</span> prcp_data<span class="op">$</span>date, </a>
@@ -281,7 +281,11 @@ variables:
         :title = "Demonstation of ncdfgeom" ;
         :_Format = "classic" ;
 }</code></pre>
-<p>For more information about the polygon and timeseries data structures used here, see the <a href="http://cfconventions.org/cf-conventions/cf-conventions.html">NetCDF-CF standard.</a> ## Read Data</p>
+<p>For more information about the polygon and timeseries data structures used here, see the <a href="http://cfconventions.org/cf-conventions/cf-conventions.html">NetCDF-CF standard.</a></p>
+</div>
+<div id="read-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#read-data" class="anchor"></a>Read Data</h2>
 <p>Now that we have all our data in a single file, we can read it back in.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">prcp_data &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_timeseries_dsg.html">read_timeseries_dsg</a></span>(<span class="st">"climdiv_prcp.nc"</span>)</a>
 <a class="sourceLine" id="cb16-2" data-line-number="2">climdiv_poly &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_geometry.html">read_geometry</a></span>(<span class="st">"climdiv_prcp.nc"</span>)</a>
@@ -334,7 +338,7 @@ variables:
 <a class="sourceLine" id="cb32-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb32-5" data-line-number="5">title &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">"</span><span class="ch">\n</span><span class="st"> Sum of: "</span>, prcp_data<span class="op">$</span>varmeta<span class="op">$</span>climdiv_prcp_inches<span class="op">$</span>long_name, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>, </a>
 <a class="sourceLine" id="cb32-6" data-line-number="6">                <span class="kw">format</span>(prcp_data<span class="op">$</span>time[<span class="dv">1</span>], </a>
-<a class="sourceLine" id="cb32-7" data-line-number="7">                         <span class="st">"%Y-%m"</span>, <span class="dt">tz =</span> <span class="st">"UTC"</span>), <span class="st">"-"</span>, </a>
+<a class="sourceLine" id="cb32-7" data-line-number="7">                         <span class="st">"%Y-%m"</span>, <span class="dt">tz =</span> <span class="st">"UTC"</span>), <span class="st">" - "</span>, </a>
 <a class="sourceLine" id="cb32-8" data-line-number="8">                <span class="kw">format</span>(prcp_data<span class="op">$</span>time[<span class="kw">length</span>(prcp_data<span class="op">$</span>time)], </a>
 <a class="sourceLine" id="cb32-9" data-line-number="9">                         <span class="st">"%Y-%m"</span>, <span class="dt">tz =</span> <span class="st">"UTC"</span>))</a>
 <a class="sourceLine" id="cb32-10" data-line-number="10"></a>
@@ -391,6 +395,7 @@ variables:
 <li><a href="#introduction">Introduction</a></li>
       <li><a href="#installation">Installation</a></li>
       <li><a href="#write-data">Write Data</a></li>
+      <li><a href="#read-data">Read Data</a></li>
       </ul>
 </div>
       </div>

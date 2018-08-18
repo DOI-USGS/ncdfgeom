@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ncdfgeom geometry tools • ncdfgeom</title>
+<title>Reading and Writing Geometry • ncdfgeom</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="ncdfgeom geometry tools">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Reading and Writing Geometry">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <meta name="robots" content="noindex">
@@ -56,10 +56,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/geometry.html">ncdfgeom geometry tools</a>
+      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
     </li>
     <li>
-      <a href="../articles/timeseries.html">ncdfgeom</a>
+      <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
     </li>
   </ul>
 </li>
@@ -83,7 +83,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>ncdfgeom geometry tools</h1>
+      <h1>Reading and Writing Geometry</h1>
                         <h4 class="author">David Blodgett</h4>
             
       
@@ -94,13 +94,17 @@
 
     
     
-<p>Below is a demo that shows how to add polygon data to a NetCDF DSG TimeSeries file, read the polygon data from the NetCDF file, and write it to a shapefile format.</p>
-<p>First, we load up a NetCDF file and some geoJson data containing polygons.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">hucTimeseries &lt;-<span class="st"> </span>ncdf4<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/ncdf4/topics/nc_open">nc_open</a></span>(<span class="st">"hucPolygons.nc"</span>)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">hucPolygons &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/sf/topics/st_read">read_sf</a></span>(<span class="kw">system.file</span>(<span class="st">'extdata'</span>,<span class="st">'example_huc_eta.json'</span>,</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">                                       <span class="dt">package =</span> <span class="st">'ncdfgeom'</span>))</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">plot</span>(sf<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/sf/topics/st_geometry">st_geometry</a></span>(hucPolygons))</a></code></pre></div>
+<p>This vignette shows how to add polygon data to a NetCDF DSG TimeSeries file, read the polygon data from the NetCDF file, and write it to a shapefile format.</p>
+<p>First, we open a NetCDF file and some geojson data containing polygons. These files are both included in “extdata” of <code>ncdfgeom</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">file.copy</span>(<span class="kw">system.file</span>(<span class="st">'extdata'</span>,<span class="st">'example_huc_eta.nc'</span>, <span class="dt">package =</span> <span class="st">'ncdfgeom'</span>), </a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">                    <span class="st">"hucPolygons.nc"</span>, </a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">                    <span class="dt">overwrite =</span> <span class="ot">TRUE</span>) -&gt;<span class="st"> </span>quiet</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">hucTimeseries &lt;-<span class="st"> </span>ncdf4<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/ncdf4/topics/nc_open">nc_open</a></span>(<span class="st">"hucPolygons.nc"</span>)</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">hucPolygons &lt;-<span class="st"> </span>sf<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/sf/topics/st_read">read_sf</a></span>(<span class="kw">system.file</span>(<span class="st">'extdata'</span>,<span class="st">'example_huc_eta.json'</span>,</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">                                       <span class="dt">package =</span> <span class="st">'ncdfgeom'</span>))</a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="kw">plot</span>(sf<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/sf/topics/st_geometry">st_geometry</a></span>(hucPolygons))</a></code></pre></div>
 <p><img src="geometry_files/figure-html/libs-1.png" width="576"></p>
 <p>Now we have the polygons as shown above and a NetCDF file with a header that looks like:</p>
 <pre><code>netcdf hucPolygons {
@@ -144,10 +148,9 @@ variables:
 }</code></pre>
 <p>Now we can use the <code>write_geometry</code> function to add the polygon data to the NetCDF file.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">hucPolygons_nc &lt;-<span class="st"> </span>ncdfgeom<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry">write_geometry</a></span>(<span class="dt">nc_file=</span><span class="st">"hucPolygons.nc"</span>,</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">                                       <span class="dt">geomData =</span> hucPolygons, </a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">                                       <span class="dt">instance_names =</span> hucPolygons<span class="op">$</span>HUC12, </a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">                                       <span class="dt">instance_dim_name =</span> <span class="st">"station"</span>, </a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">                                       <span class="dt">variables =</span> hucTimeseries<span class="op">$</span>var)</a></code></pre></div>
+<a class="sourceLine" id="cb3-2" data-line-number="2">                                           <span class="dt">geomData =</span> hucPolygons, </a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">                                           <span class="dt">instance_dim_name =</span> <span class="st">"station"</span>, </a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">                                           <span class="dt">variables =</span> hucTimeseries<span class="op">$</span>var)</a></code></pre></div>
 <p>Now the header of the NetCDF file looks like: (note some variables removed to be more concise)</p>
 <pre><code>netcdf hucPolygons {
 dimensions:

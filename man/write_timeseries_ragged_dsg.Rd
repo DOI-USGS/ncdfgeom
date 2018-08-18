@@ -8,20 +8,20 @@ write_timeseries_ragged_dsg(nc_file, all_data, data_units = list(),
   data_longnames = list(), attributes = list())
 }
 \arguments{
-\item{nc_file}{A string file path to the nc file to be created.}
+\item{nc_file}{\code{character} file path to the nc file to be created.}
 
-\item{all_data}{A data.frame object containing all station and observation data. See 
+\item{all_data}{\code{data.frame} containing all station and observation data. See 
 description for further information}
 
-\item{data_units}{Optional list of observation units.  Names must correspond
+\item{data_units}{\code{character} Optional list of observation units.  Names must correspond
 to names of observation columns in \code{all_data}. Not required. Columns without 
 supplied data unit are given a unit of empty string.}
 
-\item{data_longnames}{Optional named list of observation long names. Names must correspond
+\item{data_longnames}{\code{character} Optional named list of observation long names. Names must correspond
 to names of observation columns in \code{all_data}. Not required. Columns without 
 supplied long name are given a long name of empty string.}
 
-\item{attributes}{An optional list of attributes that will be added at the global level. 
+\item{attributes}{\code{list} An optional list of attributes that will be added at the global level. 
 See details for useful attributes.}
 }
 \description{

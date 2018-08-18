@@ -1,20 +1,16 @@
 #'@title Write ragged array timeseries to NetCDF-CF
 #'
 #'
-#'@param nc_file A string file path to the nc file to be created.
-#'
-#'@param all_data A data.frame object containing all station and observation data. See 
+#'@param nc_file \code{character} file path to the nc file to be created.
+#'@param all_data \code{data.frame} containing all station and observation data. See 
 #'description for further information
-#'
-#'@param data_longnames Optional named list of observation long names. Names must correspond
+#'@param data_longnames \code{character} Optional named list of observation long names. Names must correspond
 #'to names of observation columns in \code{all_data}. Not required. Columns without 
 #'supplied long name are given a long name of empty string.
-#'
-#'@param data_units Optional list of observation units.  Names must correspond
+#'@param data_units \code{character} Optional list of observation units.  Names must correspond
 #'to names of observation columns in \code{all_data}. Not required. Columns without 
 #'supplied data unit are given a unit of empty string.
-#'
-#'@param attributes An optional list of attributes that will be added at the global level. 
+#'@param attributes \code{list} An optional list of attributes that will be added at the global level. 
 #'See details for useful attributes.
 #'
 #'@description

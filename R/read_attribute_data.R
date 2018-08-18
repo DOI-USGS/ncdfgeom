@@ -1,6 +1,6 @@
 #'@title Read attribute dataframe from NetCDF-DSG file
 #'
-#'@param nc A open ncdf4 object.
+#'@param nc An open ncdf4 object.
 #'@param instance_dim The NetCDF instance/station dimension.
 #'
 #'@description
@@ -9,6 +9,13 @@
 #'the netCDF file is already open and well understood.
 #'
 #'@export
+#'
+#' @examples 
+#' hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package = 'ncdfgeom'))
+#' hucPolygons_nc <- ncdfgeom::write_geometry(tempfile(), hucPolygons)
+#' 
+#' nc <- ncdf4::nc_open(hucPolygons_nc)
+#' read_attribute_data(nc, "instance")
 #'
 read_attribute_data <- function(nc, instance_dim) {
 	

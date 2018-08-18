@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read timeseries NCDF file — read_timeseries_dsg • ncdfgeom</title>
+<title>Read NetCDF-CF timeSeries featuretype — read_timeseries_dsg • ncdfgeom</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,10 +30,10 @@
 
 
 
-<meta property="og:title" content="Read timeseries NCDF file — read_timeseries_dsg" />
+<meta property="og:title" content="Read NetCDF-CF timeSeries featuretype — read_timeseries_dsg" />
 
-<meta property="og:description" content="This function reads a timeseries discrete sampling geometry NCDF file and 
-returns a list of the file's contents." />
+<meta property="og:description" content="This function reads a timeseries discrete sampling geometry NetCDF file and 
+returns a list containing the file's contents." />
 <meta name="twitter:card" content="summary" />
 
 <meta name="robots" content="noindex">
@@ -88,10 +88,10 @@ returns a list of the file's contents." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/geometry.html">ncdfgeom geometry tools</a>
+      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
     </li>
     <li>
-      <a href="../articles/timeseries.html">ncdfgeom</a>
+      <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
     </li>
   </ul>
 </li>
@@ -116,15 +116,15 @@ returns a list of the file's contents." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read timeseries NCDF file</h1>
+    <h1>Read NetCDF-CF timeSeries featuretype</h1>
     <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/read_timeseries_dsg.R'><code>R/read_timeseries_dsg.R</code></a></small>
     <div class="hidden name"><code>read_timeseries_dsg.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function reads a timeseries discrete sampling geometry NCDF file and 
-returns a list of the file's contents.</p>
+    <p>This function reads a timeseries discrete sampling geometry NetCDF file and 
+returns a list containing the file's contents.</p>
     
     </div>
 
@@ -135,20 +135,20 @@ returns a list of the file's contents.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>nc_file</th>
-      <td><p>A string file path to the nc file to be created.</p></td>
+      <td><p>character file path to the nc file to be created.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>nc_list A list containing the contents of the NetCDF file.</p>
+    <p>list containing the contents of the NetCDF file.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The current implementation checks several NetCDF-CF specific conventions prior to attempting to 
 read the file. The Conventions, featureType, and cdm_data_type global attributes are checked but not
 strictly required.</p>
-<p>Variables with standard_name and/or cf_rol of station_id and/or timeseries_id are 
+<p>Variables with standard_name and/or cf_role of station_id and/or timeseries_id are 
 searched for to indicate which variable is the 'station identifier'. The function stops 
 if one is not found.</p>
 <p>All variables are introspected for a coordinates attribute. This attribute is used to determine

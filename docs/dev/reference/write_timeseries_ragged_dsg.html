@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create ragged array timeseries NCDF file — write_timeseries_ragged_dsg • ncdfgeom</title>
+<title>Write ragged array timeseries to NetCDF-CF — write_timeseries_ragged_dsg • ncdfgeom</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Create ragged array timeseries NCDF file — write_timeseries_ragged_dsg" />
+<meta property="og:title" content="Write ragged array timeseries to NetCDF-CF — write_timeseries_ragged_dsg" />
 
 <meta property="og:description" content="This creates a ragged array timeseries discrete sampling features NCDF file" />
 <meta name="twitter:card" content="summary" />
@@ -87,10 +87,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/geometry.html">ncdfgeom geometry tools</a>
+      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
     </li>
     <li>
-      <a href="../articles/timeseries.html">ncdfgeom</a>
+      <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
     </li>
   </ul>
 </li>
@@ -115,7 +115,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create ragged array timeseries NCDF file</h1>
+    <h1>Write ragged array timeseries to NetCDF-CF</h1>
     <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/write_timeseries_ragged_dsg.R'><code>R/write_timeseries_ragged_dsg.R</code></a></small>
     <div class="hidden name"><code>write_timeseries_ragged_dsg.Rd</code></div>
     </div>
@@ -134,28 +134,28 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>nc_file</th>
-      <td><p>A string file path to the nc file to be created.</p></td>
+      <td><p><code>character</code> file path to the nc file to be created.</p></td>
     </tr>
     <tr>
       <th>all_data</th>
-      <td><p>A data.frame object containing all station and observation data. See 
+      <td><p><code>data.frame</code> containing all station and observation data. See 
 description for further information</p></td>
     </tr>
     <tr>
       <th>data_units</th>
-      <td><p>Optional list of observation units.  Names must correspond
+      <td><p><code>character</code> Optional list of observation units.  Names must correspond
 to names of observation columns in <code>all_data</code>. Not required. Columns without 
 supplied data unit are given a unit of empty string.</p></td>
     </tr>
     <tr>
       <th>data_longnames</th>
-      <td><p>Optional named list of observation long names. Names must correspond
+      <td><p><code>character</code> Optional named list of observation long names. Names must correspond
 to names of observation columns in <code>all_data</code>. Not required. Columns without 
 supplied long name are given a long name of empty string.</p></td>
     </tr>
     <tr>
       <th>attributes</th>
-      <td><p>An optional list of attributes that will be added at the global level. 
+      <td><p><code>list</code> An optional list of attributes that will be added at the global level. 
 See details for useful attributes.</p></td>
     </tr>
     </table>

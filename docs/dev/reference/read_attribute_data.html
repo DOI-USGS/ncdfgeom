@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get Dataframe from NetCDF-DSG File — read_attribute_data • ncdfgeom</title>
+<title>Read attribute dataframe from NetCDF-DSG file — read_attribute_data • ncdfgeom</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Get Dataframe from NetCDF-DSG File — read_attribute_data" />
+<meta property="og:title" content="Read attribute dataframe from NetCDF-DSG file — read_attribute_data" />
 
-<meta property="og:description" content="Gets instance data from a NetCDF-DSG file and returns it in a data.frame.
+<meta property="og:description" content="Gets attribute data from a NetCDF-DSG file and returns it in a data.frame.
 This function is intended as a convenience to be used within workflows where
 the netCDF file is already open and well understood." />
 <meta name="twitter:card" content="summary" />
@@ -89,10 +89,10 @@ the netCDF file is already open and well understood." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/geometry.html">ncdfgeom geometry tools</a>
+      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
     </li>
     <li>
-      <a href="../articles/timeseries.html">ncdfgeom</a>
+      <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
     </li>
   </ul>
 </li>
@@ -117,14 +117,14 @@ the netCDF file is already open and well understood." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get Dataframe from NetCDF-DSG File</h1>
+    <h1>Read attribute dataframe from NetCDF-DSG file</h1>
     <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/read_attribute_data.R'><code>R/read_attribute_data.R</code></a></small>
     <div class="hidden name"><code>read_attribute_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Gets instance data from a NetCDF-DSG file and returns it in a <code>data.frame</code>.
+    <p>Gets attribute data from a NetCDF-DSG file and returns it in a <code>data.frame</code>.
 This function is intended as a convenience to be used within workflows where
 the netCDF file is already open and well understood.</p>
     
@@ -137,7 +137,7 @@ the netCDF file is already open and well understood.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>nc</th>
-      <td><p>A open ncdf4 object.</p></td>
+      <td><p>An open ncdf4 object.</p></td>
     </tr>
     <tr>
       <th>instance_dim</th>
@@ -146,12 +146,35 @@ the netCDF file is already open and well understood.</p>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>hucPolygons</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/sf/topics/st_read'>read_sf</a></span>(<span class='fu'>system.file</span>(<span class='st'>'extdata'</span>,<span class='st'>'example_huc_eta.json'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'ncdfgeom'</span>))
+<span class='no'>hucPolygons_nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdfgeom</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry'>write_geometry</a></span>(<span class='fu'>tempfile</span>(), <span class='no'>hucPolygons</span>)
+
+<span class='no'>nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdf4</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/ncdf4/topics/nc_open'>nc_open</a></span>(<span class='no'>hucPolygons_nc</span>)
+<span class='fu'>read_attribute_data</span>(<span class='no'>nc</span>, <span class='st'>"instance"</span>)</div><div class='output co'>#&gt;   id                                  TNMID
+#&gt; 1  1 {94745C74-B81F-42C7-9397-09DE87E038D4}
+#&gt; 2  2 {D756B24D-1959-4938-8930-FC3D417BB708}
+#&gt;                               METASOURCE SOURCEDATA SOURCEORIG SOURCEFEAT
+#&gt; 1 {2A42A390-4EEB-411B-928E-188529D9691D}       &lt;NA&gt;       &lt;NA&gt;       &lt;NA&gt;
+#&gt; 2                                   &lt;NA&gt;       &lt;NA&gt;       &lt;NA&gt;       &lt;NA&gt;
+#&gt;     LOADDATE GNIS_ID AREAACRES  AREASQKM STATES        HUC12         NAME
+#&gt; 1 2013-01-18    &lt;NA&gt;     28635 115.88012     NC 030101030106    Big Creek
+#&gt; 2 2013-01-18    &lt;NA&gt;      8464  34.25262     NC 030101030107 Double Creek
+#&gt;   HUTYPE HUMOD        TOHUC NONCONTRIB NONCONTR_1 SHAPE_Leng  SHAPE_Area
+#&gt; 1      S    NM 030101030109          0          0  0.6684346 0.011654300
+#&gt; 2      S    NM 030101030109          0          0  0.3739526 0.003442696
+#&gt;   node_count
+#&gt; 1       1678
+#&gt; 2        950</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

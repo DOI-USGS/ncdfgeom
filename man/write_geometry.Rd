@@ -8,25 +8,36 @@ write_geometry(nc_file, geomData = NULL, instance_dim_name = NULL,
   lats = NULL, lons = NULL, variables = list())
 }
 \arguments{
-\item{nc_file}{A string file path to the nc file to be created.}
+\item{nc_file}{\code{character} file path to the nc file to be created.}
 
-\item{geomData}{An object of class \code{SpatialLines}, \code{SpatialPolygons}
-or their sf equivalents with WGS84 lon in the x coordinate and lat in the y coordinate.
-Note that three dimensional geometries are not supported.}
+\item{geomData}{object of class \code{SpatialLines}, \code{SpatialPolygons}
+or an sf \code{data.frame}. Note that three dimensional geometries are not supported.}
 
-\item{instance_dim_name}{Not required if adding geometry to a NetCDF-CF Discrete Sampling Geometries 
-timeSeries file. For a new file, will use package default -- "instance" -- if not supplied.}
+\item{instance_dim_name}{\code{character} Not required if adding geometry to a 
+NetCDF-CF Discrete Sampling Geometries timeSeries file. For a new file, will 
+use package default -- "instance" -- if not supplied.}
 
-\item{lats}{Vector of WGS84 latitudes}
+\item{lats}{Vector of latitudes}
 
-\item{lons}{Vector of WGS84 longitudes}
+\item{lons}{Vector of longitudes}
 
-\item{variables}{If a an existing netcdf files is provided, this list of strings is used
-to add the geometry container attribute to the named existing variables.}
+\item{variables}{\code{character} If a an existing netcdf files is provided, this 
+list of variables that should be related to the geometries.}
 }
 \description{
-Creates a file with point, line or polygon instance data ready for the extended NetCDF-CF timeSeries featuretype format.
-Will also add attributes if a sp dataframe object is passed in.
+Creates a file with point, line or polygon instance data ready for the 
+extended NetCDF-CF timeSeries featuretype format.
+Will also add attributes if provided data has them.
+}
+\examples{
+
+hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package = 'ncdfgeom'))
+
+hucPolygons_nc <- ncdfgeom::write_geometry(nc_file=tempfile(), 
+                                           geomData = hucPolygons)
+ncdump <- system(paste("ncdump -h", hucPolygons_nc), intern = TRUE)
+cat(ncdump ,sep = "\\n")
+
 }
 \references{
 https://github.com/twhiteaker/netCDF-CF-simple-geometry

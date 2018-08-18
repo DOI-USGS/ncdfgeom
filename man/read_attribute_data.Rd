@@ -7,7 +7,7 @@
 read_attribute_data(nc, instance_dim)
 }
 \arguments{
-\item{nc}{A open ncdf4 object.}
+\item{nc}{An open ncdf4 object.}
 
 \item{instance_dim}{The NetCDF instance/station dimension.}
 }
@@ -15,4 +15,12 @@ read_attribute_data(nc, instance_dim)
 Gets attribute data from a NetCDF-DSG file and returns it in a \code{data.frame}.
 This function is intended as a convenience to be used within workflows where
 the netCDF file is already open and well understood.
+}
+\examples{
+hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package = 'ncdfgeom'))
+hucPolygons_nc <- ncdfgeom::write_geometry(tempfile(), hucPolygons)
+
+nc <- ncdf4::nc_open(hucPolygons_nc)
+read_attribute_data(nc, "instance")
+
 }

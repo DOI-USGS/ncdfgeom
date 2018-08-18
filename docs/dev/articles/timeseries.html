@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ncdfgeom • ncdfgeom</title>
+<title>Reading and Writing Timeseries • ncdfgeom</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="ncdfgeom">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Reading and Writing Timeseries">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <meta name="robots" content="noindex">
@@ -56,10 +56,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/geometry.html">ncdfgeom geometry tools</a>
+      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
     </li>
     <li>
-      <a href="../articles/timeseries.html">ncdfgeom</a>
+      <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
     </li>
   </ul>
 </li>
@@ -83,10 +83,9 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>ncdfgeom</h1>
+      <h1>Reading and Writing Timeseries</h1>
                         <h4 class="author">David Blodgett</h4>
             
-            <h4 class="date">2018-08-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/USGS-R/ncdfgeom#readme/blob/master/vignettes/timeseries.Rmd"><code>vignettes/timeseries.Rmd</code></a></small>
       <div class="hidden name"><code>timeseries.Rmd</code></div>
@@ -137,7 +136,7 @@
 <a class="sourceLine" id="cb3-10" data-line-number="10">                                                <span class="dt">project=</span>nc_project, <span class="dt">processing_level=</span>nc_proc_level)</a>
 <a class="sourceLine" id="cb3-11" data-line-number="11"></a>
 <a class="sourceLine" id="cb3-12" data-line-number="12">nc_file &lt;-<span class="st"> </span>ncdfgeom<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/ncdfgeom/topics/write_timeseries_dsg">write_timeseries_dsg</a></span>(<span class="dt">nc_file =</span> <span class="st">"demo_nc.nc"</span>, </a>
-<a class="sourceLine" id="cb3-13" data-line-number="13">                                                                                        <span class="dt">station_names =</span> <span class="kw">names</span>(timeseries_data),</a>
+<a class="sourceLine" id="cb3-13" data-line-number="13">                                                                                        <span class="dt">instance_names =</span> <span class="kw">names</span>(timeseries_data),</a>
 <a class="sourceLine" id="cb3-14" data-line-number="14">                                                                                        <span class="dt">lats =</span> lats, <span class="dt">lons =</span> lons, <span class="dt">times =</span> time, <span class="dt">alts =</span> alts,</a>
 <a class="sourceLine" id="cb3-15" data-line-number="15">                                                                                        <span class="dt">data =</span> timeseries_data,</a>
 <a class="sourceLine" id="cb3-16" data-line-number="16">                                                                                        <span class="dt">data_unit =</span> raw_data<span class="op">$</span>units[<span class="dv">1</span>],</a>
@@ -149,19 +148,19 @@
 <p>Now we have a NetCDF file with reference spatial information for each time series, and a single timeseries variable.</p>
 <p>The file has three dimensions. A dimension called “station” that that is the same length as the number of timeseries written, one called “time” that is the length of the number of time series, and one called “name_strlen” that is the length of the longest timeseries ID (which is stored as a string).</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">names</span>(nc<span class="op">$</span>dim)</a></code></pre></div>
-<pre><code>## [1] "station"     "time"        "name_strlen"</code></pre>
+<pre><code>## [1] "instance"    "time"        "name_strlen"</code></pre>
 <p>The file has variables for latitude, longitude, altitude, timeseries IDs, and a data variable.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">names</span>(nc<span class="op">$</span>var)</a></code></pre></div>
 <pre><code>## [1] "lat"                                        
 ## [2] "lon"                                        
 ## [3] "alt"                                        
-## [4] "station_name"                               
+## [4] "instance_name"                              
 ## [5] "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1"</code></pre>
 <p>The primary dimensions in the file are of length, numer of time steps and number of time series.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">nc<span class="op">$</span>dim<span class="op">$</span>time<span class="op">$</span>len</a></code></pre></div>
 <pre><code>## [1] 730</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">nc<span class="op">$</span>dim<span class="op">$</span>station<span class="op">$</span>len</a></code></pre></div>
-<pre><code>## [1] 71</code></pre>
+<pre><code>## NULL</code></pre>
 <p>The header of the resulting NetCDF file looks like:</p>
 <pre><code>ncdump -h demo_nc.nc 
 netcdf demo_nc {

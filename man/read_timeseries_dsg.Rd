@@ -7,14 +7,14 @@
 read_timeseries_dsg(nc_file)
 }
 \arguments{
-\item{nc_file}{A string file path to the nc file to be created.}
+\item{nc_file}{character file path to the nc file to be created.}
 }
 \value{
-nc_list A list containing the contents of the NetCDF file.
+list containing the contents of the NetCDF file.
 }
 \description{
-This function reads a timeseries discrete sampling geometry NCDF file and 
-returns a list of the file's contents.
+This function reads a timeseries discrete sampling geometry NetCDF file and 
+returns a list containing the file's contents.
 }
 \details{
 The current implementation checks several NetCDF-CF specific conventions prior to attempting to 

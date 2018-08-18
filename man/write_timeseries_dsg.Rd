@@ -10,35 +10,35 @@ write_timeseries_dsg(nc_file, instance_names, lats, lons, times, data,
   attributes = list(), add_to_existing = FALSE)
 }
 \arguments{
-\item{nc_file}{A string file path to the nc file to be created.}
+\item{nc_file}{\code{character} file path to the nc file to be created.}
 
-\item{instance_names}{A vector of names for each instance 
+\item{instance_names}{\code{character} or \code{numeric} vector of names for each instance 
 (e.g. station or geometry) to be added to the file.}
 
-\item{lats}{numeric vector of latitudes}
+\item{lats}{\code{numeric} vector of latitudes}
 
-\item{lons}{numeric vector of longitudes}
+\item{lons}{\code{numeric} vector of longitudes}
 
-\item{times}{vector of times. Must be of type \code{POSIXct} or an attempt to 
+\item{times}{\code{POSIXct} vector of times. Must be of type \code{POSIXct} or an attempt to 
 convert it will be made using \code{as.POSIXct(times)}.}
 
 \item{data}{\code{data.frame} with each column corresponding to an instance. Rows correspond to 
 time steps. nrow must be the same length as times. Column names must match instance names.}
 
-\item{alts}{Vector of altitudes (m above sea level) (Optional)}
+\item{alts}{\code{numeric} vector of altitudes (m above sea level) (Optional)}
 
-\item{data_unit}{character vector of observation units. Length must be the same as number 
+\item{data_unit}{\code{character} vector of data units. Length must be the same as number 
 of columns in \code{data} parameter.}
 
-\item{data_prec}{character Precision of observation data in NCDF file. 
+\item{data_prec}{\code{character} precision of observation data in NetCDF file. 
 Valid options: 'short' 'integer' 'float' 'double' 'char'.}
 
-\item{data_metadata}{list A named list of strings: list(name='ShortVarName', long_name='A Long Name')}
+\item{data_metadata}{\code{list} A named list of strings: list(name='ShortVarName', long_name='A Long Name')}
 
 \item{attributes}{list An optional list of attributes that will be added at the global level. 
 See details for useful attributes.}
 
-\item{add_to_existing}{boolean If TRUE and the file already exists, 
+\item{add_to_existing}{\code{boolean} If TRUE and the file already exists, 
 variables will be added to the existing file. See details for more.}
 }
 \description{
@@ -64,7 +64,9 @@ with the same name. The expected usage is to call this function repeatedly
 only changing the data, data_unit, data_prec and data_metadata inputs.
 }
 \references{
-http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
-http://cfconventions.org/cf-conventions/cf-conventions.html#_orthogonal_multidimensional_array_representation
-http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data
+\enumerate{
+  \item \url{http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html}
+  \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html#_orthogonal_multidimensional_array_representation}
+  \item \url{http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data}
+}
 }

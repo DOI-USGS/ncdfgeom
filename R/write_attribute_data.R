@@ -1,10 +1,11 @@
-#'@title Write attribute data to NetCDF-CF
+#' @title Write attribute data to NetCDF-CF
 #'
-#'@param nc_file A string file path to the nc file to be created. It must already have an instance dimension.
-#'@param attData A \code{data.frame} as included in a spatial dataFrame.
-#'@param instance_dim_name A string to name the instance dimension. Defaults to "instance"
-#'@param units A character \code{vector} with units for each column of attData. Default is "unknown" for all.
-#'@param ... additional arguments to be passed on nc_create.
+#' @param nc_file \code{character} file path to the nc file to be created. 
+#' If adding to a file, it must already have the named instance dimension.
+#'@param attData \code{data.frame} with instances as rows and attributes as rows.  
+#'@param instance_dim_name \code{character} name for the instance dimension. Defaults to "instance"
+#'@param units \code{character} vector with units for each column of attData. Defaults to "unknown" for all.
+#'@param ... additional arguments to be passed on to \code{nc_create}.
 #'
 #'@description
 #'Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 
@@ -17,6 +18,17 @@
 #'@importFrom methods is
 #'
 #'@export
+#'
+#' @examples 
+#' sample_data <- sf::st_set_geometry(sf::read_sf(system.file("shape/nc.shp", 
+#'                                                            package = "sf")), 
+#'                                    NULL)
+#' example_file <-write_attribute_data(tempfile(), sample_data,
+#'                                     units = rep("unknown", ncol(sample_data)))
+#' 
+#' ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
+#' cat(ncdump ,sep = "\n")
+#' 
 write_attribute_data <- function(nc_file, attData, instance_dim_name = "instance", units = rep("unknown", ncol(attData)), ...) {
 	
 	n <- nrow(attData)

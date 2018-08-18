@@ -1,25 +1,31 @@
-#'@title Write NetCDF-CF point featuretype
+#' @title Write NetCDF-CF point featuretype
 #'
+#' @param nc_file \code{character} file path to the nc file to be created.
+#' @param lats \code{numeric} vector of latitudes 
+#' @param lons \code{numeric} vector of longitudes
+#' @param alts \code{numeric} vector of altitudes
+#' @param times \code{POSIXct} vector of times, one per point, if length is one, 
+#' will use the same time for each point. Must be of type \code{POSIXct} or an 
+#' attempt to convert it will be made using \code{as.POSIXct(times)}.
+#' @param data \code{data.frame} with each column corresponding to a observation. Column 
+#' names are used as names in the NCDF file
+#' @param data_units \code{character} vector of observation units. Length must be the same as number 
+#' of columns in \code{data} parameter
+#' @param feature_names \code{character} or \code{numeric} vector of identifiers for features or stations.
+#' @param ... additional arguments to be passed on \code{nc_create}.
 #'
-#'@param nc_file A string file path to the nc file to be created.
-#'@param lats Vector of latitudes 
-#'@param lons Vector of longitudes
-#'@param alts Vector of altitudes
-#'@param times Vector of times, one per point, if length is one, will use the same time for each point. 
-#'Must be of type \code{POSIXct} or an attempt to convert it will be made using \code{as.POSIXct(times)}.
-#'@param data \code{data.frame} with each column corresponding to a observation. Column 
-#'names are used as names in the NCDF file
-#'@param data_units Character vector of observation units. Length must be the same as number 
-#'of columns in \code{data} parameter
-#'@param feature_names \code{vector} of identifiers for features or stations.
-#'@param ... additional arguments to be passed on nc_create.
-#'
-#'@description
-#'This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
-#'Can pass in netcdf creation options like force_v4 to pass on.
+#' @return \code{character} path of created file
+#' 
+#' @description
+#' Creates a point feature type discrete sampling features NetCDF file. 
+#' Returns the created filename. 
+#' Can pass in netcdf creation options like force_v4 to pass on to nc_create().
 #'
 #'@references
-#'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
+#' \enumerate{
+#'   \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
+#'   \item \url{http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html}
+#'  }
 #'
 #'@importFrom ncdf4 nc_create nc_close ncvar_def ncvar_put ncatt_put ncdim_def
 #'

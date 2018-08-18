@@ -8,15 +8,16 @@ write_attribute_data(nc_file, attData, instance_dim_name = "instance",
   units = rep("unknown", ncol(attData)), ...)
 }
 \arguments{
-\item{nc_file}{A string file path to the nc file to be created. It must already have an instance dimension.}
+\item{nc_file}{\code{character} file path to the nc file to be created. 
+If adding to a file, it must already have the named instance dimension.}
 
-\item{attData}{A \code{data.frame} as included in a spatial dataFrame.}
+\item{attData}{\code{data.frame} with instances as rows and attributes as rows.}
 
-\item{instance_dim_name}{A string to name the instance dimension. Defaults to "instance"}
+\item{instance_dim_name}{\code{character} name for the instance dimension. Defaults to "instance"}
 
-\item{units}{A character \code{vector} with units for each column of attData. Default is "unknown" for all.}
+\item{units}{\code{character} vector with units for each column of attData. Defaults to "unknown" for all.}
 
-\item{...}{additional arguments to be passed on nc_create.}
+\item{...}{additional arguments to be passed on to \code{nc_create}.}
 }
 \description{
 Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 
@@ -24,4 +25,15 @@ Use to create the start of a NetCDF-DSG file. One character length dimension is 
 long enough to contain the longest provided character string.
 This function does not implement any CF convention attributes or standard names.
 Any columns of class date will be converted to character.
+}
+\examples{
+sample_data <- sf::st_set_geometry(sf::read_sf(system.file("shape/nc.shp", 
+                                                           package = "sf")), 
+                                   NULL)
+example_file <-write_attribute_data(tempfile(), sample_data,
+                                    units = rep("unknown", ncol(sample_data)))
+
+ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
+cat(ncdump ,sep = "\\n")
+
 }

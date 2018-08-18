@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create point data NCDF file — write_point_dsg • ncdfgeom</title>
+<title>Write NetCDF-CF point featuretype — write_point_dsg • ncdfgeom</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,10 +30,11 @@
 
 
 
-<meta property="og:title" content="Create point data NCDF file — write_point_dsg" />
+<meta property="og:title" content="Write NetCDF-CF point featuretype — write_point_dsg" />
 
-<meta property="og:description" content="This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
-Can pass in netcdf creation options like force_v4 to pass on." />
+<meta property="og:description" content="Creates a point feature type discrete sampling features NetCDF file. 
+Returns the created filename. 
+Can pass in netcdf creation options like force_v4 to pass on to nc_create()." />
 <meta name="twitter:card" content="summary" />
 
 <meta name="robots" content="noindex">
@@ -88,10 +89,10 @@ Can pass in netcdf creation options like force_v4 to pass on." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/geometry.html">ncdfgeom geometry tools</a>
+      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
     </li>
     <li>
-      <a href="../articles/timeseries.html">ncdfgeom</a>
+      <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
     </li>
   </ul>
 </li>
@@ -116,15 +117,16 @@ Can pass in netcdf creation options like force_v4 to pass on." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create point data NCDF file</h1>
+    <h1>Write NetCDF-CF point featuretype</h1>
     <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/write_point_dsg.R'><code>R/write_point_dsg.R</code></a></small>
     <div class="hidden name"><code>write_point_dsg.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
-Can pass in netcdf creation options like force_v4 to pass on.</p>
+    <p>Creates a point feature type discrete sampling features NetCDF file. 
+Returns the created filename. 
+Can pass in netcdf creation options like force_v4 to pass on to nc_create().</p>
     
     </div>
 
@@ -136,24 +138,25 @@ Can pass in netcdf creation options like force_v4 to pass on.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>nc_file</th>
-      <td><p>A string file path to the nc file to be created.</p></td>
+      <td><p><code>character</code> file path to the nc file to be created.</p></td>
     </tr>
     <tr>
       <th>lats</th>
-      <td><p>Vector of latitudes</p></td>
+      <td><p><code>numeric</code> vector of latitudes</p></td>
     </tr>
     <tr>
       <th>lons</th>
-      <td><p>Vector of longitudes</p></td>
+      <td><p><code>numeric</code> vector of longitudes</p></td>
     </tr>
     <tr>
       <th>alts</th>
-      <td><p>Vector of altitudes</p></td>
+      <td><p><code>numeric</code> vector of altitudes</p></td>
     </tr>
     <tr>
       <th>times</th>
-      <td><p>Vector of times, one per point, if length is one, will use the same time for each point. 
-Must be of type <code>POSIXct</code> or an attempt to convert it will be made using <code>as.POSIXct(times)</code>.</p></td>
+      <td><p><code>POSIXct</code> vector of times, one per point, if length is one, 
+will use the same time for each point. Must be of type <code>POSIXct</code> or an 
+attempt to convert it will be made using <code>as.POSIXct(times)</code>.</p></td>
     </tr>
     <tr>
       <th>data</th>
@@ -162,22 +165,29 @@ names are used as names in the NCDF file</p></td>
     </tr>
     <tr>
       <th>data_units</th>
-      <td><p>Character vector of observation units. Length must be the same as number 
+      <td><p><code>character</code> vector of observation units. Length must be the same as number 
 of columns in <code>data</code> parameter</p></td>
     </tr>
     <tr>
       <th>feature_names</th>
-      <td><p><code>vector</code> of identifiers for features or stations.</p></td>
+      <td><p><code>character</code> or <code>numeric</code> vector of identifiers for features or stations.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments to be passed on nc_create.</p></td>
+      <td><p>additional arguments to be passed on <code>nc_create</code>.</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>character</code> path of created file</p>
+    
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html</p>
+    <ol>
+<li><p><a href='http://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types'>http://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types</a></p></li>
+<li><p><a href='http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html'>http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html</a></p></li>
+</ol>
     
 
   </div>
@@ -186,6 +196,8 @@ of columns in <code>data</code> parameter</p></td>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
       <li><a href="#references">References</a></li>
           </ul>
 
