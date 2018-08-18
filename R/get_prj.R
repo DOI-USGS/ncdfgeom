@@ -1,22 +1,25 @@
 #' Get projection from NetCDF-CF Grid Mapping
 #'
-#' This function takes a NetCDF-CF projection container and returns
+#' Takes NetCDF-CF grid mapping attributes and returns
 #' a proj4 string.
 #'
 #' The WGS84 datum is used as a default if one os not provided
-#' in the projection container, warnings will be provided in that case.
+#' in the grid mapping.
 #'
-#' If only a semi_major axis is provided, a sperical earch is assumed.
-#'
-#' https://en.wikibooks.org/wiki/PROJ.4
-#' https://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus
-#' http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings
+#' If only a semi_major axis is provided, a sperical earth is assumed.
 #'
 #' @param gm A list of attributes of the grid mapping variable
 #' as returned by ncdf or ncdf4's get attributes functions.
 #'
-#' @return A proj4 string for use with the sp CRS function.
+#' @return A proj4 string.
 #'
+#' @references 
+#' \enumerate{
+#'   \item \url{https://en.wikibooks.org/wiki/PROJ.4}
+#'   \item \url{https://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus}
+#'   \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html#appendix-grid-mappings}
+#' }
+#' 
 #' @export
 #'
 #' @examples
@@ -25,7 +28,8 @@
 #'             longitude_of_prime_meridian = 0,
 #'             semi_major_axis = 6378137,
 #'             inverse_flattening = 298)
-#' prj <- get_prj(crs)
+#' get_prj(crs)
+#' 
 #'
 get_prj <- function(gm) {
   class(gm) <- gm$grid_mapping_name
