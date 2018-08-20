@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NetCDF Geometry and Timeseries Tools • ncdfgeom</title>
+<title>NetCDF-CF Geometry and Timeseries Tools for R • ncdfgeom</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="NetCDF Geometry and Timeseries Tools">
+<script src="../pkgdown.js"></script><meta property="og:title" content="NetCDF-CF Geometry and Timeseries Tools for R">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <meta name="robots" content="noindex">
@@ -66,7 +66,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/USGS-R/ncdfgeom#readme">
+  <a href="https://github.com/USGS-R/ncdfgeom">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -83,11 +83,11 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>NetCDF Geometry and Timeseries Tools</h1>
+      <h1>NetCDF-CF Geometry and Timeseries Tools for R</h1>
                         <h4 class="author">David Blodgett</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USGS-R/ncdfgeom#readme/blob/master/vignettes/ncdfgeom.Rmd"><code>vignettes/ncdfgeom.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USGS-R/ncdfgeom/blob/master/vignettes/ncdfgeom.Rmd"><code>vignettes/ncdfgeom.Rmd</code></a></small>
       <div class="hidden name"><code>ncdfgeom.Rmd</code></div>
 
     </div>
@@ -97,11 +97,22 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p><code>ncdfgeom</code> is intended to convert spatial geometries and timeseries that would typically be stored in two or more files into a single file. Geometries in this context could be vector representations of watersheds, cities, rivers, roads, monitoring sites, etc. Geometries are often associated with attributes and possibly timeseries of observed or estimated characteristics of the geometries. Theoretically any quantity for which unique attributes and time series exist for each geometry “instance” could be written and / or read with the functions in this package.</p>
-<p><code>ncdfgeom</code> is a work in progress. Please review the <a href="https://github.com/USGS-R/ncdfgeom/issues">“issues”</a> list to submit issues and/or see what changes are planned.</p>
-<p>For spatial geometries and their attributes, <code>ncdfgeom</code> supports the <code>sf</code> and <code>sp</code> package formats. At the time of writing, 3d geometries and multipoint geometries are not supported.</p>
-<p>For timeseries, two formats are supported: 1. a <code>data.frame</code> with timesteps in rows and geometry “instances” in columns with required attributes of geometry “instances” provided seperately. (shown below) 1. a long format where each row contains all the geometry “instance” metadata, a time stamp, and the variables to be stored for that time step.</p>
-<p>The first lends its self to data where the same timestamps are used for every row and data exists for all geometry instances for all time steps – it is sometimes referred to as the orthoganal array encoding. The second lends its self to data where each geometry instance has unique timesteps and/or data is not available for each geometry instance at the same timesteps.</p>
+<p><code>ncdfgeom</code> is intended to write spatial geometries, their attributes, and timeseries data (that would typically be stored in two or more files) into a single file. The package provides functions to read and write NetCDF-CF Discrete Sampling Geometries point and timeseries feature types as well as NetCDF-CF spatial geometries. These utilities are meant to be general, but were designed to support working with typical geospatial feature data with linked attributes and time series in NetCDF. Supported data types include:</p>
+<ul>
+<li>Variables from R <code>data.frame</code> tables with one row per geometry are read from or written to NetCDF variables.</li>
+<li>
+<code>data.frame</code> tables with a time series per collumn are read from or written as NetCDF-CF DSG TimeSeries FeatureType data.</li>
+<li>
+<code>data.frame</code> table variables with a single-time-step observation for a given point location in each row are written to a NetCDF-CF DSG Point FeatureType.</li>
+<li>
+<code>sp</code> and <code>sf</code> spatial point, line, and polygon types can be read from or written to NetCDF-CF geometry variables introduced in CF-1.8</li>
+</ul>
+<p>For timeseries, two formats are supported:</p>
+<ol style="list-style-type: decimal">
+<li>a <code>data.frame</code> with timesteps in rows and geometry “instances” in columns with required attributes of geometry “instances” provided seperately. This format lends its self to data where the same timestamps are used for every row and data exists for all geometry instances for all time steps – it is sometimes referred to as the orthoganal array encoding.</li>
+<li>a long format where each row contains all the geometry “instance” metadata, a time stamp, and the variables to be stored for that time step. This format lends its self to data where each geometry instance has unique timesteps and/or data is not available for each geometry instance at the same timesteps.</li>
+</ol>
+<p>Additional read / write functions to include additional DSG feature types will be implemented in the future and contributions are welcomed. <code>ncdfgeom</code> is a work in progress. Please review the <a href="https://github.com/USGS-R/ncdfgeom/issues">“issues”</a> list to submit issues and/or see what changes are planned.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
@@ -109,7 +120,6 @@
 <p>At the time of writing, installation is only available via <code>devtools</code> or building the package directly as one would for development purposes.</p>
 <pre><code>install.packages("devtools")
 devtools::install_github("USGS-R/ncdfgeom")</code></pre>
-<p>There is an intention to have this package available via CRAN soon.</p>
 </div>
 <div id="write-data" class="section level2">
 <h2 class="hasAnchor">
@@ -143,144 +153,140 @@ devtools::install_github("USGS-R/ncdfgeom")</code></pre>
 <a class="sourceLine" id="cb12-8" data-line-number="8"></a>
 <a class="sourceLine" id="cb12-9" data-line-number="9">nc_file &lt;-<span class="st"> "climdiv_prcp.nc"</span></a>
 <a class="sourceLine" id="cb12-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb12-11" data-line-number="11"><span class="kw"><a href="../reference/write_timeseries_dsg.html">write_timeseries_dsg</a></span>(<span class="dt">nc_file =</span> nc_file, </a>
-<a class="sourceLine" id="cb12-12" data-line-number="12">                     <span class="dt">instance_names =</span> climdiv_poly<span class="op">$</span>CLIMDIV, </a>
-<a class="sourceLine" id="cb12-13" data-line-number="13">                     <span class="dt">lats =</span> climdiv_centroids<span class="op">$</span>Y, </a>
-<a class="sourceLine" id="cb12-14" data-line-number="14">                     <span class="dt">lons =</span> climdiv_centroids<span class="op">$</span>X, </a>
-<a class="sourceLine" id="cb12-15" data-line-number="15">                     <span class="dt">times =</span> prcp_data<span class="op">$</span>date, </a>
-<a class="sourceLine" id="cb12-16" data-line-number="16">                     <span class="dt">data =</span> prcp_data[<span class="dv">2</span><span class="op">:</span><span class="kw">ncol</span>(prcp_data)], </a>
-<a class="sourceLine" id="cb12-17" data-line-number="17">                     <span class="dt">data_unit =</span> <span class="kw">rep</span>(<span class="st">"inches"</span>, (<span class="kw">ncol</span>(prcp_data) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)), </a>
-<a class="sourceLine" id="cb12-18" data-line-number="18">                     <span class="dt">data_prec =</span> <span class="st">"float"</span>, </a>
-<a class="sourceLine" id="cb12-19" data-line-number="19">                     <span class="dt">data_metadata =</span> <span class="kw">list</span>(<span class="dt">name =</span> <span class="st">"climdiv_prcp_inches"</span>, </a>
-<a class="sourceLine" id="cb12-20" data-line-number="20">                                          <span class="dt">long_name =</span> <span class="st">"Estimated Monthly Climate Division Precipitation in Inches"</span>), </a>
-<a class="sourceLine" id="cb12-21" data-line-number="21">                     <span class="dt">attributes =</span> <span class="kw">list</span>(<span class="dt">title =</span> <span class="st">"Demonstation of ncdfgeom"</span>), </a>
-<a class="sourceLine" id="cb12-22" data-line-number="22">                     <span class="dt">add_to_existing =</span> <span class="ot">FALSE</span>) -&gt;<span class="st"> </span>nc_file</a></code></pre></div>
+<a class="sourceLine" id="cb12-11" data-line-number="11">prcp_dates &lt;-<span class="st"> </span>prcp_data<span class="op">$</span>date</a>
+<a class="sourceLine" id="cb12-12" data-line-number="12">prcp_data &lt;-<span class="st"> </span><span class="kw">select</span>(prcp_data, <span class="op">-</span>date)</a>
+<a class="sourceLine" id="cb12-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb12-14" data-line-number="14"><span class="kw"><a href="../reference/write_timeseries_dsg.html">write_timeseries_dsg</a></span>(<span class="dt">nc_file =</span> nc_file, </a>
+<a class="sourceLine" id="cb12-15" data-line-number="15">                     <span class="dt">instance_names =</span> climdiv_poly<span class="op">$</span>CLIMDIV, </a>
+<a class="sourceLine" id="cb12-16" data-line-number="16">                     <span class="dt">lats =</span> climdiv_centroids<span class="op">$</span>Y, </a>
+<a class="sourceLine" id="cb12-17" data-line-number="17">                     <span class="dt">lons =</span> climdiv_centroids<span class="op">$</span>X, </a>
+<a class="sourceLine" id="cb12-18" data-line-number="18">                     <span class="dt">times =</span> prcp_dates, </a>
+<a class="sourceLine" id="cb12-19" data-line-number="19">                     <span class="dt">data =</span> prcp_data, </a>
+<a class="sourceLine" id="cb12-20" data-line-number="20">                     <span class="dt">data_unit =</span> <span class="kw">rep</span>(<span class="st">"inches"</span>, (<span class="kw">ncol</span>(prcp_data) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)), </a>
+<a class="sourceLine" id="cb12-21" data-line-number="21">                     <span class="dt">data_prec =</span> <span class="st">"float"</span>, </a>
+<a class="sourceLine" id="cb12-22" data-line-number="22">                     <span class="dt">data_metadata =</span> <span class="kw">list</span>(<span class="dt">name =</span> <span class="st">"climdiv_prcp_inches"</span>, </a>
+<a class="sourceLine" id="cb12-23" data-line-number="23">                                          <span class="dt">long_name =</span> <span class="st">"Estimated Monthly Climate Division Precipitation in Inches"</span>), </a>
+<a class="sourceLine" id="cb12-24" data-line-number="24">                     <span class="dt">attributes =</span> <span class="kw">list</span>(<span class="dt">title =</span> <span class="st">"Demonstation of ncdfgeom"</span>), </a>
+<a class="sourceLine" id="cb12-25" data-line-number="25">                     <span class="dt">add_to_existing =</span> <span class="ot">FALSE</span>) -&gt;<span class="st"> </span>nc_file</a></code></pre></div>
 <p>Now we have a file with a structure as shown in the <code>ncdump</code> output below.</p>
-<pre><code>ncdump -sh climdiv_prcp.nc 
-netcdf climdiv_prcp {
-dimensions:
-    station = 344 ;
-    time = 1488 ;
-    name_strlen = 4 ;
-variables:
-    double lat(station) ;
-        lat:units = "degrees_north" ;
-        lat:_FillValue = -999. ;
-        lat:long_name = "latitude of the observation" ;
-        lat:standard_name = "latitude" ;
-    double lon(station) ;
-        lon:units = "degrees_east" ;
-        lon:_FillValue = -999. ;
-        lon:long_name = "longitude of the observation" ;
-        lon:standard_name = "longitude" ;
-    double time(time) ;
-        time:units = "days since 1970-01-01 00:00:00" ;
-        time:_FillValue = -999. ;
-        time:long_name = "time of measurement" ;
-        time:standard_name = "time" ;
-    char station_name(station, name_strlen) ;
-        station_name:long_name = "Station Names" ;
-        station_name:cf_role = "timeseries_id" ;
-        station_name:standard_name = "station_id" ;
-    float climdiv_prcp_inches(station, time) ;
-        climdiv_prcp_inches:units = "inches" ;
-        climdiv_prcp_inches:_FillValue = -999.f ;
-        climdiv_prcp_inches:long_name = "Estimated Monthly Climate Division Precipitation in Inches" ;
-        climdiv_prcp_inches:coordinates = "time lat lon" ;
-
-// global attributes:
-        :Conventions = "CF-1.7" ;
-        :featureType = "timeSeries" ;
-        :cdm_data_type = "Station" ;
-        :standard_name_vocabulary = "CF-1.7" ;
-        :title = "Demonstation of ncdfgeom" ;
-        :_Format = "classic" ;
-}</code></pre>
+<pre><code>## netcdf climdiv_prcp {
+## dimensions:
+##  instance = 344 ;
+##  time = 1488 ;
+##  name_strlen = 4 ;
+## variables:
+##  double lat(instance) ;
+##      lat:units = "degrees_north" ;
+##      lat:_FillValue = -999. ;
+##      lat:long_name = "latitude of the observation" ;
+##      lat:standard_name = "latitude" ;
+##  double lon(instance) ;
+##      lon:units = "degrees_east" ;
+##      lon:_FillValue = -999. ;
+##      lon:long_name = "longitude of the observation" ;
+##      lon:standard_name = "longitude" ;
+##  double time(time) ;
+##      time:units = "days since 1970-01-01 00:00:00" ;
+##      time:_FillValue = -999. ;
+##      time:long_name = "time of measurement" ;
+##      time:standard_name = "time" ;
+##  char instance_name(instance, name_strlen) ;
+##      instance_name:long_name = "Station Names" ;
+##      instance_name:cf_role = "timeseries_id" ;
+##  float climdiv_prcp_inches(instance, time) ;
+##      climdiv_prcp_inches:units = "inches" ;
+##      climdiv_prcp_inches:_FillValue = -999.f ;
+##      climdiv_prcp_inches:long_name = "Estimated Monthly Climate Division Precipitation in Inches" ;
+##      climdiv_prcp_inches:coordinates = "time lat lon" ;
+## 
+## // global attributes:
+##      :Conventions = "CF-1.8" ;
+##      :featureType = "timeSeries" ;
+##      :cdm_data_type = "Station" ;
+##      :standard_name_vocabulary = "CF-1.8" ;
+##      :title = "Demonstation of ncdfgeom" ;
+## }</code></pre>
 <p>Next we can write the geometry data into the same file.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="../reference/write_geometry.html">write_geometry</a></span>(<span class="dt">nc_file =</span> <span class="st">"climdiv_prcp.nc"</span>, </a>
 <a class="sourceLine" id="cb14-2" data-line-number="2">               <span class="dt">geomData =</span> climdiv_poly,</a>
 <a class="sourceLine" id="cb14-3" data-line-number="3">               <span class="dt">variables =</span> <span class="st">"climdiv_prcp_inches"</span>) -&gt;<span class="st"> </span>nc_file</a></code></pre></div>
 <p>Now we have a file with an <code>ncdump</code> that looks like:</p>
-<pre><code>ncdump -sh climdiv_prcp.nc 
-netcdf climdiv_prcp {
-dimensions:
-    station = 344 ;
-    time = 1488 ;
-    name_strlen = 4 ;
-    char = 30 ;
-    instance = 344 ;
-    node = 8198 ;
-    part = 420 ;
-variables:
-    double lat(station) ;
-        lat:units = "degrees_north" ;
-        lat:_FillValue = -999. ;
-        lat:long_name = "latitude of the observation" ;
-        lat:standard_name = "latitude" ;
-    double lon(station) ;
-        lon:units = "degrees_east" ;
-        lon:_FillValue = -999. ;
-        lon:long_name = "longitude of the observation" ;
-        lon:standard_name = "longitude" ;
-    double time(time) ;
-        time:units = "days since 1970-01-01 00:00:00" ;
-        time:_FillValue = -999. ;
-        time:long_name = "time of measurement" ;
-        time:standard_name = "time" ;
-    char station_name(station, name_strlen) ;
-        station_name:long_name = "Station Names" ;
-        station_name:cf_role = "timeseries_id" ;
-        station_name:standard_name = "station_id" ;
-    float climdiv_prcp_inches(station, time) ;
-        climdiv_prcp_inches:units = "inches" ;
-        climdiv_prcp_inches:_FillValue = -999.f ;
-        climdiv_prcp_inches:long_name = "Estimated Monthly Climate Division Precipitation in Inches" ;
-        climdiv_prcp_inches:coordinates = "time lat lon" ;
-        climdiv_prcp_inches:grid_mapping = "grid_mapping" ;
-        climdiv_prcp_inches:geometry = "geometry_container" ;
-    char CLIMDIV(instance, char) ;
-        CLIMDIV:units = "unknown" ;
-        CLIMDIV:grid_mapping = "grid_mapping" ;
-        CLIMDIV:geometry = "geometry_container" ;
-    char CLIMDIV_NAME(instance, char) ;
-        CLIMDIV_NAME:units = "unknown" ;
-        CLIMDIV_NAME:grid_mapping = "grid_mapping" ;
-        CLIMDIV_NAME:geometry = "geometry_container" ;
-    double x(node) ;
-        x:units = "degrees_east" ;
-        x:standard_name = "longitude" ;
-        x:axis = "X" ;
-    double y(node) ;
-        y:units = "degrees_north" ;
-        y:standard_name = "latitude" ;
-        y:axis = "Y" ;
-    float geometry_container ;
-        geometry_container:geometry_type = "polygon" ;
-        geometry_container:node_count = "node_count" ;
-        geometry_container:node_coordinates = "x y" ;
-        geometry_container:grid_mapping = "grid_mapping" ;
-        geometry_container:part_node_count = "part_node_count" ;
-        geometry_container:interior_ring = "interior_ring" ;
-    int node_count(instance) ;
-        node_count:long_name = "count of coordinates in each instance geometry" ;
-    float grid_mapping ;
-        grid_mapping:grid_mapping_name = "latitude_longitude" ;
-        grid_mapping:semi_major_axis = 6378137. ;
-        grid_mapping:inverse_flattening = 298.257223563 ;
-        grid_mapping:longitude_of_prime_meridian = 0. ;
-    int part_node_count(part) ;
-        part_node_count:long_name = "count of nodes in each geometry part" ;
-    int interior_ring(part) ;
-        interior_ring:long_name = "type of each geometry part" ;
-
-// global attributes:
-        :Conventions = "CF-1.8" ;
-        :featureType = "timeSeries" ;
-        :cdm_data_type = "Station" ;
-        :standard_name_vocabulary = "CF-1.7" ;
-        :title = "Demonstation of ncdfgeom" ;
-        :_Format = "classic" ;
-}</code></pre>
+<pre><code>## netcdf climdiv_prcp {
+## dimensions:
+##  instance = 344 ;
+##  time = 1488 ;
+##  name_strlen = 4 ;
+##  char = 30 ;
+##  node = 3169875 ;
+##  part = 1636 ;
+## variables:
+##  double lat(instance) ;
+##      lat:units = "degrees_north" ;
+##      lat:_FillValue = -999. ;
+##      lat:long_name = "latitude of the observation" ;
+##      lat:standard_name = "latitude" ;
+##  double lon(instance) ;
+##      lon:units = "degrees_east" ;
+##      lon:_FillValue = -999. ;
+##      lon:long_name = "longitude of the observation" ;
+##      lon:standard_name = "longitude" ;
+##  double time(time) ;
+##      time:units = "days since 1970-01-01 00:00:00" ;
+##      time:_FillValue = -999. ;
+##      time:long_name = "time of measurement" ;
+##      time:standard_name = "time" ;
+##  char instance_name(instance, name_strlen) ;
+##      instance_name:long_name = "Station Names" ;
+##      instance_name:cf_role = "timeseries_id" ;
+##  float climdiv_prcp_inches(instance, time) ;
+##      climdiv_prcp_inches:units = "inches" ;
+##      climdiv_prcp_inches:_FillValue = -999.f ;
+##      climdiv_prcp_inches:long_name = "Estimated Monthly Climate Division Precipitation in Inches" ;
+##      climdiv_prcp_inches:coordinates = "time lat lon" ;
+##      climdiv_prcp_inches:grid_mapping = "grid_mapping" ;
+##      climdiv_prcp_inches:geometry = "geometry_container" ;
+##  char CLIMDIV(instance, char) ;
+##      CLIMDIV:units = "unknown" ;
+##      CLIMDIV:grid_mapping = "grid_mapping" ;
+##      CLIMDIV:geometry = "geometry_container" ;
+##  char CLIMDIV_NAME(instance, char) ;
+##      CLIMDIV_NAME:units = "unknown" ;
+##      CLIMDIV_NAME:grid_mapping = "grid_mapping" ;
+##      CLIMDIV_NAME:geometry = "geometry_container" ;
+##  double x_nodes(node) ;
+##      x_nodes:units = "degrees_east" ;
+##      x_nodes:standard_name = "longitude" ;
+##      x_nodes:axis = "X" ;
+##  double y_nodes(node) ;
+##      y_nodes:units = "degrees_north" ;
+##      y_nodes:standard_name = "latitude" ;
+##      y_nodes:axis = "Y" ;
+##  float geometry_container ;
+##      geometry_container:geometry_type = "polygon" ;
+##      geometry_container:node_count = "node_count" ;
+##      geometry_container:node_coordinates = "x_nodes y_nodes" ;
+##      geometry_container:grid_mapping = "grid_mapping" ;
+##      geometry_container:part_node_count = "part_node_count" ;
+##      geometry_container:interior_ring = "interior_ring" ;
+##  int node_count(instance) ;
+##      node_count:long_name = "count of coordinates in each instance geometry" ;
+##  float grid_mapping ;
+##      grid_mapping:grid_mapping_name = "latitude_longitude" ;
+##      grid_mapping:semi_major_axis = 6378137. ;
+##      grid_mapping:inverse_flattening = 298.257223563 ;
+##      grid_mapping:longitude_of_prime_meridian = 0. ;
+##  int part_node_count(part) ;
+##      part_node_count:long_name = "count of nodes in each geometry part" ;
+##  int interior_ring(part) ;
+##      interior_ring:long_name = "type of each geometry part" ;
+## 
+## // global attributes:
+##      :Conventions = "CF-1.8" ;
+##      :featureType = "timeSeries" ;
+##      :cdm_data_type = "Station" ;
+##      :standard_name_vocabulary = "CF-1.8" ;
+##      :title = "Demonstation of ncdfgeom" ;
+## }</code></pre>
 <p>For more information about the polygon and timeseries data structures used here, see the <a href="http://cfconventions.org/cf-conventions/cf-conventions.html">NetCDF-CF standard.</a></p>
 </div>
 <div id="read-data" class="section level2">

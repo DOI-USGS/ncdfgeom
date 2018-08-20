@@ -42,6 +42,8 @@
 #' with the same name. The expected usage is to call this function repeatedly 
 #' only changing the data, data_unit, data_prec and data_metadata inputs.
 #' 
+#' See the timeseries vignette for more information.
+#' 
 #' @references
 #' \enumerate{
 #'   \item \url{http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html}

@@ -1,13 +1,13 @@
 Package: ncdfgeom
 Type: Package
-Title: Discrete Sampling Geometry NetCDF
+Title: NetCDF Geometry and Timeseries
 Version: 0.5.0
 Date: 2017-07-17
 Authors@R: c(person("David", "Blodgett", role = c("aut", "cre"), 
                     email = "dblodgett@usgs.gov"),
              person("Luke", "Winslow", role = "ctb"))
 Description: Tools to create discrete sampling geometry and spatial geometry NetCDF files.
-URL: https://github.com/USGS-R/ncdfgeom#readme
+URL: https://github.com/USGS-R/ncdfgeom
 BugReports: https://github.com/USGS-R/ncdfgeom/issues
 Imports:
     ncdf4,

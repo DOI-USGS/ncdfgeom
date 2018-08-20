@@ -100,7 +100,7 @@ Will also add attributes if provided data has them." />
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/USGS-R/ncdfgeom#readme">
+  <a href="https://github.com/USGS-R/ncdfgeom">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -118,7 +118,7 @@ Will also add attributes if provided data has them." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write sp or sf geometries and attributes to NetCDF-CF</h1>
-    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom#readme/blob/master/R/write_geometry.R'><code>R/write_geometry.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/write_geometry.R'><code>R/write_geometry.R</code></a></small>
     <div class="hidden name"><code>write_geometry.Rd</code></div>
     </div>
 
@@ -178,7 +178,7 @@ list of variables that should be related to the geometries.</p></td>
 <span class='no'>hucPolygons_nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdfgeom</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry'>write_geometry</a></span>(<span class='kw'>nc_file</span><span class='kw'>=</span><span class='fu'>tempfile</span>(),
                                            <span class='kw'>geomData</span> <span class='kw'>=</span> <span class='no'>hucPolygons</span>)
 <span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'>system</span>(<span class='fu'>paste</span>(<span class='st'>"ncdump -h"</span>, <span class='no'>hucPolygons_nc</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'>cat</span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf file71ad2a882f84 {
+<span class='fu'>cat</span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf filea3d0cc8b79 {
 #&gt; dimensions:
 #&gt; 	char = 38 ;
 #&gt; 	instance = 2 ;

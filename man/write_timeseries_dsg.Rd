@@ -62,6 +62,8 @@ same as are already in the file. If the functions is called with
 add_to_existing=FALSE (the default), it will overwrite an existing file 
 with the same name. The expected usage is to call this function repeatedly 
 only changing the data, data_unit, data_prec and data_metadata inputs.
+
+See the timeseries vignette for more information.
 }
 \references{
 \enumerate{

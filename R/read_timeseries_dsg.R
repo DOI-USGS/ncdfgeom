@@ -27,6 +27,8 @@
 #' 
 #' Data vars are traversed and their metadata and data content put into lists within the main
 #' response list.
+#' 
+#' See the timeseries vignette for more information.
 #'
 #'@references
 #'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html

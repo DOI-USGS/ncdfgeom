@@ -1,5 +1,5 @@
 ---
-title: "NetCDF Geometry and Timeseries Tools"
+title: "NetCDF-CF Geometry and Timeseries Tools for R"
 author: "David Blodgett"
 output: rmarkdown::html_vignette
 vignette: >
@@ -10,17 +10,19 @@ vignette: >
 
 ## Introduction
 
-`ncdfgeom` is intended to convert spatial geometries and timeseries that would typically be stored in two or more files into a single file. Geometries in this context could be vector representations of watersheds, cities, rivers, roads, monitoring sites, etc. Geometries are often associated with attributes and possibly timeseries of observed or estimated characteristics of the geometries. Theoretically any quantity for which unique attributes and time series exist for each geometry "instance" could be written and / or read with the functions in this package.
+`ncdfgeom` is intended to write spatial geometries, their attributes, and timeseries data (that would typically be stored in two or more files) into a single file. The package provides functions to read and write NetCDF-CF Discrete Sampling Geometries point and timeseries feature types as well as NetCDF-CF spatial geometries. These utilities are meant to be general, but were designed to support working with typical geospatial feature data with linked attributes and time series in NetCDF. Supported data types include:  
 
-`ncdfgeom` is a work in progress. Please review the ["issues"](https://github.com/USGS-R/ncdfgeom/issues) list to submit issues and/or see what changes are planned.
+- Variables from R `data.frame` tables with one row per geometry are read from or written to NetCDF variables.
+- `data.frame` tables with a time series per collumn are read from or written as NetCDF-CF DSG TimeSeries FeatureType data.
+- `data.frame` table variables with a single-time-step observation for a given point location in each row are written to a NetCDF-CF DSG Point FeatureType.
+- `sp` and `sf` spatial point, line, and polygon types can be read from or written to NetCDF-CF geometry variables introduced in CF-1.8
 
-For spatial geometries and their attributes, `ncdfgeom` supports the `sf` and `sp` package formats. At the time of writing, 3d geometries and multipoint geometries are not supported.
+For timeseries, two formats are supported:  
 
-For timeseries, two formats are supported:
-1. a `data.frame` with timesteps in rows and geometry "instances" in columns with required attributes of geometry "instances" provided seperately. (shown below)
-1. a long format where each row contains all the geometry "instance" metadata, a time stamp, and the variables to be stored for that time step. 
+1. a `data.frame` with timesteps in rows and geometry "instances" in columns with required attributes of geometry "instances" provided seperately. This format lends its self to data where the same timestamps are used for every row and data exists for all geometry instances for all time steps -- it is sometimes referred to as the orthoganal array encoding.
+1. a long format where each row contains all the geometry "instance" metadata, a time stamp, and the variables to be stored for that time step. This format lends its self to data where each geometry instance has unique timesteps and/or data is not available for each geometry instance at the same timesteps.
 
-The first lends its self to data where the same timestamps are used for every row and data exists for all geometry instances for all time steps -- it is sometimes referred to as the orthoganal array encoding. The second lends its self to data where each geometry instance has unique timesteps and/or data is not available for each geometry instance at the same timesteps.
+Additional read / write functions to include additional DSG feature types will be implemented in the future and contributions are welcomed. `ncdfgeom` is a work in progress. Please review the ["issues"](https://github.com/USGS-R/ncdfgeom/issues) list to submit issues and/or see what changes are planned.
 
 ## Installation
 
@@ -30,8 +32,6 @@ At the time of writing, installation is only available via `devtools` or buildin
 install.packages("devtools")
 devtools::install_github("USGS-R/ncdfgeom")
 ```
-
-There is an intention to have this package available via CRAN soon.
 
 ## Write Data
 
@@ -119,12 +119,15 @@ climdiv_centroids <- climdiv_poly %>%
 
 nc_file <- "climdiv_prcp.nc"
 
+prcp_dates <- prcp_data$date
+prcp_data <- select(prcp_data, -date)
+
 write_timeseries_dsg(nc_file = nc_file, 
                      instance_names = climdiv_poly$CLIMDIV, 
                      lats = climdiv_centroids$Y, 
                      lons = climdiv_centroids$X, 
-                     times = prcp_data$date, 
-                     data = prcp_data[2:ncol(prcp_data)], 
+                     times = prcp_dates, 
+                     data = prcp_data, 
                      data_unit = rep("inches", (ncol(prcp_data) - 1)), 
                      data_prec = "float", 
                      data_metadata = list(name = "climdiv_prcp_inches", 
@@ -134,48 +137,11 @@ write_timeseries_dsg(nc_file = nc_file,
 
 ```
 Now we have a file with a structure as shown in the `ncdump` output below.
+```{r ncdump, echo=FALSE}
+ncdump <- system(paste("ncdump -h", nc_file), intern = TRUE)
+cat(ncdump ,sep = "\n")
 ```
-ncdump -sh climdiv_prcp.nc 
-netcdf climdiv_prcp {
-dimensions:
-	station = 344 ;
-	time = 1488 ;
-	name_strlen = 4 ;
-variables:
-	double lat(station) ;
-		lat:units = "degrees_north" ;
-		lat:_FillValue = -999. ;
-		lat:long_name = "latitude of the observation" ;
-		lat:standard_name = "latitude" ;
-	double lon(station) ;
-		lon:units = "degrees_east" ;
-		lon:_FillValue = -999. ;
-		lon:long_name = "longitude of the observation" ;
-		lon:standard_name = "longitude" ;
-	double time(time) ;
-		time:units = "days since 1970-01-01 00:00:00" ;
-		time:_FillValue = -999. ;
-		time:long_name = "time of measurement" ;
-		time:standard_name = "time" ;
-	char station_name(station, name_strlen) ;
-		station_name:long_name = "Station Names" ;
-		station_name:cf_role = "timeseries_id" ;
-		station_name:standard_name = "station_id" ;
-	float climdiv_prcp_inches(station, time) ;
-		climdiv_prcp_inches:units = "inches" ;
-		climdiv_prcp_inches:_FillValue = -999.f ;
-		climdiv_prcp_inches:long_name = "Estimated Monthly Climate Division Precipitation in Inches" ;
-		climdiv_prcp_inches:coordinates = "time lat lon" ;
 
-// global attributes:
-		:Conventions = "CF-1.7" ;
-		:featureType = "timeSeries" ;
-		:cdm_data_type = "Station" ;
-		:standard_name_vocabulary = "CF-1.7" ;
-		:title = "Demonstation of ncdfgeom" ;
-		:_Format = "classic" ;
-}
-```
 Next we can write the geometry data into the same file.
 ```{r write_geom}
 write_geometry(nc_file = "climdiv_prcp.nc", 
@@ -184,88 +150,12 @@ write_geometry(nc_file = "climdiv_prcp.nc",
 
 ```
 Now we have a file with an `ncdump` that looks like:
-```
-ncdump -sh climdiv_prcp.nc 
-netcdf climdiv_prcp {
-dimensions:
-	station = 344 ;
-	time = 1488 ;
-	name_strlen = 4 ;
-	char = 30 ;
-	instance = 344 ;
-	node = 8198 ;
-	part = 420 ;
-variables:
-	double lat(station) ;
-		lat:units = "degrees_north" ;
-		lat:_FillValue = -999. ;
-		lat:long_name = "latitude of the observation" ;
-		lat:standard_name = "latitude" ;
-	double lon(station) ;
-		lon:units = "degrees_east" ;
-		lon:_FillValue = -999. ;
-		lon:long_name = "longitude of the observation" ;
-		lon:standard_name = "longitude" ;
-	double time(time) ;
-		time:units = "days since 1970-01-01 00:00:00" ;
-		time:_FillValue = -999. ;
-		time:long_name = "time of measurement" ;
-		time:standard_name = "time" ;
-	char station_name(station, name_strlen) ;
-		station_name:long_name = "Station Names" ;
-		station_name:cf_role = "timeseries_id" ;
-		station_name:standard_name = "station_id" ;
-	float climdiv_prcp_inches(station, time) ;
-		climdiv_prcp_inches:units = "inches" ;
-		climdiv_prcp_inches:_FillValue = -999.f ;
-		climdiv_prcp_inches:long_name = "Estimated Monthly Climate Division Precipitation in Inches" ;
-		climdiv_prcp_inches:coordinates = "time lat lon" ;
-		climdiv_prcp_inches:grid_mapping = "grid_mapping" ;
-		climdiv_prcp_inches:geometry = "geometry_container" ;
-	char CLIMDIV(instance, char) ;
-		CLIMDIV:units = "unknown" ;
-		CLIMDIV:grid_mapping = "grid_mapping" ;
-		CLIMDIV:geometry = "geometry_container" ;
-	char CLIMDIV_NAME(instance, char) ;
-		CLIMDIV_NAME:units = "unknown" ;
-		CLIMDIV_NAME:grid_mapping = "grid_mapping" ;
-		CLIMDIV_NAME:geometry = "geometry_container" ;
-	double x(node) ;
-		x:units = "degrees_east" ;
-		x:standard_name = "longitude" ;
-		x:axis = "X" ;
-	double y(node) ;
-		y:units = "degrees_north" ;
-		y:standard_name = "latitude" ;
-		y:axis = "Y" ;
-	float geometry_container ;
-		geometry_container:geometry_type = "polygon" ;
-		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x y" ;
-		geometry_container:grid_mapping = "grid_mapping" ;
-		geometry_container:part_node_count = "part_node_count" ;
-		geometry_container:interior_ring = "interior_ring" ;
-	int node_count(instance) ;
-		node_count:long_name = "count of coordinates in each instance geometry" ;
-	float grid_mapping ;
-		grid_mapping:grid_mapping_name = "latitude_longitude" ;
-		grid_mapping:semi_major_axis = 6378137. ;
-		grid_mapping:inverse_flattening = 298.257223563 ;
-		grid_mapping:longitude_of_prime_meridian = 0. ;
-	int part_node_count(part) ;
-		part_node_count:long_name = "count of nodes in each geometry part" ;
-	int interior_ring(part) ;
-		interior_ring:long_name = "type of each geometry part" ;
 
-// global attributes:
-		:Conventions = "CF-1.8" ;
-		:featureType = "timeSeries" ;
-		:cdm_data_type = "Station" ;
-		:standard_name_vocabulary = "CF-1.7" ;
-		:title = "Demonstation of ncdfgeom" ;
-		:_Format = "classic" ;
-}
+```{r ncdump2, echo=FALSE}
+ncdump <- system(paste("ncdump -h", nc_file), intern = TRUE)
+cat(ncdump ,sep = "\n")
 ```
+
 For more information about the polygon and timeseries data structures used here, see the [NetCDF-CF standard.](http://cfconventions.org/cf-conventions/cf-conventions.html)  
 
 ## Read Data
