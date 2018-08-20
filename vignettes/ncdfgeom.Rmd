@@ -1,5 +1,5 @@
 ---
-title: "NetCDF Geometry and Timeseries Tools"
+title: "NetCDF-CF Geometry and Timeseries Tools for R"
 author: "David Blodgett"
 output: rmarkdown::html_vignette
 vignette: >
@@ -8,38 +8,306 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup}
+## Introduction
+
+`ncdfgeom` is intended to write spatial geometries, their attributes, and timeseries data (that would typically be stored in two or more files) into a single file. The package provides functions to read and write NetCDF-CF Discrete Sampling Geometries point and timeseries feature types as well as NetCDF-CF spatial geometries. These utilities are meant to be general, but were designed to support working with typical geospatial feature data with linked attributes and time series in NetCDF. Supported data types include:  
+
+- Variables from R `data.frame` tables with one row per geometry are read from or written to NetCDF variables.
+- `data.frame` tables with a time series per collumn are read from or written as NetCDF-CF DSG TimeSeries FeatureType data.
+- `data.frame` table variables with a single-time-step observation for a given point location in each row are written to a NetCDF-CF DSG Point FeatureType.
+- `sp` and `sf` spatial point, line, and polygon types can be read from or written to NetCDF-CF geometry variables introduced in CF-1.8
+
+For timeseries, two formats are supported:  
+
+1. a `data.frame` with timesteps in rows and geometry "instances" in columns with required attributes of geometry "instances" provided seperately. This format lends its self to data where the same timestamps are used for every row and data exists for all geometry instances for all time steps -- it is sometimes referred to as the orthoganal array encoding.
+1. a long format where each row contains all the geometry "instance" metadata, a time stamp, and the variables to be stored for that time step. This format lends its self to data where each geometry instance has unique timesteps and/or data is not available for each geometry instance at the same timesteps.
+
+Additional read / write functions to include additional DSG feature types will be implemented in the future and contributions are welcomed. `ncdfgeom` is a work in progress. Please review the ["issues"](https://github.com/USGS-R/ncdfgeom/issues) list to submit issues and/or see what changes are planned.
+
+## Installation
+
+At the time of writing, installation is only available via `devtools` or building the package directly as one would for development purposes.
+
+```
+install.packages("devtools")
+devtools::install_github("USGS-R/ncdfgeom")
+```
+
+## Write Data
+
+In this example, we'll work with precipitation data available by climate division from NOAA at: [doi:10.7289/V5M32STR](https://doi.org/10.7289/V5M32STR)
+
+Code to download and get it ready for ncdfgeom is shown at the end of this vignette. Let's look at the names and dimensions of the two `data.frames` that we'll start with: `prcp_data` and `climdiv_poly`. 
+
+```{r libs, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(tidyr)
 library(sf)
-library(leaflet)
+library(ncdfgeom)
+```
+```{r setup_secret, echo = FALSE}
+# Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt
+prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20180806"
+prcp_file <- "prcp.txt"
+if(!file.exists(prcp_file)) {
+  download.file(url = prcp_url, destfile = prcp_file, quiet = TRUE)
+}
 
+division_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/CONUS_CLIMATE_DIVISIONS.shp.zip"
+division_file <- "CONUS_CLIMATE_DIVISIONS.shp.zip"
+if(!file.exists(division_file)) {
+  download.file(url = division_url, destfile = division_file, quiet = TRUE)
+  unzip("CONUS_CLIMATE_DIVISIONS.shp.zip")
+}
 
-file.copy(system.file('extdata','example_huc_eta.nc', package = 'ncdfgeom'), 
-					"hucPolygons.nc", 
-					overwrite = TRUE) -> quiet
+climdiv_poly <- read_sf("GIS.OFFICIAL_CLIM_DIVISIONS.shp") %>%
+  select("CLIMDIV", CLIMDIV_NAME = "NAME") %>%
+  mutate(CLIMDIV = ifelse(nchar(as.character(CLIMDIV)) == 3, 
+                          paste0("0",as.character(CLIMDIV)),
+                          as.character(CLIMDIV)))
 
-hucTimeseries <- ncdf4::nc_open("hucPolygons.nc")
+month_strings <- c("jan", "feb", "mar", "apr", "may", "jun", 
+                   "jul", "aug", "sep", "oct", "nov", "dec")
 
-et <- ncdf4::ncvar_get(hucTimeseries, hucTimeseries$var$et)
-time <- as.POSIXct(hucTimeseries$dim$time$vals * 24*60*60, 
-									 origin = strptime("1970-01-01", "%Y-%m-%d"))
+prcp_data <- read.table(prcp_file, header = FALSE, 
+                        colClasses = c("character", 
+                                       rep("numeric", 12)),
+                        col.names = c("meta", month_strings))
 
-plot(time, et[,1], main = "Monthly Evapotranspiration",pch=16)
-lines(time, et[,1], pch=16)
+# Here we gather the data into a long format and prep it for ncdfgeom.
+prcp_data <- prcp_data %>%
+  gather(key = "month", value = "precip_inches", -meta) %>%
+  mutate(climdiv = paste0(substr(meta, 1, 2), substr(meta, 3, 4)),
+         year = substr(meta, 7, 10),
+         precip_inches = ifelse(precip_inches < 0, NA, precip_inches)) %>%
+  mutate(date = as.Date(paste0("01", "-", month, "-", year), 
+                        format = "%d-%b-%Y")) %>%
+  select(-meta, -month, -year) %>%
+  filter(climdiv %in% climdiv_poly$CLIMDIV) %>%
+  spread(key = "climdiv", value = "precip_inches")
 
-hucPolygons <- read_sf(system.file('extdata','example_huc_eta.json', 
-																					package = 'ncdfgeom'))
+# Now make sure things are in the same order.
+climdiv_names <- names(prcp_data)[2:length(names(prcp_data))]
+climdiv_row_order <- match(climdiv_names, climdiv_poly$CLIMDIV)
+climdiv_poly <- climdiv_poly[climdiv_row_order, ]
+```
+```{r data_shape}
+# prcp_data is in "wide" format with dates as rows.
+dim(prcp_data)
+# The climate division ids are the names prcp_data.
+str(names(prcp_data)) 
+# climdiv_poly is an sf data.frame with geometry instances as rows.
+dim(climdiv_poly)
+# climdiv_poly has three variables, one of which is the geometries.
+str(names(climdiv_poly))
+# Climate division identifiers are in the CLIMDIV variable.
+str(climdiv_poly$CLIMDIV)
+```
 
-leaflet(hucPolygons) %>% addTiles() %>% addPolygons()
+As shown above, we have two `data.frame`s. One has 344 columns and the other 344 rows. These 344 climate divisions will be our "instance" dimension when we write to NetCDF. 
 
-hucPolygons_nc <- ncdfgeom::ToNCDFSG(nc_file="hucPolygons.nc", 
-																			 geomData = hucPolygons, 
-																			 instance_names = hucPolygons$HUC12, 
-																			 instance_dim_name = "station", 
-																			 variables = hucTimeseries$var)
+The NetCDF discrete sampling geometries timeSeries standard requires point lat/lon coordinate locations for timeSeries data. In the code below, we calculate these values and write the timeseries data to a netcdf file.
 
-hucPolygons_sf <- ncdfgeom::FromNCDFSG("hucPolygons.nc")
+```{r write_ts} 
+climdiv_centroids <- climdiv_poly %>%
+  st_transform(5070) %>% # Albers Equal Area
+  st_set_agr("constant") %>%
+  st_centroid() %>%
+  st_transform(4269) %>% #NAD83 Lat/Lon
+  st_coordinates() %>%
+  as.data.frame()
 
-hucPolygons_gpkg <- write_sf(hucPolygons_sf, "hucPolygons.gpkg")
-unlink("hucPolygons.nc")
-unlink("hucPolygons.gpkg")
+nc_file <- "climdiv_prcp.nc"
+
+prcp_dates <- prcp_data$date
+prcp_data <- select(prcp_data, -date)
+
+write_timeseries_dsg(nc_file = nc_file, 
+                     instance_names = climdiv_poly$CLIMDIV, 
+                     lats = climdiv_centroids$Y, 
+                     lons = climdiv_centroids$X, 
+                     times = prcp_dates, 
+                     data = prcp_data, 
+                     data_unit = rep("inches", (ncol(prcp_data) - 1)), 
+                     data_prec = "float", 
+                     data_metadata = list(name = "climdiv_prcp_inches", 
+                                          long_name = "Estimated Monthly Climate Division Precipitation in Inches"), 
+                     attributes = list(title = "Demonstation of ncdfgeom"), 
+                     add_to_existing = FALSE) -> nc_file
+
+```
+Now we have a file with a structure as shown in the `ncdump` output below.
+```{r ncdump, echo=FALSE}
+ncdump <- system(paste("ncdump -h", nc_file), intern = TRUE)
+cat(ncdump ,sep = "\n")
+```
+
+Next we can write the geometry data into the same file.
+```{r write_geom}
+write_geometry(nc_file = "climdiv_prcp.nc", 
+               geomData = climdiv_poly,
+               variables = "climdiv_prcp_inches") -> nc_file
+
+```
+Now we have a file with an `ncdump` that looks like:
+
+```{r ncdump2, echo=FALSE}
+ncdump <- system(paste("ncdump -h", nc_file), intern = TRUE)
+cat(ncdump ,sep = "\n")
+```
+
+For more information about the polygon and timeseries data structures used here, see the [NetCDF-CF standard.](http://cfconventions.org/cf-conventions/cf-conventions.html)  
+
+## Read Data
+
+Now that we have all our data in a single file, we can read it back in.
+```{r read}
+prcp_data <- read_timeseries_dsg("climdiv_prcp.nc")
+climdiv_poly <- read_geometry("climdiv_prcp.nc")
+
+# In the future, the response from read_timeseries_dsg could be a formal R object.
+# Right now, it is a list that looks like:
+names(prcp_data)
+class(prcp_data$time)
+names(prcp_data$varmeta$climdiv_prcp_inches)
+prcp_data$data_unit
+prcp_data$data_prec
+str(names(prcp_data$data_frames$climdiv_prcp_inches))
+prcp_data$global_attributes
+names(climdiv_poly)
+```
+
+To understand what is actually in this file, let's visualize the data we just read. Below we join a sum of the precipitation timeseries to the climate division polygons and plot them up.
+
+```{r p_colors_source, echo=FALSE}
+# Because we've gotta have pretty colors!
+p_colors <- function (n, name = c("precip_colors")) {
+# Thanks! https://quantdev.ssri.psu.edu/tutorials/generating-custom-color-palette-function-r
+    p_rgb <- col2rgb(c("#FAFBF3", "#F0F8E3", "#D4E9CA", 
+                       "#BBE0CE", "#B7DAD0", "#B0CCD7", 
+                       "#A9B8D7", "#A297C2", "#8F6F9E", 
+                       "#684A77", "#41234D"))
+    precip_colors = rgb(p_rgb[1,],p_rgb[2,],p_rgb[3,],maxColorValue = 255)
+    name = match.arg(name)
+    orig = eval(parse(text = name))
+    rgb = t(col2rgb(orig))
+    temp = matrix(NA, ncol = 3, nrow = n)
+    x = seq(0, 1, , length(orig))
+    xg = seq(0, 1, , n)
+    for (k in 1:3) {
+        hold = spline(x, rgb[, k], n = n)$y
+        hold[hold < 0] = 0
+        hold[hold > 255] = 255
+        temp[, k] = round(hold)
+    }
+    palette = rgb(temp[, 1], temp[, 2], temp[, 3], maxColorValue = 255)
+    palette
+}
+```
+
+```{r plot, fig.height=6, fig.width=8}
+climdiv_poly <- climdiv_poly %>%
+  st_transform(3857) %>% # web mercator
+  st_simplify(dTolerance = 5000)
+
+title <- paste0("\n Sum of: ", prcp_data$varmeta$climdiv_prcp_inches$long_name, "\n", 
+                format(prcp_data$time[1], 
+                         "%Y-%m", tz = "UTC"), " - ", 
+                format(prcp_data$time[length(prcp_data$time)], 
+                         "%Y-%m", tz = "UTC"))
+
+prcp_sum <- apply(prcp_data$data_frames$climdiv_prcp_inches, 
+                  2, sum, na.rm = TRUE)
+
+prcp <- data.frame(CLIMDIV = names(prcp_sum), 
+                   prcp = as.numeric(prcp_sum), 
+                   stringsAsFactors = FALSE) %>%
+  right_join(climdiv_poly, by = "CLIMDIV") %>% 
+  st_as_sf()
+
+plot(prcp["prcp"], lwd = 0.1, pal = p_colors, 
+     breaks = seq(0, 14000, 1000),
+     main = title,
+     key.pos = 3, key.length = lcm(20))
+  
+```
+
+This is the code used to download and prep the precipitation data.
+```{r setup, echo = FALSE}
+# Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt
+prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20180806"
+prcp_file <- "prcp.txt"
+if(!file.exists(prcp_file)) {
+  download.file(url = prcp_url, destfile = prcp_file, quiet = TRUE)
+}
+
+division_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/CONUS_CLIMATE_DIVISIONS.shp.zip"
+division_file <- "CONUS_CLIMATE_DIVISIONS.shp.zip"
+if(!file.exists(division_file)) {
+  download.file(url = division_url, destfile = division_file, quiet = TRUE)
+  unzip("CONUS_CLIMATE_DIVISIONS.shp.zip")
+}
+
+climdiv_poly <- read_sf("GIS.OFFICIAL_CLIM_DIVISIONS.shp") %>%
+  select("CLIMDIV", CLIMDIV_NAME = "NAME") %>%
+  mutate(CLIMDIV = ifelse(nchar(as.character(CLIMDIV)) == 3, 
+                          paste0("0",as.character(CLIMDIV)),
+                          as.character(CLIMDIV)))
+
+month_strings <- c("jan", "feb", "mar", "apr", "may", "jun", 
+                   "jul", "aug", "sep", "oct", "nov", "dec")
+
+prcp_data <- read.table(prcp_file, header = FALSE, 
+                        colClasses = c("character", 
+                                       rep("numeric", 12)),
+                        col.names = c("meta", month_strings))
+
+# Here we gather the data into a long format and prep it for ncdfgeom.
+prcp_data <- prcp_data %>%
+  gather(key = "month", value = "precip_inches", -meta) %>%
+  mutate(climdiv = paste0(substr(meta, 1, 2), substr(meta, 3, 4)),
+         year = substr(meta, 7, 10),
+         precip_inches = ifelse(precip_inches < 0, NA, precip_inches)) %>%
+  mutate(date = as.Date(paste0("01", "-", month, "-", year), 
+                        format = "%d-%b-%Y")) %>%
+  select(-meta, -month, -year) %>%
+  filter(climdiv %in% climdiv_poly$CLIMDIV) %>%
+  spread(key = "climdiv", value = "precip_inches")
+
+# Now make sure things are in the same order.
+climdiv_names <- names(prcp_data)[2:length(names(prcp_data))]
+climdiv_row_order <- match(climdiv_names, climdiv_poly$CLIMDIV)
+climdiv_poly <- climdiv_poly[climdiv_row_order, ]
+```
+
+Here's the `p_colors` function used in plotting above.
+```{r p_colors, eval=FALSE}
+p_colors <- function (n, name = c("precip_colors")) {
+# Thanks! https://quantdev.ssri.psu.edu/tutorials/generating-custom-color-palette-function-r
+    p_rgb <- col2rgb(c("#FAFBF3", "#F0F8E3", "#D4E9CA", 
+                       "#BBE0CE", "#B7DAD0", "#B0CCD7", 
+                       "#A9B8D7", "#A297C2", "#8F6F9E", 
+                       "#684A77", "#41234D"))
+    precip_colors = rgb(p_rgb[1,],p_rgb[2,],p_rgb[3,],maxColorValue = 255)
+    name = match.arg(name)
+    orig = eval(parse(text = name))
+    rgb = t(col2rgb(orig))
+    temp = matrix(NA, ncol = 3, nrow = n)
+    x = seq(0, 1, , length(orig))
+    xg = seq(0, 1, , n)
+    for (k in 1:3) {
+        hold = spline(x, rgb[, k], n = n)$y
+        hold[hold < 0] = 0
+        hold[hold > 255] = 255
+        temp[, k] = round(hold)
+    }
+    palette = rgb(temp[, 1], temp[, 2], temp[, 3], maxColorValue = 255)
+    palette
+}
+```
+```{r cleanup}
+unlink("GIS*")
+unlink("CONUS_CLIMATE_DIVISIONS.shp.zip")
+unlink("prcp.txt")
+unlink("climdiv_prcp.nc")
 ```

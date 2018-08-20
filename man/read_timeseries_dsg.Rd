@@ -2,26 +2,26 @@
 % Please edit documentation in R/read_timeseries_dsg.R
 \name{read_timeseries_dsg}
 \alias{read_timeseries_dsg}
-\title{Read timeseries NCDF file}
+\title{Read NetCDF-CF timeSeries featuretype}
 \usage{
 read_timeseries_dsg(nc_file)
 }
 \arguments{
-\item{nc_file}{A string file path to the nc file to be created.}
+\item{nc_file}{character file path to the nc file to be created.}
 }
 \value{
-nc_list A list containing the contents of the NetCDF file.
+list containing the contents of the NetCDF file.
 }
 \description{
-This function reads a timeseries discrete sampling geometry NCDF file and 
-returns a list of the file's contents.
+This function reads a timeseries discrete sampling geometry NetCDF file and 
+returns a list containing the file's contents.
 }
 \details{
 The current implementation checks several NetCDF-CF specific conventions prior to attempting to 
 read the file. The Conventions, featureType, and cdm_data_type global attributes are checked but not
 strictly required. 
 
-Variables with standard_name and/or cf_rol of station_id and/or timeseries_id are 
+Variables with standard_name and/or cf_role of station_id and/or timeseries_id are 
 searched for to indicate which variable is the 'station identifier'. The function stops 
 if one is not found.
 
@@ -35,6 +35,8 @@ Variables with a coordinates attribute are assumed to be the 'data variables'.
 
 Data vars are traversed and their metadata and data content put into lists within the main
 response list.
+
+See the timeseries vignette for more information.
 }
 \references{
 http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html

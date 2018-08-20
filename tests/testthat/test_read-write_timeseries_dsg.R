@@ -27,17 +27,16 @@ test_that("Create basic DSG file",{
                                attributes=global_attributes)
   testnc<-nc_open(nc_file)
   
-  expect_equivalent(length(testnc$dim$station$vals),71)
-  expect_equivalent(ncatt_get(testnc,varid=0,"Conventions")$value,"CF-1.7")
+  expect_equivalent(length(testnc$dim[[pkg.env$instance_dim_name]]$vals),71)
+  expect_equivalent(ncatt_get(testnc,varid=0,"Conventions")$value, pkg.env$cf_version)
   expect_equivalent(ncatt_get(testnc,varid=0,"cdm_data_type")$value,"Station")
-  expect_equivalent(ncatt_get(testnc,varid=0,"standard_name_vocabulary")$value,"CF-1.7")
-  expect_equivalent(ncatt_get(testnc,varid="station_name","standard_name")$value,"station_id")
-  expect_equivalent(ncatt_get(testnc,varid="station_name","cf_role")$value,"timeseries_id")
-  expect_equivalent(ncatt_get(testnc,varid="time","standard_name")$value,"time")
-  expect_equivalent(ncatt_get(testnc,varid="lat","standard_name")$value,"latitude")
-  expect_equivalent(ncatt_get(testnc,varid="lon","standard_name")$value,"longitude")
+  expect_equivalent(ncatt_get(testnc,varid=0,"standard_name_vocabulary")$value, pkg.env$cf_version)
+  expect_equivalent(ncatt_get(testnc,varid=pkg.env$dsg_timeseries_id, "cf_role")$value, pkg.env$timeseries_id_cf_role)
+  expect_equivalent(ncatt_get(testnc,varid=pkg.env$time_var_name, "standard_name")$value, pkg.env$time_var_standard_name)
+  expect_equivalent(ncatt_get(testnc,varid=pkg.env$lat_coord_var_name,"standard_name")$value,pkg.env$lat_coord_var_standard_name)
+  expect_equivalent(ncatt_get(testnc,varid=pkg.env$lon_coord_var_name,"standard_name")$value,pkg.env$lon_coord_var_standard_name)
   expect_equivalent(ncatt_get(testnc,varid=test_data$all_data$variable[1],'long_name')$value,test_data$long_name)
-  expect_equivalent(ncvar_get(testnc,varid="station_name")[1],"1")
+  expect_equivalent(ncvar_get(testnc,varid=pkg.env$dsg_timeseries_id)[1],"1")
   expect_equivalent(ncvar_get(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,1],test_data$all_data$`1`)
   expect_equivalent(ncvar_get(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,71],test_data$all_data$`71`)
   expect_equivalent(testnc$var$`BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1`$units,"mm/d")
@@ -62,7 +61,7 @@ test_that('soilmoisturetools data writes as expected', {
   )
   nc_file <- write_timeseries_dsg(
     nc_file = tempfile(),
-    station_names = ok$station,
+    instance_names = ok$station,
     lats = ok_meta$latitude,
     lons = ok_meta$longitude,
     alts = ok_meta$elevation,

@@ -1,20 +1,19 @@
-#'@title Read timeseries NCDF file
+#'@title Read NetCDF-CF timeSeries featuretype
 #'
+#'@param nc_file character file path to the nc file to be created.
 #'
-#'@param nc_file A string file path to the nc file to be created.
-#'
-#'@return nc_list A list containing the contents of the NetCDF file.
+#'@return list containing the contents of the NetCDF file.
 #'
 #'@description
-#'This function reads a timeseries discrete sampling geometry NCDF file and 
-#'returns a list of the file's contents.
+#'This function reads a timeseries discrete sampling geometry NetCDF file and 
+#'returns a list containing the file's contents.
 #'
 #'@details
 #' The current implementation checks several NetCDF-CF specific conventions prior to attempting to 
 #' read the file. The Conventions, featureType, and cdm_data_type global attributes are checked but not
 #' strictly required. 
 #' 
-#' Variables with standard_name and/or cf_rol of station_id and/or timeseries_id are 
+#' Variables with standard_name and/or cf_role of station_id and/or timeseries_id are 
 #' searched for to indicate which variable is the 'station identifier'. The function stops 
 #' if one is not found.
 #' 
@@ -28,6 +27,8 @@
 #' 
 #' Data vars are traversed and their metadata and data content put into lists within the main
 #' response list.
+#' 
+#' See the timeseries vignette for more information.
 #'
 #'@references
 #'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
@@ -50,24 +51,24 @@ read_timeseries_dsg = function(nc_file){
 	timeseries_id<-NULL
 	for(var in nc$var) {
 		if(ncatt_get(nc,var$name,'standard_name')$value=='station_id') { timeseries_id<-var$name }
-		if(ncatt_get(nc,var$name,'cf_role')$value=='timeseries_id') { timeseries_id<-var$name }
+		if(ncatt_get(nc,var$name,'cf_role')$value==pkg.env$timeseries_id_cf_role) { timeseries_id<-var$name }
 	}
 	if(is.null(timeseries_id)) { stop('A timeseries id variable was not found in the file.') }
 
 	# Look for 'coordinates' that match variable names. http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/ch09s05.html
 	coord_vars<-list()
 	data_vars<-list()
-	data_var<-FALSE
 	for(var in nc$var) {
-		for(coord_var in append(nc$var,nc$dim)) {
-			if(grepl(coord_var$name,ncatt_get(nc,var$name,'coordinates')$value)) {
-				coord_vars<-append(coord_vars,coord_var$name)
-				data_var<-TRUE
+	  data_var <- FALSE
+		for (coord_var in append(nc$var,nc$dim)) {
+			if (grepl(coord_var$name, ncatt_get(nc, var$name, 'coordinates')$value)) {
+				coord_vars <- append(coord_vars,coord_var$name)
+				data_var <- TRUE
 			}
 		}
-		if(data_var) { data_vars<-append(data_vars,var$name) }
+		if (data_var) { data_vars<-append(data_vars,var$name) }
 	}
-	if(length(coord_vars)==0) { stop('No coordinates declarations were found in the file.') }
+	if (length(coord_vars)==0) { stop('No coordinates declarations were found in the file.') }
 	
 	# Given the coordinates found look for one and only one variable with standard name time, latitude, and longitude. OR (worst case maybe don't support) units like 'days since 1970-01-01 00:00:00', or 'degrees_east', or 'degrees_north'
 	lat<-NULL
@@ -76,11 +77,11 @@ read_timeseries_dsg = function(nc_file){
 	time<-NULL
 	for(coord_var in coord_vars) {
 		for(var in nc$var) {
-			if(ncatt_get(nc,var$name,'standard_name')$value=='latitude') {lat<-var}
-			if(ncatt_get(nc,var$name,'standard_name')$value=='longitude') {lon<-var}
-			if(ncatt_get(nc,var$name,'standard_name')$value=='height') {alt<-var}
-			if(ncatt_get(nc,var$name,'standard_name')$value=='time') {time<-var}
-		for(dim in nc$dim) { # ncdf doesn't treat time as a variable, only a dimension / coordinate variable?
+			if(ncatt_get(nc,var$name,'standard_name')$value==pkg.env$lat_coord_var_standard_name) {lat<-var}
+			if(ncatt_get(nc,var$name,'standard_name')$value==pkg.env$lon_coord_var_standard_name) {lon<-var}
+			if(ncatt_get(nc,var$name,'standard_name')$value==pkg.env$alt_coord_var_standard_name) {alt<-var}
+			if(ncatt_get(nc,var$name,'standard_name')$value==pkg.env$time_var_standard_name) {time<-var}
+		for(dim in nc$dim) { # ncdf doesn't treat time as a variable, only a dimension / coordinate variable
 				if(dim$name=="time") {time<-dim}
 				if(grepl(' since ',dim$units)) {time<-dim}
 			}
@@ -91,7 +92,9 @@ read_timeseries_dsg = function(nc_file){
 	if(is.null(time)) { stop('No time coordinate found.')}
 	
 	# Check that time unites are: 
-	if(!grepl('days since 1970-01-01',time$units)) {stop('Time units other than "days since 1970-01-01" not yet supported.')}
+	if(!grepl('days since 1970-01-01',time$units)) {
+	  stop('Time units other than "days since 1970-01-01" not yet supported.')
+	  }
 	
 	# Return time variable as posixCT -- See Climates package for better netcdf time handling to extend this.
 	nc_list$time<-as.POSIXct(time$vals*86400, origin='1970-01-01 00:00.00 UTC')

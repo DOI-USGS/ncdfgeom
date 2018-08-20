@@ -2,37 +2,45 @@
 % Please edit documentation in R/write_point_dsg.R
 \name{write_point_dsg}
 \alias{write_point_dsg}
-\title{Create point data NCDF file}
+\title{Write NetCDF-CF point featuretype}
 \usage{
 write_point_dsg(nc_file, lats, lons, alts, times, data,
   data_units = rep("", ncol(data)), feature_names = NULL, ...)
 }
 \arguments{
-\item{nc_file}{A string file path to the nc file to be created.}
+\item{nc_file}{\code{character} file path to the nc file to be created.}
 
-\item{lats}{Vector of latitudes}
+\item{lats}{\code{numeric} vector of latitudes}
 
-\item{lons}{Vector of longitudes}
+\item{lons}{\code{numeric} vector of longitudes}
 
-\item{alts}{Vector of altitudes}
+\item{alts}{\code{numeric} vector of altitudes}
 
-\item{times}{Vector of times, one per point, if length is one, will use the same time for each point. 
-Must be of type \code{POSIXct} or an attempt to convert it will be made using \code{as.POSIXct(times)}.}
+\item{times}{\code{POSIXct} vector of times, one per point, if length is one, 
+will use the same time for each point. Must be of type \code{POSIXct} or an 
+attempt to convert it will be made using \code{as.POSIXct(times)}.}
 
 \item{data}{\code{data.frame} with each column corresponding to a observation. Column 
 names are used as names in the NCDF file}
 
-\item{data_units}{Character vector of observation units. Length must be the same as number 
+\item{data_units}{\code{character} vector of observation units. Length must be the same as number 
 of columns in \code{data} parameter}
 
-\item{feature_names}{\code{vector} of identifiers for features or stations.}
+\item{feature_names}{\code{character} or \code{numeric} vector of identifiers for features or stations.}
 
-\item{...}{additional arguments to be passed on nc_create.}
+\item{...}{additional arguments to be passed on \code{nc_create}.}
+}
+\value{
+\code{character} path of created file
 }
 \description{
-This creates a simple point data discrete sampling features NCDF file. Returns the created filename. 
-Can pass in netcdf creation options like force_v4 to pass on.
+Creates a point feature type discrete sampling features NetCDF file. 
+Returns the created filename. 
+Can pass in netcdf creation options like force_v4 to pass on to nc_create().
 }
 \references{
-http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
+\enumerate{
+  \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
+  \item \url{http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html}
+ }
 }

@@ -1,5 +1,4 @@
 # Examples - Contiguous Ragged Arrays  
-Created 2018-08-14 09:53:10   
 
 ## Point (2D)  
 Well Known Text (WKT): ```POINT (30 10) ```  
@@ -9,17 +8,17 @@ netcdf sample_point {
 dimensions:
 	instance = 1 ;
 variables:
-	double x(instance) ;
-		x:units = "degrees_east" ;
-		x:standard_name = "longitude" ;
-		x:axis = "X" ;
-	double y(instance) ;
-		y:units = "degrees_north" ;
-		y:standard_name = "latitude" ;
-		y:axis = "Y" ;
+	double x_nodes(instance) ;
+		x_nodes:units = "degrees_east" ;
+		x_nodes:standard_name = "longitude" ;
+		x_nodes:axis = "X" ;
+	double y_nodes(instance) ;
+		y_nodes:units = "degrees_north" ;
+		y_nodes:standard_name = "latitude" ;
+		y_nodes:axis = "Y" ;
 	float geometry_container ;
 		geometry_container:geometry_type = "point" ;
-		geometry_container:node_coordinates = "x y" ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 	float grid_mapping ;
 		grid_mapping:grid_mapping_name = "latitude_longitude" ;
@@ -31,9 +30,9 @@ variables:
 		:Conventions = "CF-1.8" ;
 data:
 
- x = 30 ;
+ x_nodes = 30 ;
 
- y = 10 ;
+ y_nodes = 10 ;
 
  geometry_container = _ ;
 
@@ -51,18 +50,18 @@ dimensions:
 	node = 3 ;
 	instance = 1 ;
 variables:
-	double x(node) ;
-		x:units = "degrees_east" ;
-		x:standard_name = "longitude" ;
-		x:axis = "X" ;
-	double y(node) ;
-		y:units = "degrees_north" ;
-		y:standard_name = "latitude" ;
-		y:axis = "Y" ;
+	double x_nodes(node) ;
+		x_nodes:units = "degrees_east" ;
+		x_nodes:standard_name = "longitude" ;
+		x_nodes:axis = "X" ;
+	double y_nodes(node) ;
+		y_nodes:units = "degrees_north" ;
+		y_nodes:standard_name = "latitude" ;
+		y_nodes:axis = "Y" ;
 	float geometry_container ;
 		geometry_container:geometry_type = "line" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x y" ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
@@ -76,9 +75,9 @@ variables:
 		:Conventions = "CF-1.8" ;
 data:
 
- x = 30, 10, 40 ;
+ x_nodes = 30, 10, 40 ;
 
- y = 10, 30, 40 ;
+ y_nodes = 10, 30, 40 ;
 
  geometry_container = _ ;
 
@@ -98,18 +97,18 @@ dimensions:
 	node = 5 ;
 	instance = 1 ;
 variables:
-	double x(node) ;
-		x:units = "degrees_east" ;
-		x:standard_name = "longitude" ;
-		x:axis = "X" ;
-	double y(node) ;
-		y:units = "degrees_north" ;
-		y:standard_name = "latitude" ;
-		y:axis = "Y" ;
+	double x_nodes(node) ;
+		x_nodes:units = "degrees_east" ;
+		x_nodes:standard_name = "longitude" ;
+		x_nodes:axis = "X" ;
+	double y_nodes(node) ;
+		y_nodes:units = "degrees_north" ;
+		y_nodes:standard_name = "latitude" ;
+		y_nodes:axis = "Y" ;
 	float geometry_container ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x y" ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
@@ -123,9 +122,9 @@ variables:
 		:Conventions = "CF-1.8" ;
 data:
 
- x = 30, 40, 20, 10, 30 ;
+ x_nodes = 30, 40, 20, 10, 30 ;
 
- y = 10, 40, 40, 20, 10 ;
+ y_nodes = 10, 40, 40, 20, 10 ;
 
  geometry_container = _ ;
 
@@ -146,18 +145,18 @@ dimensions:
 	instance = 1 ;
 	part = 2 ;
 variables:
-	double x(node) ;
-		x:units = "degrees_east" ;
-		x:standard_name = "longitude" ;
-		x:axis = "X" ;
-	double y(node) ;
-		y:units = "degrees_north" ;
-		y:standard_name = "latitude" ;
-		y:axis = "Y" ;
+	double x_nodes(node) ;
+		x_nodes:units = "degrees_east" ;
+		x_nodes:standard_name = "longitude" ;
+		x_nodes:axis = "X" ;
+	double y_nodes(node) ;
+		y_nodes:units = "degrees_north" ;
+		y_nodes:standard_name = "latitude" ;
+		y_nodes:axis = "Y" ;
 	float geometry_container ;
 		geometry_container:geometry_type = "line" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x y" ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 		geometry_container:part_node_count = "part_node_count" ;
 	int node_count(instance) ;
@@ -174,9 +173,9 @@ variables:
 		:Conventions = "CF-1.8" ;
 data:
 
- x = 10, 20, 10, 40, 30, 40, 30 ;
+ x_nodes = 10, 20, 10, 40, 30, 40, 30 ;
 
- y = 10, 20, 40, 40, 30, 20, 10 ;
+ y_nodes = 10, 20, 40, 40, 30, 20, 10 ;
 
  geometry_container = _ ;
 
@@ -199,18 +198,18 @@ dimensions:
 	instance = 1 ;
 	part = 2 ;
 variables:
-	double x(node) ;
-		x:units = "degrees_east" ;
-		x:standard_name = "longitude" ;
-		x:axis = "X" ;
-	double y(node) ;
-		y:units = "degrees_north" ;
-		y:standard_name = "latitude" ;
-		y:axis = "Y" ;
+	double x_nodes(node) ;
+		x_nodes:units = "degrees_east" ;
+		x_nodes:standard_name = "longitude" ;
+		x_nodes:axis = "X" ;
+	double y_nodes(node) ;
+		y_nodes:units = "degrees_north" ;
+		y_nodes:standard_name = "latitude" ;
+		y_nodes:axis = "Y" ;
 	float geometry_container ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x y" ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 		geometry_container:part_node_count = "part_node_count" ;
 	int node_count(instance) ;
@@ -227,9 +226,9 @@ variables:
 		:Conventions = "CF-1.8" ;
 data:
 
- x = 30, 45, 10, 30, 15, 40, 10, 5, 15 ;
+ x_nodes = 30, 45, 10, 30, 15, 40, 10, 5, 15 ;
 
- y = 20, 40, 40, 20, 5, 10, 20, 10, 5 ;
+ y_nodes = 20, 40, 40, 20, 5, 10, 20, 10, 5 ;
 
  geometry_container = _ ;
 
@@ -252,18 +251,18 @@ dimensions:
 	instance = 1 ;
 	part = 2 ;
 variables:
-	double x(node) ;
-		x:units = "degrees_east" ;
-		x:standard_name = "longitude" ;
-		x:axis = "X" ;
-	double y(node) ;
-		y:units = "degrees_north" ;
-		y:standard_name = "latitude" ;
-		y:axis = "Y" ;
+	double x_nodes(node) ;
+		x_nodes:units = "degrees_east" ;
+		x_nodes:standard_name = "longitude" ;
+		x_nodes:axis = "X" ;
+	double y_nodes(node) ;
+		y_nodes:units = "degrees_north" ;
+		y_nodes:standard_name = "latitude" ;
+		y_nodes:axis = "Y" ;
 	float geometry_container ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x y" ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 		geometry_container:part_node_count = "part_node_count" ;
 		geometry_container:interior_ring = "interior_ring" ;
@@ -283,9 +282,9 @@ variables:
 		:Conventions = "CF-1.8" ;
 data:
 
- x = 35, 45, 15, 10, 35, 20, 35, 30, 20 ;
+ x_nodes = 35, 45, 15, 10, 35, 20, 35, 30, 20 ;
 
- y = 10, 45, 40, 20, 10, 30, 35, 20, 30 ;
+ y_nodes = 10, 45, 40, 20, 10, 30, 35, 20, 30 ;
 
  geometry_container = _ ;
 
@@ -310,18 +309,18 @@ dimensions:
 	instance = 1 ;
 	part = 3 ;
 variables:
-	double x(node) ;
-		x:units = "degrees_east" ;
-		x:standard_name = "longitude" ;
-		x:axis = "X" ;
-	double y(node) ;
-		y:units = "degrees_north" ;
-		y:standard_name = "latitude" ;
-		y:axis = "Y" ;
+	double x_nodes(node) ;
+		x_nodes:units = "degrees_east" ;
+		x_nodes:standard_name = "longitude" ;
+		x_nodes:axis = "X" ;
+	double y_nodes(node) ;
+		y_nodes:units = "degrees_north" ;
+		y_nodes:standard_name = "latitude" ;
+		y_nodes:axis = "Y" ;
 	float geometry_container ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x y" ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 		geometry_container:part_node_count = "part_node_count" ;
 		geometry_container:interior_ring = "interior_ring" ;
@@ -341,9 +340,9 @@ variables:
 		:Conventions = "CF-1.8" ;
 data:
 
- x = 40, 20, 45, 40, 20, 10, 10, 30, 45, 20, 30, 20, 20, 30 ;
+ x_nodes = 40, 20, 45, 40, 20, 10, 10, 30, 45, 20, 30, 20, 20, 30 ;
 
- y = 40, 45, 30, 40, 35, 30, 10, 5, 20, 35, 20, 15, 25, 20 ;
+ y_nodes = 40, 45, 30, 40, 35, 30, 10, 5, 20, 35, 20, 15, 25, 20 ;
 
  geometry_container = _ ;
 
@@ -368,18 +367,18 @@ dimensions:
 	instance = 1 ;
 	part = 6 ;
 variables:
-	double x(node) ;
-		x:units = "degrees_east" ;
-		x:standard_name = "longitude" ;
-		x:axis = "X" ;
-	double y(node) ;
-		y:units = "degrees_north" ;
-		y:standard_name = "latitude" ;
-		y:axis = "Y" ;
+	double x_nodes(node) ;
+		x_nodes:units = "degrees_east" ;
+		x_nodes:standard_name = "longitude" ;
+		x_nodes:axis = "X" ;
+	double y_nodes(node) ;
+		y_nodes:units = "degrees_north" ;
+		y_nodes:standard_name = "latitude" ;
+		y_nodes:axis = "Y" ;
 	float geometry_container ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x y" ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 		geometry_container:part_node_count = "part_node_count" ;
 		geometry_container:interior_ring = "interior_ring" ;
@@ -399,11 +398,11 @@ variables:
 		:Conventions = "CF-1.8" ;
 data:
 
- x = 0, 20, 20, 0, 0, 1, 10, 19, 1, 5, 7, 9, 5, 11, 13, 15, 11, 5, 9, 7, 5, 
-    11, 15, 13, 11 ;
+ x_nodes = 0, 20, 20, 0, 0, 1, 10, 19, 1, 5, 7, 9, 5, 11, 13, 15, 11, 5, 9, 
+    7, 5, 11, 15, 13, 11 ;
 
- y = 0, 0, 20, 20, 0, 1, 5, 1, 1, 15, 19, 15, 15, 15, 19, 15, 15, 25, 25, 29, 
-    25, 25, 25, 29, 25 ;
+ y_nodes = 0, 0, 20, 20, 0, 1, 5, 1, 1, 15, 19, 15, 15, 15, 19, 15, 15, 25, 
+    25, 29, 25, 25, 25, 29, 25 ;
 
  geometry_container = _ ;
 

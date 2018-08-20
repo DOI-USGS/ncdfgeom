@@ -15,15 +15,15 @@ test_that("create geom_examples.md", {
               "Multiple MultiPolygons with Interior Rings (2D)")
   
   sink(geom_examples)
-  cat(paste("# Examples - Contiguous Ragged Arrays  \nCreated",Sys.time(),"  \n\n"))
+  cat(paste("# Examples - Contiguous Ragged Arrays  \n\n"))
   
   for(geom in 1:length(namesstr)) {
     cat(paste0("## ", namesstr[geom],"  \nWell Known Text (WKT): ```",fixtureData[["2d"]][order[geom]]),"```  \n")
     fileName<-paste0("sample_",order[geom],".nc")
     if(grepl('point',order[geom])) {
-      ToNCDFSG(fileName, get_fixture_data(order[geom]))
+      write_geometry(fileName, get_fixture_data(order[geom]))
     } else {
-      ToNCDFSG(fileName, get_fixture_data(order[geom]))
+      write_geometry(fileName, get_fixture_data(order[geom]))
     }
     cat("Common Data Language (CDL):\n```  \n")
     t<-system(paste0("ncdump ", fileName), intern = TRUE)
