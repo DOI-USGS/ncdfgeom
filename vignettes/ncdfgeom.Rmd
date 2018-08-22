@@ -64,7 +64,8 @@ climdiv_poly <- read_sf("GIS.OFFICIAL_CLIM_DIVISIONS.shp") %>%
   select("CLIMDIV", CLIMDIV_NAME = "NAME") %>%
   mutate(CLIMDIV = ifelse(nchar(as.character(CLIMDIV)) == 3, 
                           paste0("0",as.character(CLIMDIV)),
-                          as.character(CLIMDIV)))
+                          as.character(CLIMDIV))) %>%
+  st_simplify(dTolerance = 0.0125)
 
 month_strings <- c("jan", "feb", "mar", "apr", "may", "jun", 
                    "jul", "aug", "sep", "oct", "nov", "dec")
