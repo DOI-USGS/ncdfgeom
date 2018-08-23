@@ -94,7 +94,7 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		# Open existing file.
 		nc<-nc_open(nc_file, write = TRUE)
 		data_vars = list()
-		data_vars[[1]] = ncvar_def(data_name, data_unit, dim=list(nc$dim$time, nc$dim$station), prec=data_prec, 
+		data_vars[[1]] = ncvar_def(data_name, data_unit, dim=list(nc$dim$time, nc$dim[[pkg.env$instance_dim_name]]), prec=data_prec, 
 															 longname=data_metadata[['long_name']], missval=-999)
 		ncvar_add(nc, data_vars[[1]])
 		nc_close(nc)

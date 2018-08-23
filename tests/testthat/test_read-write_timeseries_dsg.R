@@ -25,6 +25,20 @@ test_that("Create basic DSG file",{
                                data_prec='double',
                                data_metadata=test_data$meta,
                                attributes=global_attributes)
+  
+  test_data$meta <- list(name = "duplicate", long_name = "test")
+  
+  testnc<-write_timeseries_dsg(nc_file, 
+                               names(test_data$var_data), 
+                               test_data$lats, test_data$lons, 
+                               test_data$time, test_data$var, 
+                               test_data$alts, 
+                               data_unit=test_data$units,	
+                               data_prec='double',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes,
+                               add_to_existing = TRUE)
+  
   testnc<-nc_open(nc_file)
   
   expect_equivalent(length(testnc$dim[[pkg.env$instance_dim_name]]$vals),71)
@@ -41,6 +55,7 @@ test_that("Create basic DSG file",{
   expect_equivalent(ncvar_get(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,71],test_data$all_data$`71`)
   expect_equivalent(testnc$var$`BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1`$units,"mm/d")
   expect_equivalent(ncatt_get(testnc,varid=0,"summary")$value,'test summary')
+  expect("duplicate" %in% names(testnc$var))
 })
 
 test_that('soilmoisturetools data writes as expected', {
