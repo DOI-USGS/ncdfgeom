@@ -402,3 +402,25 @@ test_that("transverse_mercator", {
 
 
 })
+
+test_that("spherical", {
+  
+  p <- "+proj=lcc +lat_1=30 +lat_2=60 +x_0=0 +y_0=0 +units=m +lat_0=40.0000076294 +lon_0=-97 +a=6370000 +b=6370000 +pm=0 +no_defs"
+  
+  # From the National Water Model forcings
+  c <- list(transform_name = "lambert_conformal_conic", 
+            grid_mapping_name = "lambert_conformal_conic", 
+            standard_parallel = c(30, 60), 
+            longitude_of_central_meridian = -97, 
+            latitude_of_projection_origin = 40.0000076294, 
+            false_easting = 0, 
+            false_northing = 0, 
+            earth_radius = 6370000)
+
+  prj <- suppressWarnings(get_prj(c))
+  
+  expect_equal(prj, p)
+  
+  crs <- get_gridmapping(p)
+  
+})

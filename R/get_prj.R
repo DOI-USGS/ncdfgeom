@@ -185,12 +185,18 @@ getGeoDatum <- function(gm) {
   }
 
   if(is.null(gm$semi_major_axis)) {
-    warning("Didn't find a semi major axis for datum, assuming WGS84 6378137.0 meters")
-    gm$semi_major_axis <- 6378137.0
-
-    if(is.null(gm$inverse_flattening) && is.null(gm$semi_minor_axis)) {
-      warning("Didn't find an inverse flattening value, assuming WGS84 298.257223563")
-      gm$inverse_flattening <- 298.257223563
+    if(!is.null(gm$earth_radius)) {
+      warning("Didn't find a semi major axis but did find earth radius. Assuming spherical earth")
+      gm$semi_major_axis <- gm$earth_radius
+      gm$semi_minor_axis <- gm$earth_radius
+    } else {
+      warning("Didn't find a semi major axis for datum, assuming WGS84 6378137.0 meters")
+      gm$semi_major_axis <- 6378137.0
+    
+      if(is.null(gm$inverse_flattening) && is.null(gm$semi_minor_axis)) {
+        warning("Didn't find an inverse flattening value, assuming WGS84 298.257223563")
+        gm$inverse_flattening <- 298.257223563
+      }
     }
   }
 
