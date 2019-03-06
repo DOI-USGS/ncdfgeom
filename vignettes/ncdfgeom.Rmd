@@ -47,7 +47,7 @@ library(ncdfgeom)
 ```
 ```{r setup_secret, echo = FALSE}
 # Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt
-prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20180806"
+prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190304"
 prcp_file <- "prcp.txt"
 if(!file.exists(prcp_file)) {
   download.file(url = prcp_url, destfile = prcp_file, quiet = TRUE)
@@ -236,7 +236,7 @@ plot(prcp["prcp"], lwd = 0.1, pal = p_colors,
 This is the code used to download and prep the precipitation data.
 ```{r setup, echo = FALSE}
 # Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt
-prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20180806"
+prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190304"
 prcp_file <- "prcp.txt"
 if(!file.exists(prcp_file)) {
   download.file(url = prcp_url, destfile = prcp_file, quiet = TRUE)
