@@ -417,3 +417,106 @@ data:
   
 ```  
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            -Error : Can't find DESCRIPTION
+|-| -|-|-|-|══ Building pkgdown site ════════════════════════════════════════════════════════════════════
+-Reading from: '/Users/dblodgett/Documents/Projects/WBEEP/3_code/ncdfgeom'
+|Writing to:   '/Users/dblodgett/Documents/Projects/WBEEP/3_code/ncdfgeom/docs/dev'
+-── Initialising site ────────────────────────────────────────────────────────────────────────
+|Copying '../../../../../../../Library/Frameworks/R.framework/Versions/3.5/Resources/library/pkgdown/assets/pkgdown.css' to 'pkgdown.css'
+Copying '../../../../../../../Library/Frameworks/R.framework/Versions/3.5/Resources/library/pkgdown/assets/pkgdown.js' to 'pkgdown.js'
+-|── Building home ────────────────────────────────────────────────────────────────────────────
+-Writing 'authors.html'
+|-|-|-|Writing 'index.html'
+-── Building function reference ──────────────────────────────────────────────────────────────
+|-Updating ncdfgeom documentation
+|Writing NAMESPACE
+-Loading ncdfgeom
+|-|This information is preliminary or provisional 
+and is subject to revision. It is being provided 
+to meet the need for timely best science. The 
+information has not received final approval by the 
+U.S. Geological Survey (USGS) and is provided on the 
+condition that neither the USGS nor the U.S. Government 
+shall be held liable for any damages resulting from the 
+authorized or unauthorized use of the information.
+
+****Support Package****
+This package is a USGS-R Support package. 
+see: https://owi.usgs.gov/R/packages.html#support
+-Writing NAMESPACE
+|Writing 'reference/index.html'
+-Loading ncdfgeom
+|-Reading 'man/read_attribute_data.Rd'
+This information is preliminary or provisional 
+and is subject to revision. It is being provided 
+to meet the need for timely best science. The 
+information has not received final approval by the 
+U.S. Geological Survey (USGS) and is provided on the 
+condition that neither the USGS nor the U.S. Government 
+shall be held liable for any damages resulting from the 
+authorized or unauthorized use of the information.
+
+****Support Package****
+This package is a USGS-R Support package. 
+see: https://owi.usgs.gov/R/packages.html#support
+|-|-Writing 'reference/read_attribute_data.html'
+|Reading 'man/read_geometry.Rd'
+-|-Writing 'reference/read_geometry.html'
+|Reading 'man/read_timeseries_dsg.Rd'
+-Writing 'reference/read_timeseries_dsg.html'
+|Reading 'man/write_attribute_data.Rd'
+-Writing 'reference/write_attribute_data.html'
+|Reading 'man/write_geometry.Rd'
+-Writing 'reference/write_geometry.html'
+|Reading 'man/write_point_dsg.Rd'
+-Writing 'reference/write_point_dsg.html'
+|Reading 'man/write_timeseries_dsg.Rd'
+-Writing 'reference/write_timeseries_dsg.html'
+|── Building articles ────────────────────────────────────────────────────────────────────────
+-Writing 'articles/index.html'
+|Reading 'vignettes/geometry.Rmd'
+-|-|-|-|-|-|-|Writing 'articles/geometry.html'
+-Reading 'vignettes/ncdfgeom.Rmd'
+|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-Error in download.file(url = prcp_url, destfile = prcp_file, quiet = TRUE) : 
+  cannot open URL 'ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20180806'
+|-|- -|-|-|-══ Building pkgdown site ════════════════════════════════════════════════════════════════════
+|Reading from: '/Users/dblodgett/Documents/Projects/WBEEP/3_code/ncdfgeom'
+-Writing to:   '/Users/dblodgett/Documents/Projects/WBEEP/3_code/ncdfgeom/docs/dev'
+|── Initialising site ────────────────────────────────────────────────────────────────────────
+-── Building home ────────────────────────────────────────────────────────────────────────────
+|-|-|-|Writing 'index.html'
+-── Building function reference ──────────────────────────────────────────────────────────────
+|-Updating ncdfgeom documentation
+|Writing NAMESPACE
+-Loading ncdfgeom
+|-|This information is preliminary or provisional 
+and is subject to revision. It is being provided 
+to meet the need for timely best science. The 
+information has not received final approval by the 
+U.S. Geological Survey (USGS) and is provided on the 
+condition that neither the USGS nor the U.S. Government 
+shall be held liable for any damages resulting from the 
+authorized or unauthorized use of the information.
+
+****Support Package****
+This package is a USGS-R Support package. 
+see: https://owi.usgs.gov/R/packages.html#support
+-Writing NAMESPACE
+|Loading ncdfgeom
+-|This information is preliminary or provisional 
+and is subject to revision. It is being provided 
+to meet the need for timely best science. The 
+information has not received final approval by the 
+U.S. Geological Survey (USGS) and is provided on the 
+condition that neither the USGS nor the U.S. Government 
+shall be held liable for any damages resulting from the 
+authorized or unauthorized use of the information.
+
+****Support Package****
+This package is a USGS-R Support package. 
+see: https://owi.usgs.gov/R/packages.html#support
+-── Building articles ────────────────────────────────────────────────────────────────────────
+|Reading 'vignettes/ncdfgeom.Rmd'
+-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|Writing 'articles/ncdfgeom.html'
+-|══ DONE ═════════════════════════════════════════════════════════════════════════════════════
+-|-|-| ── Previewing site ──────────────────────────────────────────────────────────────────────────

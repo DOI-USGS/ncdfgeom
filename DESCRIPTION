@@ -15,7 +15,9 @@ Imports:
     sp,
   	rgdal,
     methods,
-    dplyr
+    dplyr,
+    rgeos,
+    ncmeta
 Depends:
   R (>= 3.0)
 Suggests: 
@@ -27,8 +29,9 @@ Suggests:
     rmarkdown,
     pkgdown,
     tidyr
+Remotes: hypertidy/ncmeta
 License: CC0
 LazyData: TRUE
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

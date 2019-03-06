@@ -97,7 +97,7 @@ check_netcdf <- function(nc) {
               crs = crs))
 }
 
-findVarByAtt <- function(nc, attribute, value = "*", strict = TRUE) {
+findVarByAtt <- function(nc, attribute, value = ".*", strict = TRUE) {
   foundVar<-list()
   for(variable in c(names(nc$var), names(nc$dim))) {
     temp<-try(ncatt_get(nc,variable,attribute))
