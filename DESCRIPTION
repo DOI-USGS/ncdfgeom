@@ -29,6 +29,7 @@ Suggests:
     rmarkdown,
     pkgdown,
     tidyr
+Remotes: hypertidy/ncmeta
 License: CC0
 LazyData: TRUE
 Encoding: UTF-8
