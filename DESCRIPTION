@@ -24,7 +24,6 @@ Suggests:
 		testthat,
 		geoknife,
     maptools,
-    rgeos,
     knitr,
     rmarkdown,
     pkgdown,

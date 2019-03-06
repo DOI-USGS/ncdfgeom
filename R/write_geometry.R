@@ -100,7 +100,7 @@ write_geometry = function(nc_file, geomData = NULL, instance_dim_name = NULL, la
 #'https://github.com/twhiteaker/netCDF-CF-simple-geometry
 #'
 #'@importFrom ncdf4 nc_open ncvar_add nc_close ncvar_def ncvar_put ncatt_put ncdim_def nc_create
-#'
+#'@importFrom stats setNames
 #'@noRd
 write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c()) {
   
