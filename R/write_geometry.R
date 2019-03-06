@@ -243,7 +243,8 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
   
   ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$node_coordinates, attval = paste(pkg.env$x_nodes, pkg.env$y_nodes))
   
-  crs <- get_gridmapping(geomData@proj4string)
+  crs <- ncmeta::nc_prj_to_gridmapping(geomData@proj4string)
+  crs <- setNames(crs$value, crs$name)
   
   if(length(crs) == 0) {
     crs <- list(grid_mapping_name = "latitude_longitude",

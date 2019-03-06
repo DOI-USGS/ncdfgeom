@@ -60,7 +60,7 @@ read_geometry = function(nc_file) {
   if(length(crs) == 0) {
     prj <- "+proj=longlat +datum=WGS84"
   } else {
-    prj <- get_prj(crs)
+    prj <- ncmeta::nc_gm_to_prj(crs)
   }
 
   if(point) {
