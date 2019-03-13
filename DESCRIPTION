@@ -28,7 +28,7 @@ Suggests:
     rmarkdown,
     pkgdown,
     tidyr
-Remotes: hypertidy/ncmeta
+Remotes: hypertidy/ncmeta, cran/rgdal@1.3-9
 License: CC0
 LazyData: TRUE
 Encoding: UTF-8
