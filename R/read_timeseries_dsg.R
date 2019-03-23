@@ -10,22 +10,23 @@
 #'
 #'@details
 #' The current implementation checks several NetCDF-CF specific conventions prior to attempting to 
-#' read the file. The Conventions, featureType, and cdm_data_type global attributes are checked but not
+#' read the file. The Conventions and featureType global attributes are checked but not
 #' strictly required. 
 #' 
 #' Variables with standard_name and/or cf_role of station_id and/or timeseries_id are 
-#' searched for to indicate which variable is the 'station identifier'. The function stops 
+#' searched for to indicate which variable is the 'timeseries identifier'. The function stops 
 #' if one is not found.
 #' 
 #' All variables are introspected for a coordinates attribute. This attribute is used to determine
-#' which variables are coordinate variables.
+#' which variables are coordinate variables. If none are found an attempt to infer data 
+#' variables by time and timeseries_id dimensions is made.
 #' 
-#' The coordinates variables are then introspected and their standard_names used to determine
+#' The coordinates variables are introspected and their standard_names used to determine
 #' which coordinate they are. Lat, lon, and time are required, height is not. 
 #' 
 #' Variables with a coordinates attribute are assumed to be the 'data variables'.
 #' 
-#' Data vars are traversed and their metadata and data content put into lists within the main
+#' Data variables are traversed and their metadata and data content put into lists within the main
 #' response list.
 #' 
 #' See the timeseries vignette for more information.
@@ -33,96 +34,157 @@
 #'@references
 #'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
 #'
-#'@importFrom ncdf4 nc_open ncatt_get ncvar_get
+#'@importFrom RNetCDF open.nc var.get.nc var.inq.nc utcal.nc
+#'@importFrom ncmeta nc_meta
+#'@importFrom dplyr filter select group_by
 #'
 #'@export
 read_timeseries_dsg = function(nc_file){
-	nc<-nc_open(nc_file)
+  
+  # unquoted variable hack
+  variable <- attribute <- value <- dimension <- name <- NULL
+  
+	nc <- open.nc(nc_file)
+	
+	nc_meta <- nc_meta(nc_file)
+	nc_atts <- nc_meta$attribute
+	
 	nc_list<-list()
+	
 	# Check important global atts
-	if(!grepl('CF',ncatt_get(nc,0,'Conventions')$value)) {
-		warning('File does not advertise CF conventions, unexpected behavior may result.')}
-	if(!grepl('timeSeries',ncatt_get(nc,0,'featureType')$value)) {
-		warning('File does not advertise use of the CF timeseries featureType, unexpected behavior may result.')}
-	if(!grepl('Station',ncatt_get(nc,0,'cdm_data_type')$value)) {
-		warning('File does not advertise use of the Station cdm_data_type, unexpected behavior may result.')}
+	check <- filter(nc_atts, variable == "NC_GLOBAL" & attribute == 'Conventions')$value
+	if(length(check) == 0 || !grepl('CF', check)) {
+		warning('File does not advertise CF conventions, unexpected behavior may result.') 
+	}
+		
+	check <- filter(nc_atts, variable == "NC_GLOBAL" & attribute == "featureType")$value
+	if(length(check) == 0 || !grepl('timeSeries', check)) {
+		warning('File does not advertise use of the CF timeseries featureType, unexpected behavior may result.') 
+	 }
 
 	# Look for variable with the timeseries_id in it.
-	timeseries_id<-NULL
-	for(var in nc$var) {
-		if(ncatt_get(nc,var$name,'standard_name')$value=='station_id') { timeseries_id<-var$name }
-		if(ncatt_get(nc,var$name,'cf_role')$value==pkg.env$timeseries_id_cf_role) { timeseries_id<-var$name }
-	}
-	if(is.null(timeseries_id)) { stop('A timeseries id variable was not found in the file.') }
-
-	# Look for 'coordinates' that match variable names. http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/ch09s05.html
-	coord_vars<-list()
-	data_vars<-list()
-	for(var in nc$var) {
-	  data_var <- FALSE
-		for (coord_var in append(nc$var,nc$dim)) {
-			if (grepl(coord_var$name, ncatt_get(nc, var$name, 'coordinates')$value)) {
-				coord_vars <- append(coord_vars,coord_var$name)
-				data_var <- TRUE
-			}
-		}
-		if (data_var) { data_vars<-append(data_vars,var$name) }
-	}
-	if (length(coord_vars)==0) { stop('No coordinates declarations were found in the file.') }
+	timeseries_id <- filter(nc_atts, attribute == "standard_name" &
+	                          value == "station_id")$variable
+	timeseries_id <- filter(nc_atts, attribute == "cf_role" &
+	                          value == pkg.env$timeseries_id_cf_role)$variable
 	
-	# Given the coordinates found look for one and only one variable with standard name time, latitude, and longitude. OR (worst case maybe don't support) units like 'days since 1970-01-01 00:00:00', or 'degrees_east', or 'degrees_north'
-	lat<-NULL
-	lon<-NULL
-	alt<-NULL
-	time<-NULL
-	for(coord_var in coord_vars) {
-		for(var in nc$var) {
-			if(ncatt_get(nc,var$name,'standard_name')$value==pkg.env$lat_coord_var_standard_name) {lat<-var}
-			if(ncatt_get(nc,var$name,'standard_name')$value==pkg.env$lon_coord_var_standard_name) {lon<-var}
-			if(ncatt_get(nc,var$name,'standard_name')$value==pkg.env$alt_coord_var_standard_name) {alt<-var}
-			if(ncatt_get(nc,var$name,'standard_name')$value==pkg.env$time_var_standard_name) {time<-var}
-		for(dim in nc$dim) { # ncdf doesn't treat time as a variable, only a dimension / coordinate variable
-				if(dim$name=="time") {time<-dim}
-				if(grepl(' since ',dim$units)) {time<-dim}
-			}
-		}
-	}
-	if(is.null(lat)) { stop('No latitude coordinate found.')}
-	if(is.null(lon)) { stop('No longitude coordinate found.')}
-	if(is.null(time)) { stop('No time coordinate found.')}
-	
-	# Check that time unites are: 
-	if(!grepl('days since 1970-01-01',time$units)) {
-	  stop('Time units other than "days since 1970-01-01" not yet supported.')
+	if(length(timeseries_id) == 0) { 
+	  stop('A timeseries id variable was not found in the file.') 
 	  }
-	
-	# Return time variable as posixCT -- See Climates package for better netcdf time handling to extend this.
-	nc_list$time<-as.POSIXct(time$vals*86400, origin='1970-01-01 00:00.00 UTC')
 
-	# Return lat/lon/alt as they are found.
-	nc_list$lats<-ncvar_get(nc,lat,1,-1)
-	nc_list$lons<-ncvar_get(nc,lon,1,-1)
-	if(!is.null(alt)){
-		nc_list$alts<-ncvar_get(nc,alt,1,-1)
+	# Look for 'coordinates' that match variable names. 
+	# http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/ch09s05.html
+	nc_coord_vars <- ncmeta::nc_coord_var(nc)
+	
+	coord_vars <- unique(c(nc_coord_vars$X, nc_coord_vars$Y, 
+	                       nc_coord_vars$Z, nc_coord_vars$T))
+	coord_vars <- coord_vars[!is.na(coord_vars)]
+	
+	data_vars <- filter(nc_atts, attribute == "coordinates" & 
+	                      grepl(paste(coord_vars, collapse = "|"), value))
+	
+	if (length(coord_vars) == 0) { 
+	  stop('No coordinates declarations were found in the file.') 
+	 }
+	# Given the coordinates found look for one and only one variable 
+	# with standard name time, latitude, and longitude. 
+	# OR (worst case maybe don't support) units like 'days since 1970-01-01 00:00:00', 
+	# or 'degrees_east', or 'degrees_north'
+	
+	sn <- filter(nc_atts, attribute == "standard_name")
+	lat <- filter(sn, value == pkg.env$lat_coord_var_standard_name)
+	lon <- filter(sn, value == pkg.env$lon_coord_var_standard_name)
+	alt <- filter(sn, value == pkg.env$alt_coord_var_standard_name)
+	time <- filter(sn, value == pkg.env$time_var_standard_name)
+	
+	if(length(time) == 0) {
+	  time <- filter(nc_atts, attribute == "units" & grepl(" since ", value))
+	}
+	
+	if(length(lat) == 0) { stop('No latitude coordinate found.') }
+	if(length(lon) == 0) { stop('No longitude coordinate found.') }
+	if(length(time) == 0) { stop('No time coordinate found.') }
+	
+	axes <- nc_meta$axis
+	dim_time <- filter(axes, variable == time$variable)$dimension
+	dim_tsid <- filter(axes, variable == timeseries_id)$dimension
+	
+	if (nrow(data_vars) == 0) {
+	  warning("no data variables found, attempting to infer via shared dimensions")
+    
+	  axes_search <- group_by(axes, variable)
+	  axes_search <- filter(axes_search, all(c(dim_tsid, dim_time) %in% dimension) &
+	                   !variable %in% c(coord_vars, timeseries_id))
+	  
+	  data_vars <- data.frame(variable = unique(axes_search$variable), stringsAsFactors = FALSE)
+	  
+	  if(nrow(data_vars) == 0) stop("No data variables could be identified")
+	}
+	
+	time_vals <- var.get.nc(nc, time$variable)
+	time_units <- filter(nc_atts, variable == time$variable & attribute == "units")
+	
+	nc_list$time <- utcal.nc(time_units$value[[1]], time_vals, type = "c")
+
+	if(nrow(lat) > 0) {
+	  nc_list$lats <- var.get.nc(nc, lat$variable)
+	} else {
+	  warning("no latatiude coordinate found")
+	  nc_list$lats <- numeric(0)
+	}
+	
+	if(nrow(lon) > 0) {
+	  nc_list$lons <- var.get.nc(nc, lon$variable)
+	} else {
+	  warning("no longitude coordinate found")
+	  nc_list$lons <- numeric(0)
+	}
+	
+	if(nrow(alt) > 0) { 
+	  nc_list$alts <- var.get.nc(nc, alt$variable)
+	} else {
+	  warning("no altitude coordinate found")
+	  nc_list$alts <- numeric(0)
 	}
 
 	# For all variables that have a 'coordinates' attribute that matches the one found earlier...
-	nc_list$varmeta<-list()
-	for(data_var in data_vars) {
-		nc_list$data_unit[data_var]<-nc$var[data_var][[1]]$units
-		nc_list$data_prec[data_var]<-nc$var[data_var][[1]]$prec
-		nc_list$varmeta[data_var][[1]]$name<-nc$var[data_var][[1]]$name
-		nc_list$varmeta[data_var][[1]]$long_name<-nc$var[data_var][[1]]$longname
-		nc_list$data_frames[data_var][[1]]<-as.data.frame(ncvar_get(nc,data_var,c(1,1),c(-1,-1)))
-		colnames(nc_list$data_frames[data_var][[1]])<-as.character(ncvar_get(nc,timeseries_id))
+	nc_list$varmeta <- list()
+	
+	for(data_var in data_vars$variable) {
+	  nc_var <- filter(nc_meta$variable, name == data_var)
+	  
+	  nc_list$data_unit[data_var] <- filter(nc_atts, variable == data_var &
+		                                        attribute == "units")$value[[1]]
+		nc_list$data_prec[data_var] <- nc_var$type # todo map this to NetCDF types
+		
+		nc_list$varmeta[data_var][[1]]$name <- data_var
+		nc_list$varmeta[data_var][[1]]$long_name <- filter(nc_atts, variable == data_var &
+		                                                     attribute == "long_name")$value[[1]]
+		# Ensures we get back data with time in rows.
+		dim_order <- match(var.inq.nc(nc, data_var)$dimids, 
+		                   c(dim_time, dim_tsid))
+		
+		nc_list$data_frames[data_var][[1]] <- as.data.frame(var.get.nc(nc, data_var))
+		
+		if(dim_order[1] > dim_order[2])
+		  nc_list$data_frames[data_var][[1]] <- t(nc_list$data_frames[data_var][[1]])
+		
+		colnames(nc_list$data_frames[data_var][[1]]) <- as.character(var.get.nc(nc, timeseries_id))
 	}
 	
-	nc_list$global_attributes$nc_summary<-ncatt_get(nc,0,'summary')$value
-	nc_list$global_attributes$nc_date_created<-ncatt_get(nc,0,'date_created')$value
-	nc_list$global_attributes$nc_creator_name<-ncatt_get(nc,0,'creator_name')$value
-	nc_list$global_attributes$nc_creator_email<-ncatt_get(nc,0,'creator_email')$value
-	nc_list$global_attributes$nc_project<-ncatt_get(nc,0,'project')$value
-	nc_list$global_attributes$nc_proc_level<-ncatt_get(nc,0,'processing_level')$value
-	nc_list$global_attributes$nc_title<-ncatt_get(nc,0,'title')$value
+	nc_list$global_attributes$nc_summary <- filter(nc_atts, variable == "NC_GLOBAL" &
+	                                                 attribute == "summary")$value
+	nc_list$global_attributes$nc_date_created <- filter(nc_atts, variable == "NC_GLOBAL" &
+	                                                      attribute == "date_created")$value
+	nc_list$global_attributes$nc_creator_name <- filter(nc_atts, variable == "NC_GLOBAL" &
+	                                                      attribute == "creator_name")$value
+	nc_list$global_attributes$nc_creator_email <- filter(nc_atts, variable == "NC_GLOBAL" &
+	                                                       attribute == "creator_email")$value
+	nc_list$global_attributes$nc_project <- filter(nc_atts, variable == "NC_GLOBAL" &
+	                                                 attribute == "project")$value
+	nc_list$global_attributes$nc_proc_level <- filter(nc_atts, variable == "NC_GLOBAL" &
+	                                                    attribute == "processing_level")$value
+	nc_list$global_attributes$nc_title <- filter(nc_atts, variable == "NC_GLOBAL" &
+	                                               attribute == "title")$value
 	return(nc_list)
 }

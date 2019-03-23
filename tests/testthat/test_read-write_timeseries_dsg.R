@@ -91,7 +91,7 @@ test_that('soilmoisturetools data writes as expected', {
   
   nc <- nc_open(nc_file)
   
-  expect_equal(1,1)
+  expect(file.exists(nc_file))
 })
 
 test_that("Read basic DSG file",{
@@ -107,7 +107,7 @@ test_that("Read basic DSG file",{
 	expect_equivalent(as.numeric(testlist$lons), as.numeric(test_data$lons))
 	expect_equivalent(as.numeric(testlist$alts), as.numeric(test_data$alts))
 	expect_equivalent(testlist$data_unit[1], test_data$units) # could be tricky if there are multiple variables in the netcdf file.
-	expect_equivalent(testlist$data_prec[1],'double')
+	expect_equivalent(testlist$data_prec[1],'NC_DOUBLE')
 	expect_equivalent(testlist$varmeta[[1]]$name,test_data$all_data$variable[1])
 	expect_equivalent(testlist$varmeta[[1]]$long_name,test_data$long_name)
 	expect_equivalent(testlist$global_attributes$nc_summary,'test summary')
