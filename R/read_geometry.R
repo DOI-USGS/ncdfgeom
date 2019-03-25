@@ -39,7 +39,7 @@ read_geometry = function(nc_file) {
 
   nc <- nc_open(nc_file)
 
-  checkVals <- check_netcdf(nc)
+  checkVals <- check_netcdf(nc_file)
 
   instance_id<-checkVals$instance_id
   instance_dim<-checkVals$instance_dim
@@ -76,12 +76,12 @@ read_geometry = function(nc_file) {
   } else {
     node_count <- c(ncvar_get(nc, geom_container$node_count))
     
-    if(is.character(geom_container$part_node_count)) {
+    if(length(geom_container$part_node_count) > 0) {
       part_node_count <- ncvar_get(nc, geom_container$part_node_count)
     } else {
       part_node_count <- node_count
     }
-    if(is.character(geom_container$part_type)) {
+    if(length(geom_container$part_type) > 0) {
       part_type <- ncvar_get(nc, geom_container$part_type)
     } else {
       part_type <- rep(pkg.env$multi_val, length(part_node_count))
