@@ -60,6 +60,7 @@ test_that("shapefile line data works", {
     expect_equal(class(lineData[name][[1]]), class(returnLineData[name][[1]]))
   }
   for(name in names(lineData)) {
+    if(is.character(returnLineData[name][[1]])) lineData[name][is.na(lineData[name])] <- ""
     expect_equal(c(lineData[name]), c(returnLineData[name]))
   }
 })
