@@ -27,7 +27,7 @@
 #'   \item \url{http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html}
 #'  }
 #'
-#'@importFrom ncdf4 nc_create nc_close ncvar_def ncvar_put ncatt_put ncdim_def
+#'@importFrom ncdf4 nc_create nc_open nc_close ncvar_def ncvar_put ncatt_put ncdim_def ncvar_add
 #'
 #'@export
 write_point_dsg = function(nc_file, lats, lons, alts, times, data, data_units=rep('', ncol(data)), feature_names = NULL, ...){

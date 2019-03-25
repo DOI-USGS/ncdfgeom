@@ -27,7 +27,8 @@ check_netcdf <- function(nc) {
   atts <- nc_atts(nc)
   
   # Check important global atts
-  if(!grepl('CF',get_att(atts, "NC_GLOBAL", "Conventions")$value)) {
+  check <- get_att(atts, "NC_GLOBAL", "Conventions")$value
+  if(length(check) > 0 && !grepl('CF', check)) {
     warning('File does not advertise CF conventions, unexpected behavior may result.')}
 
   geom_container_var<-find_var_by_att(atts, pkg.env$geom_type_attr_name)

@@ -29,7 +29,7 @@ names(hucPolygons)
 hucPolygons_nc <- ncdfgeom::write_geometry(nc_file=huc_eta_nc, 
                                           geomData = hucPolygons, 
                                           instance_dim_name = "station", 
-                                          variables = hucTimeseries$var)
+                                          variables = names(hucTimeseries$var))
 huc_poly <- read_geometry(huc_eta_nc)
 plot(sf::st_geometry(huc_poly))
 names(huc_poly)

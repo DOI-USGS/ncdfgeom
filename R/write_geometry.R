@@ -19,7 +19,6 @@
 #' @references
 #' https://github.com/twhiteaker/netCDF-CF-simple-geometry
 #'
-#' @importFrom ncdf4 nc_open ncvar_add nc_close ncvar_def ncvar_put ncatt_put ncdim_def
 #' @importFrom sp SpatialLinesDataFrame polygons SpatialPoints
 #'
 #' @export
@@ -99,9 +98,9 @@ write_geometry = function(nc_file, geomData = NULL, instance_dim_name = NULL, la
 #'@references
 #'https://github.com/twhiteaker/netCDF-CF-simple-geometry
 #'
-#'@importFrom ncdf4 nc_open ncvar_add nc_close ncvar_def ncvar_put ncatt_put ncdim_def nc_create
-#'@importFrom stats setNames
-#'@noRd
+#' @importFrom RNetCDF open.nc close.nc create.nc var.put.nc att.put.nc
+#' @importFrom stats setNames
+#' @noRd
 write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c()) {
   
   geomData <- check_geomData(geomData)
@@ -191,57 +190,58 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
     }
   }
   
-  node_dim<-ncdim_def(node_dim_name, '', 1:length(xVals), create_dimvar=FALSE)
-  xVar <- ncvar_def(name = pkg.env$x_nodes, units = 'degrees_east', dim = node_dim, prec = "double")
-  yVar <- ncvar_def(name = pkg.env$y_nodes, units = 'degrees_north', dim = node_dim, prec = "double")
-  
   if(file.exists(nc_file)) {
-    new_file <- TRUE
-    nc <- nc_open(nc_file,write = TRUE)
-    nc <- ncvar_add(nc,xVar)
-    nc <- ncvar_add(nc,yVar)
+    nc <- open.nc(nc_file, write = TRUE)
   } else {
-    new_file <- FALSE
-    nc <- nc_create(nc_file, list(xVar, yVar))
+    nc <- create.nc(nc_file)
   }
   
-  nc_close(nc)
-  nc <- nc_open(nc_file,write = TRUE)
+  try(dim.def.nc(nc, node_dim_name, length(xVals), unlim = FALSE), silent = TRUE)
   
+  var.def.nc(nc, pkg.env$x_nodes, "NC_DOUBLE", node_dim_name)
+  var.def.nc(nc, pkg.env$y_nodes, "NC_DOUBLE", node_dim_name)
   
-  ncvar_put(nc = nc, varid = pkg.env$x_nodes, vals = xVals)
-  ncvar_put(nc = nc, varid = pkg.env$y_nodes, vals = yVals)
-  ncatt_put(nc = nc, varid = pkg.env$x_nodes, attname = 'standard_name', attval = 'longitude')
-  ncatt_put(nc = nc, varid = pkg.env$y_nodes, attname = 'standard_name', attval = 'latitude')
-  ncatt_put(nc = nc, varid = pkg.env$x_nodes, attname = "axis", attval = "X")
-  ncatt_put(nc = nc, varid = pkg.env$y_nodes, attname = "axis", attval = "Y")
+  att.put.nc(nc, pkg.env$x_nodes, "units", "NC_CHAR", "degrees_east")
+  att.put.nc(nc, pkg.env$y_nodes, "units", "NC_CHAR", "degrees_north")
+
+  close.nc(nc)
+  nc <- open.nc(nc_file, write = TRUE)
   
-  geom_container <- ncvar_def(name = pkg.env$geom_container_var_name, units = '', dim = list())
-  ncvar_add(nc, geom_container)
+  var.put.nc(nc, pkg.env$x_nodes, xVals)
+  var.put.nc(nc, pkg.env$y_nodes, yVals)
+  att.put.nc(nc, pkg.env$x_nodes, 'standard_name', "NC_CHAR", 'longitude')
+  att.put.nc(nc, pkg.env$y_nodes, 'standard_name', "NC_CHAR", 'latitude')
+  att.put.nc(nc, pkg.env$x_nodes, "axis", "NC_CHAR", "X")
+  att.put.nc(nc, pkg.env$y_nodes, "axis", "NC_CHAR", "Y")
   
-  nc_close(nc)
-  nc <- nc_open(nc_file,write = TRUE)
+  geom_container <- var.def.nc(nc, pkg.env$geom_container_var_name, "NC_INT", NA)
+  
+  close.nc(nc)
+  nc <- open.nc(nc_file,write = TRUE)
   
   if(pointsMode) {
-    ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$geom_type_attr_name, attval = 'point')
+    att.put.nc(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name, "NC_CHAR", 'point')
   } else if(linesMode) {
-    ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$geom_type_attr_name, attval = 'line')
+    att.put.nc(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name, "NC_CHAR", 'line')
   } else {
-    ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$geom_type_attr_name, attval = 'polygon')
+    att.put.nc(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name, "NC_CHAR", 'polygon')
   }
   if(!(pointsMode && !multis)) {
-    ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$node_count_attr_name, attval = pkg.env$node_count_var_name)
+    att.put.nc(nc, pkg.env$geom_container_var_name, pkg.env$node_count_attr_name, "NC_CHAR", pkg.env$node_count_var_name)
     
-    instance_dim <- nc$dim[instance_dim_name]
-    if(is.null(unlist(instance_dim))) instance_dim <- ncdim_def(instance_dim_name, '', 1:length(node_count), create_dimvar = FALSE)
+    instance_dim <- tryCatch({
+        dim.inq.nc(nc, instance_dim_name)},
+      error = function(e) {
+        dim.def.nc(nc, instance_dim_name, length(node_count), unlim = FALSE)
+        dim.inq.nc(nc, instance_dim_name)
+      })
     
-    node_count_var<-ncvar_def(name = pkg.env$node_count_var_name, units = '', dim = instance_dim,
-                              longname = "count of coordinates in each instance geometry", prec = "integer")
-    nc <- ncvar_add(nc, node_count_var)
-    ncvar_put(nc = nc, varid = pkg.env$node_count_var_name, vals = node_count)
+    var.def.nc(nc, pkg.env$node_count_var_name, "NC_INT", instance_dim$id)
+    att.put.nc(nc, pkg.env$node_count_var_name, "long_name", "NC_CHAR", "count of coordinates in each instance geometry")
+    var.put.nc(nc, pkg.env$node_count_var_name, node_count)
   }
   
-  ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$node_coordinates, attval = paste(pkg.env$x_nodes, pkg.env$y_nodes))
+  att.put.nc(nc, pkg.env$geom_container_var_name, pkg.env$node_coordinates, "NC_CHAR", paste(pkg.env$x_nodes, pkg.env$y_nodes))
   
   crs <- ncmeta::nc_prj_to_gridmapping(geomData@proj4string)
   crs <- setNames(crs$value, crs$name)
@@ -255,49 +255,44 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
   }
   
   if(length(crs) > 0) {
-    ncatt_put(nc = nc,
-              varid = pkg.env$geom_container_var_name,
-              attname = pkg.env$crs,
-              attval = pkg.env$crs_var_name)
+    att.put.nc(nc, pkg.env$geom_container_var_name, pkg.env$crs, "NC_CHAR", pkg.env$crs_var_name)
     
     for(var in variables) {
-      ncatt_put(nc = nc,
-                varid = var,
-                attname = pkg.env$crs,
-                attval = pkg.env$crs_var_name)
+      att.put.nc(nc, var, pkg.env$crs, "NC_CHAR", pkg.env$crs_var_name)
     }
     
-    crs_var <- ncvar_def(name = pkg.env$crs_var_name, units = '', dim = list())
-    ncvar_add(nc, crs_var)
-    nc_close(nc)
+    crs_var <- var.def.nc(nc, pkg.env$crs_var_name, vartype = "NC_INT", dimensions = NA)
+
+    close.nc(nc)
+    nc <- open.nc(nc_file,write = TRUE)
     
-    nc <- nc_open(nc_file,write = TRUE)
-    for(crs_att in names(crs)) ncatt_put(nc = nc, varid = pkg.env$crs_var_name, attname = crs_att, attval = crs[crs_att][[1]])
+    types <- list(numeric="NC_DOUBLE", integer = "NC_INT", character="NC_CHAR")
+    
+    for(crs_att in names(crs)) att.put.nc(nc, pkg.env$crs_var_name, crs_att, types[class(crs[crs_att][[1]])][[1]], crs[crs_att][[1]])
   }
   
   if(!pointsMode && (multis || holes)) {
-    part_node_count_dim<-ncdim_def(pkg.env$part_dim_name, '', 1:length(part_node_count), create_dimvar = FALSE)
-    part_node_count_var<-ncvar_def(name = pkg.env$part_node_count_var_name, units = '', dim = part_node_count_dim,
-                                   longname = "count of nodes in each geometry part", prec = "integer")
-    nc <- ncvar_add(nc, part_node_count_var)
-    ncvar_put(nc = nc, varid = pkg.env$part_node_count_var_name, vals = part_node_count)
-    ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$part_node_count_attr_name, attval = pkg.env$part_node_count_var_name)
+    dim.def.nc(nc, pkg.env$part_dim_name, length(part_node_count))
+    var.def.nc(nc, pkg.env$part_node_count_var_name, "NC_INT", pkg.env$part_dim_name)
+    var.put.nc(nc, pkg.env$part_node_count_var_name, part_node_count)
+    att.put.nc(nc, pkg.env$part_node_count_var_name, "long_name", "NC_CHAR", "count of nodes in each geometry part")
+    att.put.nc(nc, pkg.env$geom_container_var_name, pkg.env$part_node_count_attr_name, "NC_CHAR", pkg.env$part_node_count_var_name)
+    
     if(holes) {
-      part_type_var <- ncvar_def(name = pkg.env$part_type_var_name, units = '', dim = part_node_count_dim,
-                                 longname = "type of each geometry part", prec = "integer")
-      nc <- ncvar_add(nc, part_type_var)
-      ncvar_put(nc = nc, varid = pkg.env$part_type_var_name, vals = part_type)
-      ncatt_put(nc = nc, varid = pkg.env$geom_container_var_name, attname = pkg.env$part_type_attr_name, attval = pkg.env$part_type_var_name)
+      var.def.nc(nc, pkg.env$part_type_var_name, "NC_INT", pkg.env$part_dim_name)
+      var.put.nc(nc, pkg.env$part_type_var_name, part_type)
+      att.put.nc(nc, pkg.env$part_type_var_name, "long_name", "NC_CHAR", "type of each geometry part")
+      att.put.nc(nc, pkg.env$geom_container_var_name, pkg.env$part_type_attr_name, "NC_CHAR", pkg.env$part_type_var_name)
     }
   }
   
-  ncatt_put(nc, 0,'Conventions', pkg.env$cf_version)
+  att.put.nc(nc, "NC_GLOBAL", "Conventions", "NC_CHAR", pkg.env$cf_version)
   
   for(var in variables) {
-    ncatt_put(nc, var, pkg.env$geometry_container_att_name, pkg.env$geom_container_var_name)
+    att.put.nc(nc, var, pkg.env$geometry_container_att_name, "NC_CHAR", pkg.env$geom_container_var_name)
   }
   
-  nc_close(nc)
+  close.nc(nc)
   return(nc_file)
 }
 
