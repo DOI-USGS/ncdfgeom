@@ -7,7 +7,7 @@
 read_timeseries_dsg(nc_file)
 }
 \arguments{
-\item{nc_file}{character file path to the nc file to be created.}
+\item{nc_file}{character file path to the nc file to be read.}
 }
 \value{
 list containing the contents of the NetCDF file.

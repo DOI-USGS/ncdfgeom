@@ -66,7 +66,7 @@ read_geometry = function(nc_file) {
   if(point) {
     point_data <- matrix(c(xCoords,
                            yCoords), ncol=2)
-    dataFrame <- read_attribute_data(nc, instance_dim)
+    dataFrame <- read_attribute_data(nc_file, instance_dim)
     if(nrow(dataFrame) != nrow(point_data)) {
       stop("Reading multipoint is not supported yet.")
       # This is where handling for multipoint would go.
@@ -120,7 +120,7 @@ read_geometry = function(nc_file) {
         Srl <- append(Srl, Lines(srl, as.character(geom)))
       }
     }
-    dataFrame <- read_attribute_data(nc, instance_dim)
+    dataFrame <- read_attribute_data(nc_file, instance_dim)
 
     for(varName in names(dataFrame)) {
       if(!varName %in% variable_list) {

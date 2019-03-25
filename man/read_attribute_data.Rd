@@ -7,7 +7,7 @@
 read_attribute_data(nc, instance_dim)
 }
 \arguments{
-\item{nc}{An open ncdf4 object.}
+\item{nc}{A NetCDF path or urlto be opened.}
 
 \item{instance_dim}{The NetCDF instance/station dimension.}
 }
@@ -20,7 +20,6 @@ the netCDF file is already open and well understood.
 hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package = 'ncdfgeom'))
 hucPolygons_nc <- ncdfgeom::write_geometry(tempfile(), hucPolygons)
 
-nc <- ncdf4::nc_open(hucPolygons_nc)
-read_attribute_data(nc, "instance")
+read_attribute_data(hucPolygons_nc, "instance")
 
 }

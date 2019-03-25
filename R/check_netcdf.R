@@ -1,7 +1,7 @@
 #'@title Check NetCDF-DSG File
 #'
 #'
-#'@param nc A open RNetCDF object or string to be opened.
+#'@param nc A NetCDF path or URL to be opened.
 #'
 #'@description
 #'Introspects a netcdf file and tries to interpret it as a NetCDF-DSG file. Returns a named

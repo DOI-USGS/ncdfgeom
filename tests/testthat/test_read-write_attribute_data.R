@@ -12,14 +12,14 @@ test_that("A dataframe can be round tripped to netCDF.", {
   expect_equal(as.numeric(ncvar_get(nc, nc$var$SHAPE_LENG)), as.numeric(dataFrame$SHAPE_LENG))
 	expect_equal(ncatt_get(nc, nc$var$LENGTHKM, "units")$value, "km")
 	expect_equal(ncatt_get(nc, nc$var$SHAPE_LENG, "units")$value, "unknown")
-  returnDataFrame <- read_attribute_data(nc, "instance")
+  returnDataFrame <- read_attribute_data(nc_file, "instance")
   i <- sapply(dataFrame, is, class2 = "Date")
   dataFrame[i] <- lapply(dataFrame[i], as.character)
   expect_equal(names(dataFrame), names(returnDataFrame)[2:10])
   for(name in names(dataFrame)) {
   	expect_equal(class(dataFrame[name][[1]]), class(returnDataFrame[name][[1]]))
   }
-  expect_error(read_attribute_data(nc, "garbage"), "The instance dimension was not found in the provided NetCDF object.")
+  expect_error(read_attribute_data(nc_file, "garbage"), "The instance dimension was not found in the provided NetCDF object.")
   })
 
 test_that("instance data can be added to an existing netcdf file.", {

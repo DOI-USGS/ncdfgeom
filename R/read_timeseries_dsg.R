@@ -1,6 +1,6 @@
 #'@title Read NetCDF-CF timeSeries featuretype
 #'
-#'@param nc_file character file path to the nc file to be created.
+#'@param nc_file character file path to the nc file to be read.
 #'
 #'@return list containing the contents of the NetCDF file.
 #'
@@ -34,7 +34,7 @@
 #'@references
 #'http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
 #'
-#'@importFrom RNetCDF open.nc var.get.nc var.inq.nc utcal.nc
+#'@importFrom RNetCDF open.nc var.get.nc var.inq.nc utcal.nc close.nc
 #'@importFrom ncmeta nc_meta
 #'@importFrom dplyr filter select group_by
 #'
@@ -45,6 +45,7 @@ read_timeseries_dsg = function(nc_file){
   variable <- attribute <- value <- dimension <- name <- NULL
   
 	nc <- open.nc(nc_file)
+	on.exit(close.nc(nc), add  = TRUE)
 	
 	nc_meta <- nc_meta(nc_file)
 	nc_atts <- nc_meta$attribute
