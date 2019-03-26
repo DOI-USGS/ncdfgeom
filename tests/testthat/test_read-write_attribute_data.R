@@ -6,7 +6,7 @@ test_that("A dataframe can be round tripped to netCDF.", {
   units<-c("unitless","date","unitless","unitless","unitless","km","unitless","unitless","unknown")
   nc_file <- write_attribute_data(nc_file=tempfile(), attData = dataFrame, instance_dim_name = "instance", units = units)
   nc <- nc_open(nc_file)
-  expect_equal(class(nc),"ncdf4")
+  
   expect_equal(as.character(ncvar_get(nc, nc$var$COMID)), as.character(dataFrame$COMID))
   expect_equal(as.character(ncvar_get(nc, nc$var$FDATE)), as.character(dataFrame$FDATE))
   expect_equal(as.numeric(ncvar_get(nc, nc$var$SHAPE_LENG)), as.numeric(dataFrame$SHAPE_LENG))

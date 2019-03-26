@@ -40,8 +40,7 @@ test_that("multiline data frame works", {
   nc_file <- write_geometry(nc_file=tempfile(), geomData = lineData)
 
   nc<-nc_open(nc_file)
-  expect_equal(class(nc),"ncdf4")
-
+  
   returnLineData<-read_geometry(nc_file)
   compareSL(lineData, returnLineData)
 })

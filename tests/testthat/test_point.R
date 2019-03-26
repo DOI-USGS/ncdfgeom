@@ -105,7 +105,7 @@ test_that("Point data can be written", {
                              data = dataFrame[c("GRIDCODE", "X_COORD", "Y_COORD")],
                              data_units = c("unitless", "m", "m"), force_v4 = TRUE)
   nc <- nc_open(nc_file)
-  expect_equal(class(nc),"ncdf4")
+  
   expect_equal(as.character(ncvar_get(nc, nc$var$feature_name)), as.character(dataFrame$ID))
   expect_equal(as.character(ncvar_get(nc, nc$var$GRIDCODE)), as.character(dataFrame$GRIDCODE))
   expect_equal(as.numeric(ncvar_get(nc, nc$var$Y_COORD)), as.numeric(dataFrame$Y_COORD))

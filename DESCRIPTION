@@ -10,7 +10,6 @@ Description: Tools to create discrete sampling geometry and spatial geometry Net
 URL: https://github.com/USGS-R/ncdfgeom
 BugReports: https://github.com/USGS-R/ncdfgeom/issues
 Imports:
-    ncdf4,
     RNetCDF,
     sf,
     sp,
@@ -22,6 +21,7 @@ Imports:
 Depends:
   R (>= 3.0)
 Suggests: 
+    ncdf4,
 		testthat,
 		geoknife,
     maptools,

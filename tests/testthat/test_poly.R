@@ -6,8 +6,6 @@ test_that("data for basic polygon", {
   nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
   nc<-nc_open(nc_file)
 
-  expect_equal(class(nc),"ncdf4")
-
   expect_equal(nc$dim$instance$vals,c(1))
 
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$x_nodes)),

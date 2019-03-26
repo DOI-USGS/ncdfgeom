@@ -20,7 +20,7 @@ huc_eta_nc <- tempfile()
 file.copy(system.file('extdata','example_huc_eta.nc', package = 'ncdfgeom'), 
          huc_eta_nc, overwrite = TRUE)
          
-hucTimeseries <- ncdf4::nc_open(huc_eta_nc)
+vars <- ncmeta::nc_vars(huc_eta_nc)
 
 hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package = 'ncdfgeom'))
 plot(sf::st_geometry(hucPolygons))
@@ -29,7 +29,7 @@ names(hucPolygons)
 hucPolygons_nc <- ncdfgeom::write_geometry(nc_file=huc_eta_nc, 
                                           geomData = hucPolygons, 
                                           instance_dim_name = "station", 
-                                          variables = names(hucTimeseries$var))
+                                          variables = vars$name)
 huc_poly <- read_geometry(huc_eta_nc)
 plot(sf::st_geometry(huc_poly))
 names(huc_poly)

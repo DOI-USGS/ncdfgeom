@@ -19,8 +19,8 @@ attribute_file<-system.file('extdata/yahara_alb_attributes.csv', package = "ncdf
 
 # Grab some attributes
 attributes <- read.csv(attribute_file, colClasses='character')
-lats <- attributes$YCOORD
-lons <- attributes$XCOORD
+lats <- as.numeric(attributes$YCOORD)
+lons <- as.numeric(attributes$XCOORD)
 alts <- rep(1,length(lats)) # Making up altitude for the sake of demonstration.
 ```
 
@@ -72,7 +72,6 @@ ncdfgeom::write_timeseries_dsg(nc_file = "demo_nc.nc",
                                data_metadata = meta,
                                attributes = global_attributes) -> nc_file
 
-nc <- ncdf4::nc_open(nc_file)
 ```
 
 Now we have a NetCDF file with reference spatial information for each time series, and a single timeseries variable.
@@ -84,17 +83,16 @@ The file has three dimensions.
 1. one called "name_strlen" that is the length of the longest timeseries ID (which is stored as a string).
 
 ```{r dim}
-names(nc$dim)
+ncmeta::nc_dims(nc_file)
 ```
 
 The file has variables for latitude, longitude, altitude, timeseries IDs, and a data variable.
 ```{r var}
-names(nc$var)
+ncmeta::nc_vars(nc_file)
 ```
-The primary dimensions in the file are of length, numer of time steps and number of time series.
+The primary dimensions in the file are of length, number of time steps and number of time series.
 ```{r dim2}
-nc$dim$time$len
-nc$dim$station$len
+ncmeta::nc_dims(nc_file)
 ```
 
 The header of the resulting NetCDF file looks like:
