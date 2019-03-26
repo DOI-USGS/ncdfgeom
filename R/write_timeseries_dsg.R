@@ -51,7 +51,7 @@
 #'   \item \url{http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data}
 #' }
 #' 
-#' @importFrom ncdf4 nc_create nc_close ncvar_def ncvar_put ncatt_put ncdim_def
+#' @importFrom RNetCDF open.nc close.nc create.nc dim.def.nc var.def.nc var.put.nc att.put.nc
 #' @importFrom methods is
 #' 
 #' @export
@@ -92,101 +92,118 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 	
 	if(add_to_existing) {
 		# Open existing file.
-		nc<-nc_open(nc_file, write = TRUE)
+		nc<-open.nc(nc_file, write = TRUE)
 		data_vars = list()
-		data_vars[[1]] = ncvar_def(data_name, data_unit, dim=list(nc$dim$time, nc$dim[[pkg.env$instance_dim_name]]), prec=data_prec, 
-															 longname=data_metadata[['long_name']], missval=-999)
-		ncvar_add(nc, data_vars[[1]])
-		nc_close(nc)
-		nc<-nc_open(nc_file, write = TRUE)
-		putDataInNC(nc,nt,n,data_name,data)
-		nc_close(nc)
+		
+		data_vars[[1]] = var.def.nc(nc, data_name, pkg.env$nc_types[data_prec][[1]], c(pkg.env$time_dim_name, pkg.env$instance_dim_name))
+		att.put.nc(nc, data_name, "long_name", "NC_CHAR", data_metadata[['long_name']])
+		att.put.nc(nc, data_name, "missing_value", "NC_DOUBLE", -999)
+    att.put.nc(nc, data_name, "units", "NC_CHAR", data_unit)
+    
+		close.nc(nc)
+		nc<-open.nc(nc_file, write = TRUE)
+		
+		put_data_in_nc(nc,nt,n,data_name,data)
+		
+		close.nc(nc)
+		
 	} else {
-		station_dim = ncdim_def(pkg.env$instance_dim_name, '', 1:n, create_dimvar=FALSE)
-		time_dim = ncdim_def(pkg.env$time_dim_name, '', 1:nt, unlim=FALSE, create_dimvar=FALSE)
-		strlen_dim = ncdim_def(pkg.env$str_len_dim, '', 1:max(sapply(instance_names, nchar)), create_dimvar=FALSE)
+	  nc <- create.nc(nc_file)
+	  
+		dim.def.nc(nc, pkg.env$instance_dim_name, n, unlim = FALSE)
+		dim.def.nc(nc, pkg.env$time_dim_name, nt, unlim=FALSE)
+		dim.def.nc(nc, pkg.env$str_len_dim, 
+		           max(sapply(instance_names, nchar)), unlim = FALSE)
 		
 		#Setup our spatial and time info
-		station_var = ncvar_def(pkg.env$dsg_timeseries_id, '', dim=list(strlen_dim, station_dim), missval=NULL, prec='char', longname='Station Names')
-		time_var 		= ncvar_def(pkg.env$time_var_name,'days since 1970-01-01 00:00:00', dim=time_dim, -999, prec='double', longname='time of measurement')
-		lat_var 		= ncvar_def(pkg.env$lat_coord_var_name, 'degrees_north', dim=station_dim, -999, prec='double', longname = 'latitude of the observation')
-		lon_var 		= ncvar_def(pkg.env$lon_coord_var_name, 'degrees_east', dim=station_dim, -999, prec='double', longname = 'longitude of the observation')
+		add_var(nc, pkg.env$dsg_timeseries_id, 
+		        c(pkg.env$str_len_dim, pkg.env$instance_dim_name), 
+		        "NC_CHAR", long_name = "Station Names")
+		
+		add_var(nc, pkg.env$time_var_name, pkg.env$time_dim_name, "NC_DOUBLE", 
+		        'days since 1970-01-01 00:00:00', -999, 'time of measurement')
+		
+		add_var(nc, pkg.env$lat_coord_var_name, pkg.env$instance_dim_name, "NC_DOUBLE", 
+		        'degrees_north', -999, 'latitude of the observation')
+		
+		add_var(nc, pkg.env$lon_coord_var_name, pkg.env$instance_dim_name, "NC_DOUBLE", 
+		        'degrees_east', -999, 'longitude of the observation')
 		
 		if(!is.na(alts[1])){
-			alt_var = ncvar_def(pkg.env$alt_coord_var_name, 'm', dim=station_dim, missval=-999, prec='double', longname='vertical distance above the surface')
+		  add_var(nc, pkg.env$alt_coord_var_name, pkg.env$instance_dim_name, "NC_DOUBLE", 
+		          'm', -999, 'vertical distance above the surface')
 		}
 		
-		data_vars = list()
-		data_vars[[1]] = ncvar_def(data_name, data_unit, dim=list(time_dim, station_dim), prec=data_prec, 
-															 longname=data_metadata[['long_name']], missval=-999)
-		
-		if(!is.na(alts[1])){
-			nc = nc_create(nc_file, vars = c(list(lat_var, lon_var, time_var, alt_var, station_var), data_vars))
-		} else {
-			nc = nc_create(nc_file, vars = c(list(lat_var, lon_var, time_var, station_var), data_vars))
-		}
-		
-		nc_close(nc)
-		nc<-nc_open(nc_file, write = TRUE)
+    add_var(nc, data_name, c(pkg.env$time_dim_name, pkg.env$instance_dim_name), 
+            pkg.env$nc_types[data_prec][[1]], data_unit, -999, data_metadata[['long_name']])
+
+		close.nc(nc)
+		nc <- open.nc(nc_file, write = TRUE)
+
 		#add standard_names
-		ncatt_put(nc, pkg.env$lat_coord_var_name, 'standard_name', pkg.env$lat_coord_var_standard_name)
-		ncatt_put(nc, pkg.env$time_var_name, 'standard_name', pkg.env$time_var_standard_name)
-		ncatt_put(nc, pkg.env$lon_coord_var_name, 'standard_name', pkg.env$lon_coord_var_standard_name)
+		att.put.nc(nc, pkg.env$lat_coord_var_name, 'standard_name', "NC_CHAR", pkg.env$lat_coord_var_standard_name)
+		att.put.nc(nc, pkg.env$time_var_name, 'standard_name', "NC_CHAR", pkg.env$time_var_standard_name)
+		att.put.nc(nc, pkg.env$lon_coord_var_name, 'standard_name', "NC_CHAR", pkg.env$lon_coord_var_standard_name)
 		
 		if(!is.na(alts[1])){
-			ncatt_put(nc, pkg.env$alt_coord_var_name, 'standard_name', pkg.env$alt_coord_var_standard_name)
+			att.put.nc(nc, pkg.env$alt_coord_var_name, 'standard_name', "NC_CHAR", pkg.env$alt_coord_var_standard_name)
 		}
 		
-		ncatt_put(nc, pkg.env$dsg_timeseries_id, 'cf_role', pkg.env$timeseries_id_cf_role)
+		att.put.nc(nc, pkg.env$dsg_timeseries_id, 'cf_role', "NC_CHAR", pkg.env$timeseries_id_cf_role)
 		
 		#Important Global Variables
-		ncatt_put(nc, 0,'Conventions',pkg.env$cf_version)
-		ncatt_put(nc, 0,'featureType','timeSeries')
-		ncatt_put(nc, 0,'cdm_data_type','Station')
-		ncatt_put(nc, 0,'standard_name_vocabulary',pkg.env$cf_version)
+		att.put.nc(nc, "NC_GLOBAL", 'Conventions', "NC_CHAR", pkg.env$cf_version)
+		att.put.nc(nc, "NC_GLOBAL", 'featureType', "NC_CHAR", 'timeSeries')
+		att.put.nc(nc, "NC_GLOBAL", 'cdm_data_type', "NC_CHAR", 'Station')
+		att.put.nc(nc, "NC_GLOBAL", 'standard_name_vocabulary', "NC_CHAR", pkg.env$cf_version)
 		
 		#Add the optional global attributes
 		if(length(attributes)>0){
 			for(i in 1:length(attributes)){
-				ncatt_put(nc, 0, names(attributes)[i], attributes[[i]])
+				att.put.nc(nc, "NC_GLOBAL", names(attributes)[i], 
+				           pkg.env$nc_types[class(attributes[[i]])][[1]], attributes[[i]])
 			}
 		}
 		
 		#Put data in NC file
-		ncvar_put(nc, time_var, as.numeric(times)/86400, count=nt) #convert to days since 1970-01-01
-		ncvar_put(nc, lat_var, lats, count=n)
-		ncvar_put(nc, lon_var, lons, count=n)
+		var.put.nc(nc, pkg.env$time_var_name, as.numeric(times)/86400) #convert to days since 1970-01-01
+		var.put.nc(nc, pkg.env$lat_coord_var_name, lats)
+		var.put.nc(nc, pkg.env$lon_coord_var_name, lons)
 		
 		if(!is.na(alts[1])){
-			ncvar_put(nc, alt_var, alts, count=n)
+			var.put.nc(nc, pkg.env$alt_coord_var_name, alts)
 		}
-		ncvar_put(nc, station_var, instance_names, count=c(-1,n))
+		var.put.nc(nc, pkg.env$dsg_timeseries_id, instance_names)
 		
-		putDataInNC(nc,nt,n,data_name,data)
+		put_data_in_nc(nc, nt, n, data_name, data)
 		
-		nc_close(nc) 
+		close.nc(nc) 
 		
 		return(nc_file)
 	}
 }
 
-putDataInNC<-function(nc,nt,n,data_name,data,alts=NA) {
+put_data_in_nc <- function(nc, nt, n, data_name, data, alts=NA) {
 	#Add coordinates
 	if(!is.na(alts[1])){
-		ncatt_put(nc, data_name, 'coordinates', paste(pkg.env$time_var_name,
-		                                              pkg.env$lat_coord_var_name,
-		                                              pkg.env$lon_coord_var_name,
-		                                              pkg.env$alt_coord_var_name))
+	  coordinates <- paste(pkg.env$time_var_name,
+	                       pkg.env$lat_coord_var_name,
+	                       pkg.env$lon_coord_var_name,
+	                       pkg.env$alt_coord_var_name)
 	} else {
-		ncatt_put(nc, data_name, 'coordinates', paste(pkg.env$time_var_name,
-		                                              pkg.env$lat_coord_var_name,
-		                                              pkg.env$lon_coord_var_name))
+	  coordinates <- paste(pkg.env$time_var_name,
+	                       pkg.env$lat_coord_var_name,
+	                       pkg.env$lon_coord_var_name)
 	}
+	  att.put.nc(nc, data_name, 'coordinates', "NC_CHAR", coordinates)
+
+		att.put.nc(nc, data_name, 'coordinates', "NC_CHAR", coordinates)
+		
 	if ( nt * n < 100000 ) {
-		ncvar_put(nc, data_name, as.matrix(data), start=c(1,1), count=c(nt, n))
+		var.put.nc(nc, data_name, as.matrix(data))
 	} else {
 		for ( st in 1:n ) {
-			ncvar_put(nc, data_name, as.matrix(data[,st]), start=c(1,st), count=c(nt, 1))
+			var.put.nc(nc, data_name, as.matrix(data[,st]), start=c(1, st), count=c(nt, 1))
 		}
 	}
 }

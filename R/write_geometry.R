@@ -266,9 +266,8 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
     close.nc(nc)
     nc <- open.nc(nc_file,write = TRUE)
     
-    types <- list(numeric="NC_DOUBLE", integer = "NC_INT", character="NC_CHAR")
     
-    for(crs_att in names(crs)) att.put.nc(nc, pkg.env$crs_var_name, crs_att, types[class(crs[crs_att][[1]])][[1]], crs[crs_att][[1]])
+    for(crs_att in names(crs)) att.put.nc(nc, pkg.env$crs_var_name, crs_att, pkg.env$nc_types[class(crs[crs_att][[1]])][[1]], crs[crs_att][[1]])
   }
   
   if(!pointsMode && (multis || holes)) {
