@@ -35,7 +35,7 @@
 <meta property="og:description" content="Attemps to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame." />
 <meta name="twitter:card" content="summary" />
 
-<meta name="robots" content="noindex">
+
 
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
       </span>
     </div>
 
@@ -99,12 +99,7 @@
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        <li>
-  <a href="https://github.com/USGS-R/ncdfgeom">
-    <span class="fa fa-github fa-lg"></span>
-     
-  </a>
-</li>
+        
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -118,7 +113,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Read NetCDF-CF spatial geometries</h1>
-    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/read_geometry.R'><code>R/read_geometry.R</code></a></small>
+    
     <div class="hidden name"><code>read_geometry.Rd</code></div>
     </div>
 
@@ -152,7 +147,7 @@
     <pre class="examples"><div class='input'><span class='no'>huc_eta_nc</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/tempfile'>tempfile</a></span>()
 <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/files'>file.copy</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>'extdata'</span>,<span class='st'>'example_huc_eta.nc'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'ncdfgeom'</span>),
          <span class='no'>huc_eta_nc</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='no'>hucTimeseries</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdf4</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/ncdf4/topics/nc_open'>nc_open</a></span>(<span class='no'>huc_eta_nc</span>)
+<span class='no'>vars</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncmeta</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/ncmeta/topics/nc_vars'>nc_vars</a></span>(<span class='no'>huc_eta_nc</span>)
 
 <span class='no'>hucPolygons</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>read_sf</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>'extdata'</span>,<span class='st'>'example_huc_eta.json'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'ncdfgeom'</span>))
 <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_geometry'>st_geometry</a></span>(<span class='no'>hucPolygons</span>))</div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/names'>names</a></span>(<span class='no'>hucPolygons</span>)</div><div class='output co'>#&gt;  [1] "TNMID"      "METASOURCE" "SOURCEDATA" "SOURCEORIG" "SOURCEFEAT"
@@ -162,7 +157,7 @@
 <span class='no'>hucPolygons_nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdfgeom</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry'>write_geometry</a></span>(<span class='kw'>nc_file</span><span class='kw'>=</span><span class='no'>huc_eta_nc</span>,
                                           <span class='kw'>geomData</span> <span class='kw'>=</span> <span class='no'>hucPolygons</span>,
                                           <span class='kw'>instance_dim_name</span> <span class='kw'>=</span> <span class='st'>"station"</span>,
-                                          <span class='kw'>variables</span> <span class='kw'>=</span> <span class='no'>hucTimeseries</span>$<span class='no'>var</span>)
+                                          <span class='kw'>variables</span> <span class='kw'>=</span> <span class='no'>vars</span>$<span class='no'>name</span>)
 <span class='no'>huc_poly</span> <span class='kw'>&lt;-</span> <span class='fu'>read_geometry</span>(<span class='no'>huc_eta_nc</span>)
 <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_geometry'>st_geometry</a></span>(<span class='no'>huc_poly</span>))</div><div class='img'><img src='read_geometry-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/names'>names</a></span>(<span class='no'>huc_poly</span>)</div><div class='output co'>#&gt;  [1] "lat"          "lon"          "station_name" "TNMID"        "METASOURCE"  
 #&gt;  [6] "SOURCEDATA"   "SOURCEORIG"   "SOURCEFEAT"   "LOADDATE"     "GNIS_ID"     

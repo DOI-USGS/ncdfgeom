@@ -12,7 +12,6 @@
 <script src="../pkgdown.js"></script><meta property="og:title" content="Reading and Writing Geometry">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
-<meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -31,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
       </span>
     </div>
 
@@ -65,14 +64,7 @@
   </ul>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/USGS-R/ncdfgeom">
-    <span class="fa fa-github fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
+<ul class="nav navbar-nav navbar-right"></ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -88,7 +80,7 @@
                         <h4 class="author">David Blodgett</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USGS-R/ncdfgeom/blob/master/vignettes/geometry.Rmd"><code>vignettes/geometry.Rmd</code></a></small>
+      
       <div class="hidden name"><code>geometry.Rmd</code></div>
 
     </div>
@@ -161,12 +153,12 @@
 #&gt;      :DODS.dimName = "name_strlen" ;
 #&gt; }</code></pre>
 <p>Now we can use the <code>write_geometry</code> function to add the polygon data to the NetCDF file.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">hucTimeseries &lt;-<span class="st"> </span>ncdf4<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncdf4/topics/nc_open">nc_open</a></span>(example_file)</a>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">vars &lt;-<span class="st"> </span>ncmeta<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncmeta/topics/nc_vars">nc_vars</a></span>(example_file)</a>
 <a class="sourceLine" id="cb3-2" title="2"></a>
 <a class="sourceLine" id="cb3-3" title="3">ncdfgeom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry">write_geometry</a></span>(<span class="dt">nc_file=</span>example_file,</a>
 <a class="sourceLine" id="cb3-4" title="4">                         <span class="dt">geomData =</span> hucPolygons, </a>
 <a class="sourceLine" id="cb3-5" title="5">                         <span class="dt">instance_dim_name =</span> <span class="st">"station"</span>, </a>
-<a class="sourceLine" id="cb3-6" title="6">                         <span class="dt">variables =</span> hucTimeseries<span class="op">$</span>var) -&gt;<span class="st"> </span>example_file</a></code></pre></div>
+<a class="sourceLine" id="cb3-6" title="6">                         <span class="dt">variables =</span> vars<span class="op">$</span>name) -&gt;<span class="st"> </span>example_file</a></code></pre></div>
 <p>Now the header of the NetCDF file looks like:</p>
 <pre><code>#&gt; netcdf example {
 #&gt; dimensions:
@@ -195,6 +187,8 @@
 #&gt;      time:missing_value = -999. ;
 #&gt;      time:long_name = "time of measurement" ;
 #&gt;      time:standard_name = "time" ;
+#&gt;      time:grid_mapping = "grid_mapping" ;
+#&gt;      time:geometry = "geometry_container" ;
 #&gt;  char station_name(station, maxStrlen64) ;
 #&gt;      station_name:units = "" ;
 #&gt;      station_name:missing_value = "" ;
@@ -212,19 +206,22 @@
 #&gt;      et:geometry = "geometry_container" ;
 #&gt;  char LOADDATE(station, char) ;
 #&gt;      LOADDATE:units = "unknown" ;
+#&gt;      LOADDATE:missing_value = "" ;
 #&gt;      LOADDATE:grid_mapping = "grid_mapping" ;
 #&gt;      LOADDATE:geometry = "geometry_container" ;
 #&gt;  double AREASQKM(station) ;
 #&gt;      AREASQKM:units = "unknown" ;
-#&gt;      AREASQKM:_FillValue = NaN ;
+#&gt;      AREASQKM:missing_value = -9999.999 ;
 #&gt;      AREASQKM:grid_mapping = "grid_mapping" ;
 #&gt;      AREASQKM:geometry = "geometry_container" ;
 #&gt;  char HUC12(station, char) ;
 #&gt;      HUC12:units = "unknown" ;
+#&gt;      HUC12:missing_value = "" ;
 #&gt;      HUC12:grid_mapping = "grid_mapping" ;
 #&gt;      HUC12:geometry = "geometry_container" ;
 #&gt;  char NAME(station, char) ;
 #&gt;      NAME:units = "unknown" ;
+#&gt;      NAME:missing_value = "" ;
 #&gt;      NAME:grid_mapping = "grid_mapping" ;
 #&gt;      NAME:geometry = "geometry_container" ;
 #&gt;  double x_nodes(node) ;
@@ -235,14 +232,14 @@
 #&gt;      y_nodes:units = "degrees_north" ;
 #&gt;      y_nodes:standard_name = "latitude" ;
 #&gt;      y_nodes:axis = "Y" ;
-#&gt;  float geometry_container ;
+#&gt;  int geometry_container ;
 #&gt;      geometry_container:geometry_type = "polygon" ;
 #&gt;      geometry_container:node_count = "node_count" ;
 #&gt;      geometry_container:node_coordinates = "x_nodes y_nodes" ;
 #&gt;      geometry_container:grid_mapping = "grid_mapping" ;
 #&gt;  int node_count(station) ;
 #&gt;      node_count:long_name = "count of coordinates in each instance geometry" ;
-#&gt;  float grid_mapping ;
+#&gt;  int grid_mapping ;
 #&gt;      grid_mapping:grid_mapping_name = "latitude_longitude" ;
 #&gt;      grid_mapping:semi_major_axis = 6378137. ;
 #&gt;      grid_mapping:inverse_flattening = 298.257223563 ;
@@ -288,11 +285,11 @@ variables:
         y_nodes:units = "degrees_north" ;
         y_nodes:standard_name = "latitude" ;
         y_nodes:axis = "Y" ;
-    float geometry_container ;
+    int geometry_container ;
         geometry_container:geometry_type = "point" ;
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
         geometry_container:grid_mapping = "grid_mapping" ;
-    float grid_mapping ;
+    int grid_mapping ;
         grid_mapping:grid_mapping_name = "latitude_longitude" ;
         grid_mapping:semi_major_axis = 6378137. ;
         grid_mapping:inverse_flattening = 298.257223563 ;
@@ -330,14 +327,14 @@ variables:
         y_nodes:units = "degrees_north" ;
         y_nodes:standard_name = "latitude" ;
         y_nodes:axis = "Y" ;
-    float geometry_container ;
+    int geometry_container ;
         geometry_container:geometry_type = "line" ;
         geometry_container:node_count = "node_count" ;
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
         geometry_container:grid_mapping = "grid_mapping" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
-    float grid_mapping ;
+    int grid_mapping ;
         grid_mapping:grid_mapping_name = "latitude_longitude" ;
         grid_mapping:semi_major_axis = 6378137. ;
         grid_mapping:inverse_flattening = 298.257223563 ;
@@ -377,14 +374,14 @@ variables:
         y_nodes:units = "degrees_north" ;
         y_nodes:standard_name = "latitude" ;
         y_nodes:axis = "Y" ;
-    float geometry_container ;
+    int geometry_container ;
         geometry_container:geometry_type = "polygon" ;
         geometry_container:node_count = "node_count" ;
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
         geometry_container:grid_mapping = "grid_mapping" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
-    float grid_mapping ;
+    int grid_mapping ;
         grid_mapping:grid_mapping_name = "latitude_longitude" ;
         grid_mapping:semi_major_axis = 6378137. ;
         grid_mapping:inverse_flattening = 298.257223563 ;
@@ -425,7 +422,7 @@ variables:
         y_nodes:units = "degrees_north" ;
         y_nodes:standard_name = "latitude" ;
         y_nodes:axis = "Y" ;
-    float geometry_container ;
+    int geometry_container ;
         geometry_container:geometry_type = "line" ;
         geometry_container:node_count = "node_count" ;
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
@@ -433,7 +430,7 @@ variables:
         geometry_container:part_node_count = "part_node_count" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
-    float grid_mapping ;
+    int grid_mapping ;
         grid_mapping:grid_mapping_name = "latitude_longitude" ;
         grid_mapping:semi_major_axis = 6378137. ;
         grid_mapping:inverse_flattening = 298.257223563 ;
@@ -478,7 +475,7 @@ variables:
         y_nodes:units = "degrees_north" ;
         y_nodes:standard_name = "latitude" ;
         y_nodes:axis = "Y" ;
-    float geometry_container ;
+    int geometry_container ;
         geometry_container:geometry_type = "polygon" ;
         geometry_container:node_count = "node_count" ;
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
@@ -486,7 +483,7 @@ variables:
         geometry_container:part_node_count = "part_node_count" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
-    float grid_mapping ;
+    int grid_mapping ;
         grid_mapping:grid_mapping_name = "latitude_longitude" ;
         grid_mapping:semi_major_axis = 6378137. ;
         grid_mapping:inverse_flattening = 298.257223563 ;
@@ -531,7 +528,7 @@ variables:
         y_nodes:units = "degrees_north" ;
         y_nodes:standard_name = "latitude" ;
         y_nodes:axis = "Y" ;
-    float geometry_container ;
+    int geometry_container ;
         geometry_container:geometry_type = "polygon" ;
         geometry_container:node_count = "node_count" ;
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
@@ -540,7 +537,7 @@ variables:
         geometry_container:interior_ring = "interior_ring" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
-    float grid_mapping ;
+    int grid_mapping ;
         grid_mapping:grid_mapping_name = "latitude_longitude" ;
         grid_mapping:semi_major_axis = 6378137. ;
         grid_mapping:inverse_flattening = 298.257223563 ;
@@ -589,7 +586,7 @@ variables:
         y_nodes:units = "degrees_north" ;
         y_nodes:standard_name = "latitude" ;
         y_nodes:axis = "Y" ;
-    float geometry_container ;
+    int geometry_container ;
         geometry_container:geometry_type = "polygon" ;
         geometry_container:node_count = "node_count" ;
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
@@ -598,7 +595,7 @@ variables:
         geometry_container:interior_ring = "interior_ring" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
-    float grid_mapping ;
+    int grid_mapping ;
         grid_mapping:grid_mapping_name = "latitude_longitude" ;
         grid_mapping:semi_major_axis = 6378137. ;
         grid_mapping:inverse_flattening = 298.257223563 ;
@@ -647,7 +644,7 @@ variables:
         y_nodes:units = "degrees_north" ;
         y_nodes:standard_name = "latitude" ;
         y_nodes:axis = "Y" ;
-    float geometry_container ;
+    int geometry_container ;
         geometry_container:geometry_type = "polygon" ;
         geometry_container:node_count = "node_count" ;
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
@@ -656,7 +653,7 @@ variables:
         geometry_container:interior_ring = "interior_ring" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
-    float grid_mapping ;
+    int grid_mapping ;
         grid_mapping:grid_mapping_name = "latitude_longitude" ;
         grid_mapping:semi_major_axis = 6378137. ;
         grid_mapping:inverse_flattening = 298.257223563 ;
@@ -687,163 +684,6 @@ data:
  interior_ring = 0, 1, 1, 1, 0, 0 ;
 }
   </code></pre>
-<ul>
-<li>Error : Can’t find DESCRIPTION</li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<p>══ Building pkgdown site ════════════════════════════════════════════════════════════════════</p>
-<ul>
-<li>Reading from: ‘/Users/dblodgett/Documents/Projects/WBEEP/3_code/ncdfgeom’</li>
-</ul>
-<div class="line-block"></div>
-<p>Writing to: ‘/Users/dblodgett/Documents/Projects/WBEEP/3_code/ncdfgeom/docs/dev’</p>
-<ul>
-<li>── Initialising site ────────────────────────────────────────────────────────────────────────</li>
-</ul>
-<div class="line-block"></div>
-<p>Copying ‘../../../../../../../Library/Frameworks/R.framework/Versions/3.5/Resources/library/pkgdown/assets/pkgdown.css’ to ‘pkgdown.css’ Copying ‘../../../../../../../Library/Frameworks/R.framework/Versions/3.5/Resources/library/pkgdown/assets/pkgdown.js’ to ‘pkgdown.js’</p>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<p>── Building home ────────────────────────────────────────────────────────────────────────────</p>
-<ul>
-<li>Writing ‘authors.html’</li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<p>Writing ‘index.html’</p>
-<ul>
-<li>── Building function reference ──────────────────────────────────────────────────────────────</li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>Updating ncdfgeom documentation</li>
-</ul>
-<div class="line-block"></div>
-<p>Writing NAMESPACE</p>
-<ul>
-<li>Loading ncdfgeom</li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<p>This information is preliminary or provisional and is subject to revision. It is being provided to meet the need for timely best science. The information has not received final approval by the U.S. Geological Survey (USGS) and is provided on the condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from the authorized or unauthorized use of the information.</p>
-<p>****Support Package**** This package is a USGS-R Support package. see: <a href="https://owi.usgs.gov/R/packages.html#support" class="uri">https://owi.usgs.gov/R/packages.html#support</a></p>
-<ul>
-<li>Writing NAMESPACE</li>
-</ul>
-<div class="line-block"></div>
-<p>Writing ‘reference/index.html’</p>
-<ul>
-<li>Loading ncdfgeom</li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>Reading ‘man/read_attribute_data.Rd’ This information is preliminary or provisional and is subject to revision. It is being provided to meet the need for timely best science. The information has not received final approval by the U.S. Geological Survey (USGS) and is provided on the condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from the authorized or unauthorized use of the information.</li>
-</ul>
-<p>****Support Package**** This package is a USGS-R Support package. see: <a href="https://owi.usgs.gov/R/packages.html#support" class="uri">https://owi.usgs.gov/R/packages.html#support</a></p>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>Writing ‘reference/read_attribute_data.html’</li>
-</ul>
-<div class="line-block"></div>
-<p>Reading ‘man/read_geometry.Rd’</p>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>Writing ‘reference/read_geometry.html’</li>
-</ul>
-<div class="line-block"></div>
-<p>Reading ‘man/read_timeseries_dsg.Rd’</p>
-<ul>
-<li>Writing ‘reference/read_timeseries_dsg.html’</li>
-</ul>
-<div class="line-block"></div>
-<p>Reading ‘man/write_attribute_data.Rd’</p>
-<ul>
-<li>Writing ‘reference/write_attribute_data.html’</li>
-</ul>
-<div class="line-block"></div>
-<p>Reading ‘man/write_geometry.Rd’</p>
-<ul>
-<li>Writing ‘reference/write_geometry.html’</li>
-</ul>
-<div class="line-block"></div>
-<p>Reading ‘man/write_point_dsg.Rd’</p>
-<ul>
-<li>Writing ‘reference/write_point_dsg.html’</li>
-</ul>
-<div class="line-block"></div>
-<p>Reading ‘man/write_timeseries_dsg.Rd’</p>
-<ul>
-<li>Writing ‘reference/write_timeseries_dsg.html’</li>
-</ul>
-<div class="line-block"></div>
-<p>── Building articles ────────────────────────────────────────────────────────────────────────</p>
-<ul>
-<li>Writing ‘articles/index.html’</li>
-</ul>
-<div class="line-block"></div>
-<p>Reading ‘vignettes/geometry.Rmd’</p>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
-<div class="line-block"></div>
-<ul>
-<li>
-</ul>
 </div>
 </div>
   </div>

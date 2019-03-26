@@ -54,7 +54,7 @@ pkg.env$lon_coord_var_standard_name <- "longitude"
 pkg.env$alt_coord_var_standard_name <- "height"
 pkg.env$timeseries_id_cf_role <- "timeseries_id"
 
-pkg.env$nc_types <- list(double = "NC_DOUBLE", numeric="NC_DOUBLE", integer = "NC_INT", character="NC_CHAR")
+pkg.env$nc_types <- list(double = "NC_DOUBLE", float = "NC_FLOAT", numeric="NC_DOUBLE", short = "NC_SHORT", integer = "NC_INT", character="NC_CHAR")
 
 check_geomData <- function(geomData) {
 	if (any(c("sf", "sfc") %in% class(geomData))) {

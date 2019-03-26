@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read NetCDF-CF timeSeries featuretype — read_timeseries_dsg • ncdfgeom</title>
+<title>Function reference • ncdfgeom</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,13 +30,9 @@
 
 
 
-<meta property="og:title" content="Read NetCDF-CF timeSeries featuretype — read_timeseries_dsg" />
+<meta property="og:title" content="Function reference" />
 
-<meta property="og:description" content="This function reads a timeseries discrete sampling geometry NetCDF file and 
-returns a list containing the file's contents." />
-<meta name="twitter:card" content="summary" />
 
-<meta name="robots" content="noindex">
 
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
@@ -51,7 +47,7 @@ returns a list containing the file's contents." />
   </head>
 
   <body>
-    <div class="container template-reference-topic">
+    <div class="container template-reference-index">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -64,7 +60,7 @@ returns a list containing the file's contents." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
       </span>
     </div>
 
@@ -100,12 +96,7 @@ returns a list containing the file's contents." />
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        <li>
-  <a href="https://github.com/USGS-R/ncdfgeom">
-    <span class="fa fa-github fa-lg"></span>
-     
-  </a>
-</li>
+        
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -116,70 +107,78 @@ returns a list containing the file's contents." />
       </header>
 
 <div class="row">
-  <div class="col-md-9 contents">
+  <div class="contents col-md-9">
     <div class="page-header">
-    <h1>Read NetCDF-CF timeSeries featuretype</h1>
-    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/read_timeseries_dsg.R'><code>R/read_timeseries_dsg.R</code></a></small>
-    <div class="hidden name"><code>read_timeseries_dsg.Rd</code></div>
+      <h1>Reference</h1>
     </div>
 
-    <div class="ref-description">
-    
-    <p>This function reads a timeseries discrete sampling geometry NetCDF file and 
-returns a list containing the file's contents.</p>
-    
-    </div>
+    <table class="ref-index">
 
-    <pre class="usage"><span class='fu'>read_timeseries_dsg</span>(<span class='no'>nc_file</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>nc_file</th>
-      <td><p>character file path to the nc file to be created.</p></td>
-    </tr>
+    <colgroup>
+      
+      <col class="alias" />
+      <col class="title" />
+    </colgroup>
+
+    <tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="read_attribute_data.html">read_attribute_data()</a></code> </p>
+        </td>
+        <td><p>Read attribute dataframe from NetCDF-DSG file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_geometry.html">read_geometry()</a></code> </p>
+        </td>
+        <td><p>Read NetCDF-CF spatial geometries</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_timeseries_dsg.html">read_timeseries_dsg()</a></code> </p>
+        </td>
+        <td><p>Read NetCDF-CF timeSeries featuretype</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_attribute_data.html">write_attribute_data()</a></code> </p>
+        </td>
+        <td><p>Write attribute data to NetCDF-CF</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_geometry.html">write_geometry()</a></code> </p>
+        </td>
+        <td><p>Write sp or sf geometries and attributes to NetCDF-CF</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_point_dsg.html">write_point_dsg()</a></code> </p>
+        </td>
+        <td><p>Write NetCDF-CF point featuretype</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_timeseries_dsg.html">write_timeseries_dsg()</a></code> </p>
+        </td>
+        <td><p>Write orthoganal array time series to NetCDF-CF</p></td>
+      </tr>
+    </tbody>
     </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>list containing the contents of the NetCDF file.</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The current implementation checks several NetCDF-CF specific conventions prior to attempting to 
-read the file. The Conventions, featureType, and cdm_data_type global attributes are checked but not
-strictly required.</p>
-<p>Variables with standard_name and/or cf_role of station_id and/or timeseries_id are 
-searched for to indicate which variable is the 'station identifier'. The function stops 
-if one is not found.</p>
-<p>All variables are introspected for a coordinates attribute. This attribute is used to determine
-which variables are coordinate variables.</p>
-<p>The coordinates variables are then introspected and their standard_names used to determine
-which coordinate they are. Lat, lon, and time are required, height is not.</p>
-<p>Variables with a coordinates attribute are assumed to be the 'data variables'.</p>
-<p>Data vars are traversed and their metadata and data content put into lists within the main
-response list.</p>
-<p>See the timeseries vignette for more information.</p>
-    
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html</p>
-    
-
   </div>
+
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#references">References</a></li>
-          </ul>
-
+      <li><a href="#section-all-functions">All functions</a></li>
+    </ul>
   </div>
 </div>
 

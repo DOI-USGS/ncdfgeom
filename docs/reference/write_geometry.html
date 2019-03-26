@@ -37,7 +37,7 @@ extended NetCDF-CF timeSeries featuretype format.
 Will also add attributes if provided data has them." />
 <meta name="twitter:card" content="summary" />
 
-<meta name="robots" content="noindex">
+
 
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
@@ -65,7 +65,7 @@ Will also add attributes if provided data has them." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
       </span>
     </div>
 
@@ -101,12 +101,7 @@ Will also add attributes if provided data has them." />
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        <li>
-  <a href="https://github.com/USGS-R/ncdfgeom">
-    <span class="fa fa-github fa-lg"></span>
-     
-  </a>
-</li>
+        
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -120,7 +115,7 @@ Will also add attributes if provided data has them." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write sp or sf geometries and attributes to NetCDF-CF</h1>
-    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/write_geometry.R'><code>R/write_geometry.R</code></a></small>
+    
     <div class="hidden name"><code>write_geometry.Rd</code></div>
     </div>
 
@@ -180,92 +175,105 @@ list of variables that should be related to the geometries.</p></td>
 <span class='no'>hucPolygons_nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdfgeom</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry'>write_geometry</a></span>(<span class='kw'>nc_file</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/tempfile'>tempfile</a></span>(),
                                            <span class='kw'>geomData</span> <span class='kw'>=</span> <span class='no'>hucPolygons</span>)
 <span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>hucPolygons_nc</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf filebc6216f3d1aa {
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf file8fca53d55a79 {
 #&gt; dimensions:
-#&gt; 	char = 38 ;
 #&gt; 	instance = 2 ;
+#&gt; 	char = 38 ;
 #&gt; 	node = 2628 ;
 #&gt; variables:
 #&gt; 	char TNMID(instance, char) ;
 #&gt; 		TNMID:units = "unknown" ;
+#&gt; 		TNMID:missing_value = "" ;
 #&gt; 		TNMID:grid_mapping = "grid_mapping" ;
 #&gt; 		TNMID:geometry = "geometry_container" ;
 #&gt; 	char METASOURCE(instance, char) ;
 #&gt; 		METASOURCE:units = "unknown" ;
+#&gt; 		METASOURCE:missing_value = "" ;
 #&gt; 		METASOURCE:grid_mapping = "grid_mapping" ;
 #&gt; 		METASOURCE:geometry = "geometry_container" ;
 #&gt; 	char SOURCEDATA(instance, char) ;
 #&gt; 		SOURCEDATA:units = "unknown" ;
+#&gt; 		SOURCEDATA:missing_value = "" ;
 #&gt; 		SOURCEDATA:grid_mapping = "grid_mapping" ;
 #&gt; 		SOURCEDATA:geometry = "geometry_container" ;
 #&gt; 	char SOURCEORIG(instance, char) ;
 #&gt; 		SOURCEORIG:units = "unknown" ;
+#&gt; 		SOURCEORIG:missing_value = "" ;
 #&gt; 		SOURCEORIG:grid_mapping = "grid_mapping" ;
 #&gt; 		SOURCEORIG:geometry = "geometry_container" ;
 #&gt; 	char SOURCEFEAT(instance, char) ;
 #&gt; 		SOURCEFEAT:units = "unknown" ;
+#&gt; 		SOURCEFEAT:missing_value = "" ;
 #&gt; 		SOURCEFEAT:grid_mapping = "grid_mapping" ;
 #&gt; 		SOURCEFEAT:geometry = "geometry_container" ;
 #&gt; 	char LOADDATE(instance, char) ;
 #&gt; 		LOADDATE:units = "unknown" ;
+#&gt; 		LOADDATE:missing_value = "" ;
 #&gt; 		LOADDATE:grid_mapping = "grid_mapping" ;
 #&gt; 		LOADDATE:geometry = "geometry_container" ;
 #&gt; 	char GNIS_ID(instance, char) ;
 #&gt; 		GNIS_ID:units = "unknown" ;
+#&gt; 		GNIS_ID:missing_value = "" ;
 #&gt; 		GNIS_ID:grid_mapping = "grid_mapping" ;
 #&gt; 		GNIS_ID:geometry = "geometry_container" ;
 #&gt; 	double AREAACRES(instance) ;
 #&gt; 		AREAACRES:units = "unknown" ;
-#&gt; 		AREAACRES:_FillValue = NaN ;
+#&gt; 		AREAACRES:missing_value = -9999.999 ;
 #&gt; 		AREAACRES:grid_mapping = "grid_mapping" ;
 #&gt; 		AREAACRES:geometry = "geometry_container" ;
 #&gt; 	double AREASQKM(instance) ;
 #&gt; 		AREASQKM:units = "unknown" ;
-#&gt; 		AREASQKM:_FillValue = NaN ;
+#&gt; 		AREASQKM:missing_value = -9999.999 ;
 #&gt; 		AREASQKM:grid_mapping = "grid_mapping" ;
 #&gt; 		AREASQKM:geometry = "geometry_container" ;
 #&gt; 	char STATES(instance, char) ;
 #&gt; 		STATES:units = "unknown" ;
+#&gt; 		STATES:missing_value = "" ;
 #&gt; 		STATES:grid_mapping = "grid_mapping" ;
 #&gt; 		STATES:geometry = "geometry_container" ;
 #&gt; 	char HUC12(instance, char) ;
 #&gt; 		HUC12:units = "unknown" ;
+#&gt; 		HUC12:missing_value = "" ;
 #&gt; 		HUC12:grid_mapping = "grid_mapping" ;
 #&gt; 		HUC12:geometry = "geometry_container" ;
 #&gt; 	char NAME(instance, char) ;
 #&gt; 		NAME:units = "unknown" ;
+#&gt; 		NAME:missing_value = "" ;
 #&gt; 		NAME:grid_mapping = "grid_mapping" ;
 #&gt; 		NAME:geometry = "geometry_container" ;
 #&gt; 	char HUTYPE(instance, char) ;
 #&gt; 		HUTYPE:units = "unknown" ;
+#&gt; 		HUTYPE:missing_value = "" ;
 #&gt; 		HUTYPE:grid_mapping = "grid_mapping" ;
 #&gt; 		HUTYPE:geometry = "geometry_container" ;
 #&gt; 	char HUMOD(instance, char) ;
 #&gt; 		HUMOD:units = "unknown" ;
+#&gt; 		HUMOD:missing_value = "" ;
 #&gt; 		HUMOD:grid_mapping = "grid_mapping" ;
 #&gt; 		HUMOD:geometry = "geometry_container" ;
 #&gt; 	char TOHUC(instance, char) ;
 #&gt; 		TOHUC:units = "unknown" ;
+#&gt; 		TOHUC:missing_value = "" ;
 #&gt; 		TOHUC:grid_mapping = "grid_mapping" ;
 #&gt; 		TOHUC:geometry = "geometry_container" ;
 #&gt; 	double NONCONTRIB(instance) ;
 #&gt; 		NONCONTRIB:units = "unknown" ;
-#&gt; 		NONCONTRIB:_FillValue = NaN ;
+#&gt; 		NONCONTRIB:missing_value = -9999.999 ;
 #&gt; 		NONCONTRIB:grid_mapping = "grid_mapping" ;
 #&gt; 		NONCONTRIB:geometry = "geometry_container" ;
 #&gt; 	double NONCONTR_1(instance) ;
 #&gt; 		NONCONTR_1:units = "unknown" ;
-#&gt; 		NONCONTR_1:_FillValue = NaN ;
+#&gt; 		NONCONTR_1:missing_value = -9999.999 ;
 #&gt; 		NONCONTR_1:grid_mapping = "grid_mapping" ;
 #&gt; 		NONCONTR_1:geometry = "geometry_container" ;
 #&gt; 	double SHAPE_Leng(instance) ;
 #&gt; 		SHAPE_Leng:units = "unknown" ;
-#&gt; 		SHAPE_Leng:_FillValue = NaN ;
+#&gt; 		SHAPE_Leng:missing_value = -9999.999 ;
 #&gt; 		SHAPE_Leng:grid_mapping = "grid_mapping" ;
 #&gt; 		SHAPE_Leng:geometry = "geometry_container" ;
 #&gt; 	double SHAPE_Area(instance) ;
 #&gt; 		SHAPE_Area:units = "unknown" ;
-#&gt; 		SHAPE_Area:_FillValue = NaN ;
+#&gt; 		SHAPE_Area:missing_value = -9999.999 ;
 #&gt; 		SHAPE_Area:grid_mapping = "grid_mapping" ;
 #&gt; 		SHAPE_Area:geometry = "geometry_container" ;
 #&gt; 	double x_nodes(node) ;
@@ -276,14 +284,14 @@ list of variables that should be related to the geometries.</p></td>
 #&gt; 		y_nodes:units = "degrees_north" ;
 #&gt; 		y_nodes:standard_name = "latitude" ;
 #&gt; 		y_nodes:axis = "Y" ;
-#&gt; 	float geometry_container ;
+#&gt; 	int geometry_container ;
 #&gt; 		geometry_container:geometry_type = "polygon" ;
 #&gt; 		geometry_container:node_count = "node_count" ;
 #&gt; 		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 #&gt; 		geometry_container:grid_mapping = "grid_mapping" ;
 #&gt; 	int node_count(instance) ;
 #&gt; 		node_count:long_name = "count of coordinates in each instance geometry" ;
-#&gt; 	float grid_mapping ;
+#&gt; 	int grid_mapping ;
 #&gt; 		grid_mapping:grid_mapping_name = "latitude_longitude" ;
 #&gt; 		grid_mapping:semi_major_axis = 6378137. ;
 #&gt; 		grid_mapping:inverse_flattening = 298.257223563 ;
