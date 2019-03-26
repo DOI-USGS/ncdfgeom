@@ -75,7 +75,7 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 	}
 	
 	if(ncol(data)!=n){
-		stop('Only one variable is currently supported, ncol(data) must equal the number of stations')
+		stop('number of data columns must equal the number of stations')
 	}
 	
 	nt = length(times)

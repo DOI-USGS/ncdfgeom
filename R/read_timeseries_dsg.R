@@ -77,6 +77,10 @@ read_timeseries_dsg = function(nc_file){
 	# http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/ch09s05.html
 	nc_coord_vars <- ncmeta::nc_coord_var(nc)
 	
+	if (nrow(nc_coord_vars) == 0) { 
+	  stop('No coordinates declarations were found in the file.') 
+	}
+	
 	coord_vars <- unique(c(nc_coord_vars$X, nc_coord_vars$Y, 
 	                       nc_coord_vars$Z, nc_coord_vars$T))
 	coord_vars <- coord_vars[!is.na(coord_vars)]
@@ -84,9 +88,6 @@ read_timeseries_dsg = function(nc_file){
 	data_vars <- filter(nc_atts, attribute == "coordinates" & 
 	                      grepl(paste(coord_vars, collapse = "|"), value))
 	
-	if (length(coord_vars) == 0) { 
-	  stop('No coordinates declarations were found in the file.') 
-	 }
 	# Given the coordinates found look for one and only one variable 
 	# with standard name time, latitude, and longitude. 
 	# OR (worst case maybe don't support) units like 'days since 1970-01-01 00:00:00', 
@@ -98,7 +99,7 @@ read_timeseries_dsg = function(nc_file){
 	alt <- filter(sn, value == pkg.env$alt_coord_var_standard_name)
 	time <- filter(sn, value == pkg.env$time_var_standard_name)
 	
-	if(length(time) == 0) {
+	if(nrow(time) == 0) {
 	  time <- filter(nc_atts, attribute == "units" & grepl(" since ", value))
 	}
 	
@@ -114,7 +115,7 @@ read_timeseries_dsg = function(nc_file){
 	  warning("no data variables found, attempting to infer via shared dimensions")
     
 	  axes_search <- group_by(axes, variable)
-	  axes_search <- filter(axes_search, all(c(dim_tsid, dim_time) %in% dimension) &
+	  axes_search <- filter(axes_search, sum(c(dim_tsid, dim_time) %in% dimension) == 2 &
 	                   !variable %in% c(coord_vars, timeseries_id))
 	  
 	  data_vars <- data.frame(variable = unique(axes_search$variable), stringsAsFactors = FALSE)
@@ -130,7 +131,7 @@ read_timeseries_dsg = function(nc_file){
 	if(nrow(lat) > 0) {
 	  nc_list$lats <- var.get.nc(nc, lat$variable)
 	} else {
-	  warning("no latatiude coordinate found")
+	  warning("no latitude coordinate found")
 	  nc_list$lats <- numeric(0)
 	}
 	
