@@ -2,11 +2,14 @@ NetCDF-CF Geometry and Timeseries Tools for R
 ===
 [![Build Status](https://travis-ci.org/USGS-R/ncdfgeom.svg)](https://travis-ci.org/USGS-R/ncdfgeom) [![Coverage Status](https://coveralls.io/repos/github/USGS-R/ncdfgeom/badge.svg?branch=master)](https://coveralls.io/github/USGS-R/ncdfgeom?branch=master)
 
-`ncdfgeom` is an **in development** package that reads and writes geometry data (points lines and polygons), attributes of geometries, and time series associated with the geometries in a standards-compliant way. It implements the NetCDF-CF Spatial Geometries specification and the timeSeries feature type of the [Discrete Sampling Geometry](http://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries) NetCDF-CF specification. 
+`ncdfgeom` reads and writes geometry data (points lines and polygons), attributes of geometries, and time series associated with the geometries in a standards-compliant way.
+
+It implements the NetCDF-CF Spatial Geometries specification and the timeSeries feature type of the [Discrete Sampling Geometry](http://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries) NetCDF-CF specification. 
 
 **Visit the [`pkgdown` site](http://usgs-r.github.io/ncdfgeom/dev/articles/ncdfgeom.html) for a complete overview of the package.**
 
-Given that this package is in active development, please test it out and consider [submitting issues and/or contributions!](https://github.com/USGS-R/ncdfgeom/issues)
+Given that this package is fairly new and in active development, please test it out 
+and consider [submitting issues and/or contributions!](https://github.com/USGS-R/ncdfgeom/issues)
 
 ## Installation
 
@@ -14,6 +17,12 @@ For the latest version:
 ```
 install.packages("devtools")
 devtools::install_github("USGS-R/ncdfgeom")
+```
+
+When available on CRAN, installation will be available via:
+
+```
+install.packages("ncdfgeom")
 ```
 
 ## Contributing

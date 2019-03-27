@@ -4,3 +4,5 @@
 demo.R
 _pkgdown.yml
 docs
+DISCLAIMER.md
+code.json

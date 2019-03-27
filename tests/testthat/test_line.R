@@ -40,8 +40,7 @@ test_that("multiline data frame works", {
   nc_file <- write_geometry(nc_file=tempfile(), geomData = lineData)
 
   nc<-nc_open(nc_file)
-  expect_equal(class(nc),"ncdf4")
-
+  
   returnLineData<-read_geometry(nc_file)
   compareSL(lineData, returnLineData)
 })
@@ -60,6 +59,7 @@ test_that("shapefile line data works", {
     expect_equal(class(lineData[name][[1]]), class(returnLineData[name][[1]]))
   }
   for(name in names(lineData)) {
+    if(is.character(returnLineData[name][[1]])) lineData[name][is.na(lineData[name])] <- ""
     expect_equal(c(lineData[name]), c(returnLineData[name]))
   }
 })

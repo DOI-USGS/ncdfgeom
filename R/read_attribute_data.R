@@ -1,6 +1,6 @@
 #'@title Read attribute dataframe from NetCDF-DSG file
 #'
-#'@param nc An open ncdf4 object.
+#'@param nc A NetCDF path or urlto be opened.
 #'@param instance_dim The NetCDF instance/station dimension.
 #'
 #'@description
@@ -8,30 +8,49 @@
 #'This function is intended as a convenience to be used within workflows where
 #'the netCDF file is already open and well understood.
 #'
-#'@export
-#'
+#' @export
+#' @importFrom ncmeta nc_meta
+#' @importFrom RNetCDF open.nc close.nc var.get.nc
+#' @importFrom dplyr filter
 #' @examples 
 #' hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package = 'ncdfgeom'))
 #' hucPolygons_nc <- ncdfgeom::write_geometry(tempfile(), hucPolygons)
 #' 
-#' nc <- ncdf4::nc_open(hucPolygons_nc)
-#' read_attribute_data(nc, "instance")
+#' read_attribute_data(hucPolygons_nc, "instance")
 #'
 read_attribute_data <- function(nc, instance_dim) {
+  
+  name <- variable <- NULL
+  
+  nc_meta <- nc_meta(nc)
 	
-	if(!any(grepl(instance_dim, names(nc$dim)))) {
+  nc <- open.nc(nc)
+  on.exit(close.nc(nc), add  = TRUE)
+  
+  nc_dim <- filter(nc_meta$dimension, name == instance_dim)
+  
+	if(nrow(nc_dim) == 0) {
 		stop("The instance dimension was not found in the provided NetCDF object.")
 	}
-	
-  dataFrame <- as.data.frame(list(id = 1:nc$dim[instance_dim][[1]]$len))
+	  
+  dataFrame <- as.data.frame(list(id = 1:nc_dim$length))
   
-  for(var in nc$var) {
-    if(var$ndims==1 && grepl(var$dim[[1]]$name, instance_dim)) {
-      dataFrame[var$name] <- c(ncvar_get(nc, var$name))
-    } else if(grepl(var$prec, paste0("^char$")) &&
-              (grepl(var$dim[[1]]$name, instance_dim) ||
-               grepl(var$dim[[2]]$name, instance_dim)))
-      dataFrame[var$name] <- c(ncvar_get(nc, var$name))
+  for(i in 1:nrow(nc_meta$variable)) {
+    var <- nc_meta$variable[i, ]
+    axis <- filter(nc_meta$axis, variable == var$name)
+    if(var$ndims == 1 && axis$dimension == nc_dim$id) {
+      if(var$type == "NC_INT") {
+        dataFrame[var$name] <- as.integer(c(var.get.nc(nc, var$name)))
+      } else {
+        dataFrame[var$name] <- c(var.get.nc(nc, var$name))
+      }
+    } else if(var$type == "NC_CHAR" &&
+              (nc_dim$id %in% axis$dimension))
+      dataFrame[var$name] <- tryCatch({
+        c(var.get.nc(nc, var$name))
+      }, error = function(e) {
+        t(var.get.nc(nc, var$name)) 
+      })
   }
   
   dataFrame[] <- lapply(dataFrame, make.true.NA)

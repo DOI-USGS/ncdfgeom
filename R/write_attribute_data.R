@@ -14,7 +14,7 @@
 #'This function does not implement any CF convention attributes or standard names.
 #'Any columns of class date will be converted to character.
 #'
-#'@importFrom ncdf4 nc_open ncvar_add nc_create nc_close ncvar_def ncvar_put ncdim_def
+#'@importFrom RNetCDF create.nc open.nc close.nc dim.def.nc dim.inq.nc var.def.nc var.put.nc att.put.nc
 #'@importFrom methods is
 #'
 #'@export
@@ -31,12 +31,24 @@
 #' 
 write_attribute_data <- function(nc_file, attData, instance_dim_name = "instance", units = rep("unknown", ncol(attData)), ...) {
 	
+  if(file.exists(nc_file)) {
+    nc <- open.nc(nc_file, write = TRUE)
+  } else {
+    nc <- create.nc(nc_file)
+  }
+  
 	n <- nrow(attData)
 	
-	instance_dim <- ncdim_def(instance_dim_name, '', 1:n, create_dimvar=FALSE)
+	instance_dim <- tryCatch({
+	  dim.inq.nc(nc, instance_dim_name)$id
+	  },
+	  error = function(e) {
+	    dim <- dim.def.nc(nc, instance_dim_name, n, unlim = FALSE)
+	    dim.inq.nc(nc, instance_dim_name)$id
+	  })
 	
 	vars<-list()
-	types <- list(numeric="double", integer = "integer", character="char")
+	types <- list(numeric="NC_DOUBLE", integer = "NC_INT", character="NC_CHAR")
 	
 	# Convert any dates to character. This could be improved later.
 	i <- sapply(attData, is, class2 = "Date")
@@ -49,43 +61,40 @@ write_attribute_data <- function(nc_file, attData, instance_dim_name = "instance
 		}
 	}
 	if(charDimLen>0) {
-		char_dim <- ncdim_def('char', '', 1:charDimLen, create_dimvar=FALSE)
+		char_dim <- dim.def.nc(nc, "char", charDimLen, unlim = FALSE)
+		char_dim <- dim.inq.nc(nc, "char")$id
 	}
 	col <- 1
 	for(colName in names(attData)) {
 		if(grepl(class(attData[colName][[1]]), "character")) {
-			vars <- c(vars, list(ncvar_def(name=colName, units = units[col], dim = list(char_dim, instance_dim),
-																		 prec = types[[class(attData[colName][[1]])]])))
+		  dim <- c(char_dim, instance_dim)
+		  missval <- ""
+		  char <- TRUE
+		  attData[colName][[1]][is.na(attData[colName][[1]])] <- ""
 		} else if(grepl(class(attData[colName][[1]]), "integer")) {
-			vars <- c(vars, list(ncvar_def(name=colName, units = units[col], dim = instance_dim,
-																		 prec = types[[class(attData[colName][[1]])]], missval = -9999)))
+		  dim <- instance_dim
+		  missval <- -9999
 		} else {
-			vars <- c(vars, list(ncvar_def(name=colName, units = units[col], dim = instance_dim,
-																		 prec = types[[class(attData[colName][[1]])]], missval = NA)))
+		  dim <- instance_dim
+		  missval <- -9999.999
 		}
+	  var.def.nc(nc, colName, types[[class(attData[colName][[1]])]], dim)
+	  att.put.nc(nc, colName, "units", "NC_CHAR", units[col])
+	  att.put.nc(nc, colName, "missing_value", types[[class(attData[colName][[1]])]], missval)
 		col <- col + 1
 	}
+
+	close.nc(nc)
 	
-	if(file.exists(nc_file)) {
-		nc <- nc_open(nc_file, write = TRUE)
-		for(var in vars) {
-			nc <- ncvar_add(nc, var)
-		}
-	} else {
-		nc <- nc_create(filename = nc_file, vars = vars, ...) 
-	}
-	
-	nc_close(nc)
-	
-	nc <- nc_open(nc_file, write = TRUE)
+	nc <- open.nc(nc_file, write = TRUE)
 	
 	if(!is.null(attData)) {
 		for(colName in names(attData)) {
-			ncvar_put(nc = nc, varid = colName, vals = attData[colName][[1]])
+			var.put.nc(nc, colName, attData[colName][[1]])
 		}
 	}
 	
-	nc_close(nc)
+	close.nc(nc)
 	
 	return(nc_file)
 }

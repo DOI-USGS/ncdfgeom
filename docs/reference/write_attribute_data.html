@@ -39,7 +39,7 @@ This function does not implement any CF convention attributes or standard names.
 Any columns of class date will be converted to character." />
 <meta name="twitter:card" content="summary" />
 
-<meta name="robots" content="noindex">
+
 
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
@@ -67,7 +67,7 @@ Any columns of class date will be converted to character." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
       </span>
     </div>
 
@@ -103,12 +103,7 @@ Any columns of class date will be converted to character." />
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        <li>
-  <a href="https://github.com/USGS-R/ncdfgeom">
-    <span class="fa fa-github fa-lg"></span>
-     
-  </a>
-</li>
+        
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -122,7 +117,7 @@ Any columns of class date will be converted to character." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write attribute data to NetCDF-CF</h1>
-    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/write_attribute_data.R'><code>R/write_attribute_data.R</code></a></small>
+    
     <div class="hidden name"><code>write_attribute_data.Rd</code></div>
     </div>
 
@@ -174,51 +169,53 @@ If adding to a file, it must already have the named instance dimension.</p></td>
                                     <span class='kw'>units</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"unknown"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>ncol</a></span>(<span class='no'>sample_data</span>)))
 
 <span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>example_file</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf filebc628bfc82e {
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf file8fca73a43e0 {
 #&gt; dimensions:
 #&gt; 	instance = 100 ;
 #&gt; 	char = 12 ;
 #&gt; variables:
 #&gt; 	double AREA(instance) ;
 #&gt; 		AREA:units = "unknown" ;
-#&gt; 		AREA:_FillValue = NaN ;
+#&gt; 		AREA:missing_value = -9999.999 ;
 #&gt; 	double PERIMETER(instance) ;
 #&gt; 		PERIMETER:units = "unknown" ;
-#&gt; 		PERIMETER:_FillValue = NaN ;
+#&gt; 		PERIMETER:missing_value = -9999.999 ;
 #&gt; 	double CNTY_(instance) ;
 #&gt; 		CNTY_:units = "unknown" ;
-#&gt; 		CNTY_:_FillValue = NaN ;
+#&gt; 		CNTY_:missing_value = -9999.999 ;
 #&gt; 	double CNTY_ID(instance) ;
 #&gt; 		CNTY_ID:units = "unknown" ;
-#&gt; 		CNTY_ID:_FillValue = NaN ;
+#&gt; 		CNTY_ID:missing_value = -9999.999 ;
 #&gt; 	char NAME(instance, char) ;
 #&gt; 		NAME:units = "unknown" ;
+#&gt; 		NAME:missing_value = "" ;
 #&gt; 	char FIPS(instance, char) ;
 #&gt; 		FIPS:units = "unknown" ;
+#&gt; 		FIPS:missing_value = "" ;
 #&gt; 	double FIPSNO(instance) ;
 #&gt; 		FIPSNO:units = "unknown" ;
-#&gt; 		FIPSNO:_FillValue = NaN ;
+#&gt; 		FIPSNO:missing_value = -9999.999 ;
 #&gt; 	int CRESS_ID(instance) ;
 #&gt; 		CRESS_ID:units = "unknown" ;
-#&gt; 		CRESS_ID:_FillValue = -9999 ;
+#&gt; 		CRESS_ID:missing_value = -9999 ;
 #&gt; 	double BIR74(instance) ;
 #&gt; 		BIR74:units = "unknown" ;
-#&gt; 		BIR74:_FillValue = NaN ;
+#&gt; 		BIR74:missing_value = -9999.999 ;
 #&gt; 	double SID74(instance) ;
 #&gt; 		SID74:units = "unknown" ;
-#&gt; 		SID74:_FillValue = NaN ;
+#&gt; 		SID74:missing_value = -9999.999 ;
 #&gt; 	double NWBIR74(instance) ;
 #&gt; 		NWBIR74:units = "unknown" ;
-#&gt; 		NWBIR74:_FillValue = NaN ;
+#&gt; 		NWBIR74:missing_value = -9999.999 ;
 #&gt; 	double BIR79(instance) ;
 #&gt; 		BIR79:units = "unknown" ;
-#&gt; 		BIR79:_FillValue = NaN ;
+#&gt; 		BIR79:missing_value = -9999.999 ;
 #&gt; 	double SID79(instance) ;
 #&gt; 		SID79:units = "unknown" ;
-#&gt; 		SID79:_FillValue = NaN ;
+#&gt; 		SID79:missing_value = -9999.999 ;
 #&gt; 	double NWBIR79(instance) ;
 #&gt; 		NWBIR79:units = "unknown" ;
-#&gt; 		NWBIR79:_FillValue = NaN ;
+#&gt; 		NWBIR79:missing_value = -9999.999 ;
 #&gt; }</div><div class='input'>
 </div></pre>
   </div>

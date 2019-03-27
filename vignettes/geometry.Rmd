@@ -49,12 +49,12 @@ cat(ncdump ,sep = "\n")
 ```
 Now we can use the `write_geometry` function to add the polygon data to the NetCDF file.
 ```{r demo}
-hucTimeseries <- ncdf4::nc_open(example_file)
+vars <- ncmeta::nc_vars(example_file)
 
 ncdfgeom::write_geometry(nc_file=example_file,
                          geomData = hucPolygons, 
                          instance_dim_name = "station", 
-                         variables = hucTimeseries$var) -> example_file
+                         variables = vars$name) -> example_file
 ```
 
 Now the header of the NetCDF file looks like:

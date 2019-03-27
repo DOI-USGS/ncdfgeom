@@ -33,6 +33,12 @@ install.packages("devtools")
 devtools::install_github("USGS-R/ncdfgeom")
 ```
 
+When on CRAN, the package will be installed with the typical install.packages method.
+
+```
+install.packages("ncdfgeom")
+```
+
 ## Write Data
 
 In this example, we'll work with precipitation data available by climate division from NOAA at: [doi:10.7289/V5M32STR](https://doi.org/10.7289/V5M32STR)

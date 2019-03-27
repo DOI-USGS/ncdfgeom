@@ -3,8 +3,8 @@
     "name": "ncdfgeom",
     "organization": "U.S. Geological Survey",
     "description": "NetCDF Geometry and Timeseries",
-    "version": "0.5.0",
-    "status": "Beta",
+    "version": "0.6.0",
+    "status": "Production",
     
     "permissions": {
       "usageType": "openSource",
@@ -41,7 +41,7 @@
     },
     
     "date": {
-      "metadataLastUpdated": "2019-03-07"
+      "metadataLastUpdated": "2019-03-26"
     }
   }
   ]

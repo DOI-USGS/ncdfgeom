@@ -27,7 +27,7 @@
 #'   \item \url{http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html}
 #'  }
 #'
-#'@importFrom ncdf4 nc_create nc_close ncvar_def ncvar_put ncatt_put ncdim_def
+#'@importFrom RNetCDF open.nc close.nc var.def.nc var.put.nc att.put.nc
 #'
 #'@export
 write_point_dsg = function(nc_file, lats, lons, alts, times, data, data_units=rep('', ncol(data)), feature_names = NULL, ...){
@@ -52,49 +52,62 @@ write_point_dsg = function(nc_file, lats, lons, alts, times, data, data_units=re
 		times = as.POSIXct(times)
 	}
 	
-	nc_file <- write_attribute_data(nc_file=nc_file, attData = data, instance_dim_name = "obs", units = data_units, ...)
+	instance_dim_name <- "obs"
 	
-	nc <- nc_open(nc_file, write = TRUE)
+	nc_file <- write_attribute_data(nc_file=nc_file, attData = data, 
+	                                instance_dim_name = instance_dim_name, 
+	                                units = data_units, ...)
+	
+	nc <- open.nc(nc_file, write = TRUE)
 	
 	#Setup our spatial and info
-	lat_var = ncvar_def('lat', 'degrees_north', nc$dim$obs, -999, prec='double', longname = 'latitude of the observation')
-	nc <- ncvar_add(nc, lat_var)
-	lon_var = ncvar_def('lon', 'degrees_east', nc$dim$obs, -999, prec='double', longname = 'longitude of the observation')
-	nc <- ncvar_add(nc, lon_var)
-	alt_var = ncvar_def('alt', 'm', nc$dim$obs, -999, prec='double', longname='vertical distance above the surface')
-	nc <- ncvar_add(nc, alt_var)
-	time_var = ncvar_def('time', 'days since 1970-01-01 00:00:00', nc$dim$obs, -999, prec='integer', longname = 'time stamp')
-	nc <- ncvar_add(nc, time_var)
+	var.def.nc(nc, "lat", "NC_DOUBLE", instance_dim_name)
+	att.put.nc(nc, "lat", "missing_value", "NC_DOUBLE", -999)
+  att.put.nc(nc, "lat", "long_name", "NC_CHAR", "latitude of the observation")	
+	att.put.nc(nc, "lat", "units", "NC_CHAR", 'degrees_north')
 	
-	nc_close(nc)
+	var.def.nc(nc, "lon", "NC_DOUBLE", instance_dim_name)
+	att.put.nc(nc, "lon", "missing_value", "NC_DOUBLE", -999)
+	att.put.nc(nc, "lon", "long_name", "NC_CHAR", "longitude of the observation")	
+	att.put.nc(nc, "lon", "units", "NC_CHAR", 'degrees_east')
 	
-	nc <- nc_open(nc_file, write = TRUE)
+	var.def.nc(nc, "alt", "NC_DOUBLE", instance_dim_name)
+	att.put.nc(nc, "alt", "missing_value", "NC_DOUBLE", -999)
+	att.put.nc(nc, "alt", "long_name", "NC_CHAR", "vertical distance above the surface")	
+	att.put.nc(nc, "alt", "units", "NC_CHAR", 'm')
+	
+	var.def.nc(nc, "time", "NC_DOUBLE", instance_dim_name)
+	att.put.nc(nc, "time", "long_name", "NC_CHAR", "time stamp")	
+	att.put.nc(nc, "time", "units", "NC_CHAR", "days since 1970-01-01 00:00:00")
+	
+  close.nc(nc)
+	nc <- open.nc(nc_file, write = TRUE)
 	
 	#add standard_names
-	ncatt_put(nc, 'lat', 'standard_name', 'latitude')
-	ncatt_put(nc, 'lon', 'standard_name', 'longitude')
-	ncatt_put(nc, 'alt', 'standard_name', 'height')
-	ncatt_put(nc, 'time', 'standard_name', 'time')
+	att.put.nc(nc, 'lat', 'standard_name', "NC_CHAR", 'latitude')
+	att.put.nc(nc, 'lon', 'standard_name', "NC_CHAR", 'longitude')
+	att.put.nc(nc, 'alt', 'standard_name', "NC_CHAR", 'height')
+	att.put.nc(nc, 'time', 'standard_name', "NC_CHAR", 'time')
 	
 	#use the same names for "standard names" and add coordinates as well
 	for(data_name in names(data)){
-		ncatt_put(nc, data_name, 'coordinates', 'lat lon alt time')
+		att.put.nc(nc, data_name, 'coordinates', "NC_CHAR", 'lat lon alt time')
 	}
 	#some final stuff
-	ncatt_put(nc, 0,'featureType','point')
-	ncatt_put(nc, 0,'Conventions','CF-1.7')
+	att.put.nc(nc, "NC_GLOBAL", 'featureType', "NC_CHAR", 'point')
+	att.put.nc(nc, "NC_GLOBAL", 'Conventions', "NC_CHAR", 'CF-1.7')
 	
 	#Put data in NC file
 	if(!is.null(feature_names)) {
-		ncatt_put(nc, 'feature_name', 'long_name', 'Feature Name')
+		att.put.nc(nc, 'feature_name', 'long_name', "NC_CHAR", 'Feature Name')
 	}
 	
-	ncvar_put(nc, 'lat', lats)
-	ncvar_put(nc, 'lon', lons)
-	ncvar_put(nc, 'alt', alts)
-	ncvar_put(nc, 'time', as.numeric(times)/86400) #convert to days since 1970-01-01
+	var.put.nc(nc, 'lat', lats)
+	var.put.nc(nc, 'lon', lons)
+	var.put.nc(nc, 'alt', alts)
+	var.put.nc(nc, 'time', as.numeric(times)/86400) #convert to days since 1970-01-01
 	
-	nc_close(nc)
+	close.nc(nc)
 	
 	return(nc_file)
 }

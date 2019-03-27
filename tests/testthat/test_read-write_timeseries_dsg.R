@@ -19,12 +19,85 @@ test_that("Create basic DSG file",{
   testnc<-write_timeseries_dsg(nc_file, 
                                names(test_data$var_data), 
                                test_data$lats, test_data$lons, 
-                               test_data$time, test_data$var, 
+                               as.character(test_data$time), 
+                               test_data$var, 
                                test_data$alts, 
                                data_unit=test_data$units,	
                                data_prec='double',
                                data_metadata=test_data$meta,
                                attributes=global_attributes)
+  expect_error(
+  testnc<-write_timeseries_dsg(nc_file, 
+                               names(test_data$var_data), 
+                               test_data$lats, test_data$lons, 
+                               as.character(test_data$time), 
+                               test_data$var, 
+                               test_data$alts[1], 
+                               data_unit=test_data$units,	
+                               data_prec='double',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes),
+  "instance_names and alts must all be vectors of the same length"
+  )
+  
+  expect_error(
+    testnc<-write_timeseries_dsg(nc_file, 
+                                 names(test_data$var_data), 
+                                 test_data$lats[1], test_data$lons, 
+                                 as.character(test_data$time), 
+                                 test_data$var, 
+                                 test_data$alts, 
+                                 data_unit=test_data$units,	
+                                 data_prec='double',
+                                 data_metadata=test_data$meta,
+                                 attributes=global_attributes),
+    "instance_names, lats, and lons must all be vectors of the same length"
+  )
+  
+  expect_error(
+    testnc<-write_timeseries_dsg(nc_file, 
+                                 names(test_data$var_data), 
+                                 test_data$lats, test_data$lons, 
+                                 as.character(test_data$time), 
+                                 test_data$var[1:10,], 
+                                 test_data$alts, 
+                                 data_unit=test_data$units,	
+                                 data_prec='double',
+                                 data_metadata=test_data$meta,
+                                 attributes=global_attributes),
+    "The length of times must match the number of rows in data"
+  )
+  
+  expect_error(
+    testnc<-write_timeseries_dsg(nc_file, 
+                                 names(test_data$var_data), 
+                                 test_data$lats, test_data$lons, 
+                                 as.character(test_data$time), 
+                                 test_data$var[, 1:10], 
+                                 test_data$alts, 
+                                 data_unit=test_data$units,	
+                                 data_prec='double',
+                                 data_metadata=test_data$meta,
+                                 attributes=global_attributes),
+    "number of data columns must equal the number of stations"
+  )
+  
+  broken <- test_data$var
+  broken$`1` <- as.integer(broken$`1`)
+  
+  expect_error(
+    testnc<-write_timeseries_dsg(nc_file, 
+                                 names(test_data$var_data), 
+                                 test_data$lats, test_data$lons, 
+                                 as.character(test_data$time), 
+                                 broken, 
+                                 test_data$alts, 
+                                 data_unit=test_data$units,	
+                                 data_prec='double',
+                                 data_metadata=test_data$meta,
+                                 attributes=global_attributes),
+    "All the collumns in the input dataframe must be of the same type."
+  )
   
   test_data$meta <- list(name = "duplicate", long_name = "test")
   
@@ -91,7 +164,7 @@ test_that('soilmoisturetools data writes as expected', {
   
   nc <- nc_open(nc_file)
   
-  expect_equal(1,1)
+  expect(file.exists(nc_file))
 })
 
 test_that("Read basic DSG file",{
@@ -107,7 +180,7 @@ test_that("Read basic DSG file",{
 	expect_equivalent(as.numeric(testlist$lons), as.numeric(test_data$lons))
 	expect_equivalent(as.numeric(testlist$alts), as.numeric(test_data$alts))
 	expect_equivalent(testlist$data_unit[1], test_data$units) # could be tricky if there are multiple variables in the netcdf file.
-	expect_equivalent(testlist$data_prec[1],'double')
+	expect_equivalent(testlist$data_prec[1],'NC_DOUBLE')
 	expect_equivalent(testlist$varmeta[[1]]$name,test_data$all_data$variable[1])
 	expect_equivalent(testlist$varmeta[[1]]$long_name,test_data$long_name)
 	expect_equivalent(testlist$global_attributes$nc_summary,'test summary')
@@ -118,6 +191,65 @@ test_that("Read basic DSG file",{
 	expect_equivalent(testlist$global_attributes$nc_proc_level,'just a test no processing')
 	expect_equivalent(testlist$global_attributes$nc_title,'test title')
 	expect_equivalent(testlist$data_frames[1][[1]],test_data$var_data) # Plan to have the dataframes work for 1 to many variables.
+	
+})
 
-	unlink(nc_file)
+test_that("warnings and edge cases", {
+  nc_file <- "data/test_output.nc"
+  nc_file_borked <- "data/test_output_borked.nc"
+  file.copy(nc_file, nc_file_borked, overwrite = TRUE)
+  nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
+  att.delete.nc(nc, "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1", "coordinates")
+  att.delete.nc(nc, "duplicate", "coordinates")
+  close.nc(nc)
+  expect_warning(
+  testlist<-read_timeseries_dsg(nc_file_borked), 
+  "no data variables found, attempting to infer via shared dimensions")
+
+  file.copy(nc_file, nc_file_borked, overwrite = TRUE)
+  nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
+  att.delete.nc(nc, "NC_GLOBAL", "Conventions")
+  close.nc(nc)
+  expect_warning(
+    testlist<-read_timeseries_dsg(nc_file_borked), 
+    "File does not advertise CF conventions, unexpected behavior may result.")
+  
+  file.copy(nc_file, nc_file_borked, overwrite = TRUE)
+  nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
+  att.delete.nc(nc, "NC_GLOBAL", "featureType")
+  close.nc(nc)
+  expect_warning(
+    testlist<-read_timeseries_dsg(nc_file_borked), 
+    "File does not advertise use of the CF timeseries featureType, unexpected behavior may result.")
+  
+  file.copy(nc_file, nc_file_borked, overwrite = TRUE)
+  nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
+  att.delete.nc(nc, "instance_name", "cf_role")
+  close.nc(nc)
+  expect_error(
+    testlist<-read_timeseries_dsg(nc_file_borked), 
+    "A timeseries id variable was not found in the file.")
+  
+  file.copy(nc_file, nc_file_borked, overwrite = TRUE)
+  nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
+  att.delete.nc(nc, "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1", "coordinates")
+  att.delete.nc(nc, "duplicate", "coordinates")
+  att.delete.nc(nc, "lat", "standard_name")
+  att.delete.nc(nc, "lon", "standard_name")
+  att.delete.nc(nc, "time", "standard_name")
+  close.nc(nc)
+  warn <- capture_warnings(testlist<-read_timeseries_dsg(nc_file_borked))
+  expect(all(c("no data variables found, attempting to infer via shared dimensions",
+           "no latitude coordinate found",                                     
+           "no longitude coordinate found") %in% warn))
+    
+  nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
+  att.delete.nc(nc, "time", "units")
+  close.nc(nc)
+  expect_error(
+    testlist<-read_timeseries_dsg(nc_file_borked), 
+    "No coordinates declarations were found in the file.")
+  
+  unlink(nc_file)
+  unlink(nc_file_borked)
 })
