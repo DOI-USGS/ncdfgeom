@@ -163,8 +163,13 @@ read_timeseries_dsg = function(nc_file){
 		nc_list$varmeta[data_var][[1]]$long_name <- filter(nc_atts, variable == data_var &
 		                                                     attribute == "long_name")$value[[1]]
 		# Ensures we get back data with time in rows.
-		dim_order <- match(var.inq.nc(nc, data_var)$dimids, 
-		                   c(dim_time, dim_tsid))
+		var_inq <- var.inq.nc(nc, data_var)
+		if(var_inq$type == "NC_CHAR") {
+		  dims <- var_inq$dimids[var_inq$dimids %in% c(dim_time, dim_tsid)]
+		} else {
+		  dims <- var_inq$dimids
+		}
+		dim_order <- match(dims, c(dim_time, dim_tsid))
 		
 		nc_list$data_frames[data_var][[1]] <- as.data.frame(var.get.nc(nc, data_var))
 		

@@ -54,7 +54,7 @@ pkg.env$lon_coord_var_standard_name <- "longitude"
 pkg.env$alt_coord_var_standard_name <- "height"
 pkg.env$timeseries_id_cf_role <- "timeseries_id"
 
-pkg.env$nc_types <- list(double = "NC_DOUBLE", float = "NC_FLOAT", numeric="NC_DOUBLE", short = "NC_SHORT", integer = "NC_INT", character="NC_CHAR")
+pkg.env$nc_types <- list(double = "NC_DOUBLE", float = "NC_FLOAT", numeric="NC_DOUBLE", short = "NC_SHORT", integer = "NC_INT", char="NC_CHAR", character="NC_CHAR")
 
 check_geomData <- function(geomData) {
 	if (any(c("sf", "sfc") %in% class(geomData))) {
@@ -63,12 +63,20 @@ check_geomData <- function(geomData) {
 	return(geomData)
 }
 
-add_var <- function(nc, name, dim, type, units = NA, missing = NA, long_name = NA) {
-  var.def.nc(nc, name, type, dim)
-  if(!is.na(units))
-    att.put.nc(nc, name, "units", "NC_CHAR", units)
-  if(!is.na(missing))
-    att.put.nc(nc, name, "missing_value", type, missing)
-  if(!is.na(long_name))
-    att.put.nc(nc, name, "long_name", "NC_CHAR", long_name)
+add_var <- function(nc, name, dim, type, units = NA, missing = NA, long_name = NA, char_dim_len = NA, data = NA) {
+  
+  if(type == "NC_CHAR") {
+    suppressWarnings(if(is.na(char_dim_len) & is.na(data)) stop("can't determine character dim length"))
+    if(is.na(char_dim_len)) char_dim_len <- max(sapply(data, function(x) max(nchar(x))))
+    char_dim <- paste0(name,"_char")
+    dim.def.nc(nc, char_dim, char_dim_len, unlim = FALSE)
+    dim <- c(char_dim, dim)
+  }
+    var.def.nc(nc, name, type, dim)
+    if(!is.na(units))
+      att.put.nc(nc, name, "units", "NC_CHAR", units)
+    if(!is.na(missing))
+      att.put.nc(nc, name, "missing_value", type, missing)
+    if(!is.na(long_name))
+      att.put.nc(nc, name, "long_name", "NC_CHAR", long_name)
 }
