@@ -63,11 +63,13 @@ check_geomData <- function(geomData) {
 	return(geomData)
 }
 
-add_var <- function(nc, name, dim, type, units = NA, missing = NA, long_name = NA, char_dim_len = NA, data = NA) {
+add_var <- function(nc, name, dim, type, units = NA, missing = NA, long_name = NA, char_dim_len = NULL, data = NULL) {
   
   if(type == "NC_CHAR") {
-    suppressWarnings(if(is.na(char_dim_len) & is.na(data)) stop("can't determine character dim length"))
-    if(is.na(char_dim_len)) char_dim_len <- max(sapply(data, function(x) max(nchar(x))))
+    suppressWarnings(if(is.null(char_dim_len) & is.null(data)) stop("can't determine character dim length"))
+    if(is.null(char_dim_len)) suppressWarnings(char_dim_len <- max(sapply(data, function(x) max(nchar(x), 
+                                                                             na.rm = TRUE)), 
+                                                  na.rm = TRUE))
     char_dim <- paste0(name,"_char")
     dim.def.nc(nc, char_dim, char_dim_len, unlim = FALSE)
     dim <- c(char_dim, dim)

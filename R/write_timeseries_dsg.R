@@ -87,6 +87,16 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		stop('All the collumns in the input dataframe must be of the same type.')
 	}
 	
+	type <- pkg.env$nc_types[data_prec][[1]]
+	
+	if(type == "NC_CHAR") {
+	  missing <- ""
+	} else if(type == "NC_INT") {
+	  missing <- -32768
+	} else {
+	  missing <- -2147483648
+	}
+	
 	# Set up data_name var.
 	data_name = data_metadata[['name']]
 	
@@ -100,7 +110,7 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		data_vars = list()
 		
 		add_var(nc, data_name, c(pkg.env$time_dim_name, pkg.env$instance_dim_name), 
-		        pkg.env$nc_types[data_prec][[1]], data_unit, 
+		        type, data_unit, missing = missing,
 		        long_name = data_metadata[['long_name']], data = data)
     
 		close.nc(nc)
@@ -139,7 +149,9 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		}
 		
     add_var(nc, data_name, c(pkg.env$time_dim_name, pkg.env$instance_dim_name), 
-            pkg.env$nc_types[data_prec][[1]], data_unit, -999, data_metadata[['long_name']])
+            type, data_unit, missing, 
+            data_metadata[['long_name']], 
+            data = data)
 
 		close.nc(nc)
 		nc <- open.nc(nc_file, write = TRUE)
@@ -206,8 +218,16 @@ put_data_in_nc <- function(nc, nt, n, data_name, data, alts=NA) {
 	if ( nt * n < 100000 ) {
 		var.put.nc(nc, data_name, as.matrix(data))
 	} else {
-		for ( st in 1:n ) {
-			var.put.nc(nc, data_name, as.matrix(data[,st]), start=c(1, st), count=c(nt, 1))
-		}
+	  if(is.character(data[1,1])) {
+  	    for ( st in 1:n ) {
+    	      to_write <- as.matrix(data[,st])
+	      to_write[is.na(to_write)] <- "NA"
+	      var.put.nc(nc, data_name, to_write, start=c(1, 1, st), count=c(NA, nt, 1))
+	    }
+	  } else {
+	    for ( st in 1:n ) {
+	      var.put.nc(nc, data_name, as.matrix(data[,st]), start=c(1, st), count=c(nt, 1))
+	    }
+	  }
 	}
 }

@@ -161,6 +161,21 @@ test_that("Create basic DSG file",{
   testnc<-nc_open("temp.nc")
   expect(testnc$dim$time$len == 1460)
   unlink("temp.nc")
+  
+  char_test <- dplyr::mutate_all(test_dat2, as.character)
+  time <- c(test_data$time,test_data$time)
+  testnc<-write_timeseries_dsg("temp.nc", 
+                               names(test_data$var_data), 
+                               test_data$lats, test_data$lons, 
+                               time, char_test,
+                               data_unit=test_data$units,	
+                               data_prec='char',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes)
+  
+  testnc<-nc_open("temp.nc")
+  expect(testnc$dim$time$len == 1460)
+  unlink("temp.nc")
 })
 
 test_that('soilmoisturetools data writes as expected', {
