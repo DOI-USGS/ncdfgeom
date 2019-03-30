@@ -5,7 +5,7 @@
 \title{Write attribute data to NetCDF-CF}
 \usage{
 write_attribute_data(nc_file, attData, instance_dim_name = "instance",
-  units = rep("unknown", ncol(attData)), ...)
+  units = rep("unknown", ncol(attData)), overwrite = FALSE)
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created. 
@@ -17,7 +17,7 @@ If adding to a file, it must already have the named instance dimension.}
 
 \item{units}{\code{character} vector with units for each column of attData. Defaults to "unknown" for all.}
 
-\item{...}{additional arguments to be passed on to \code{nc_create}.}
+\item{overwrite}{boolean overwrite existing file? Will append if FALSE.}
 }
 \description{
 Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 

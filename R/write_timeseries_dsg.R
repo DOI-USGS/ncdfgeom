@@ -19,6 +19,7 @@
 #' See details for useful attributes.
 #' @param add_to_existing \code{boolean} If TRUE and the file already exists, 
 #' variables will be added to the existing file. See details for more.
+#' @param overwrite boolean error if file exists.
 #' 
 #' @description
 #' This function creates a timeseries discrete sampling geometry NetCDF file.
@@ -57,8 +58,11 @@
 #' @export
 write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data, alts=NA, data_unit='',
 																data_prec='double',data_metadata=list(name='data',long_name='unnamed data'),
-																attributes=list(),add_to_existing=FALSE){
+																attributes=list(), add_to_existing=FALSE, overwrite = FALSE){
 	
+  if(!overwrite && !add_to_existing && file.exists(nc_file)) stop("File already exists and overwrite is false.")
+  if(overwrite && !add_to_existing) unlink(file.exists(nc_file))
+  
 	if(add_to_existing && !file.exists(nc_file)) add_to_existing=FALSE
 	
 	if(!is(times, 'POSIXct')){

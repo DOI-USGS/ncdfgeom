@@ -5,7 +5,7 @@
 #'@param attData \code{data.frame} with instances as rows and attributes as rows.  
 #'@param instance_dim_name \code{character} name for the instance dimension. Defaults to "instance"
 #'@param units \code{character} vector with units for each column of attData. Defaults to "unknown" for all.
-#'@param ... additional arguments to be passed on to \code{nc_create}.
+#'@param overwrite boolean overwrite existing file? Will append if FALSE.
 #'
 #'@description
 #'Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 
@@ -29,10 +29,14 @@
 #' ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
 #' cat(ncdump ,sep = "\n")
 #' 
-write_attribute_data <- function(nc_file, attData, instance_dim_name = "instance", units = rep("unknown", ncol(attData)), ...) {
-	
-  if(file.exists(nc_file)) {
+write_attribute_data <- function(nc_file, attData, instance_dim_name = "instance", 
+                                 units = rep("unknown", ncol(attData)), overwrite = FALSE) {
+  
+  if(file.exists(nc_file) & overwrite == FALSE) {
     nc <- open.nc(nc_file, write = TRUE)
+  } else if(overwrite == TRUE) {
+    unlink(nc_file)
+    nc <- create.nc(nc_file)
   } else {
     nc <- create.nc(nc_file)
   }
