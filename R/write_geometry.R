@@ -193,7 +193,7 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
   if(file.exists(nc_file)) {
     nc <- open.nc(nc_file, write = TRUE)
   } else {
-    nc <- create.nc(nc_file)
+    nc <- create.nc(nc_file, large = TRUE)
   }
   
   try(dim.def.nc(nc, node_dim_name, length(xVals), unlim = FALSE), silent = TRUE)
