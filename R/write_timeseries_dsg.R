@@ -19,6 +19,7 @@
 #' See details for useful attributes.
 #' @param add_to_existing \code{boolean} If TRUE and the file already exists, 
 #' variables will be added to the existing file. See details for more.
+#' @param overwrite boolean error if file exists.
 #' 
 #' @description
 #' This function creates a timeseries discrete sampling geometry NetCDF file.
@@ -57,8 +58,11 @@
 #' @export
 write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data, alts=NA, data_unit='',
 																data_prec='double',data_metadata=list(name='data',long_name='unnamed data'),
-																attributes=list(),add_to_existing=FALSE){
+																attributes=list(), add_to_existing=FALSE, overwrite = FALSE){
 	
+  if(!overwrite && !add_to_existing && file.exists(nc_file)) stop("File already exists and overwrite is false.")
+  if(overwrite && !add_to_existing) unlink(file.exists(nc_file))
+  
 	if(add_to_existing && !file.exists(nc_file)) add_to_existing=FALSE
 	
 	if(!is(times, 'POSIXct')){
@@ -74,7 +78,7 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		stop('instance_names and alts must all be vectors of the same length')
 	}
 	
-	if(ncol(data)!=n){
+	if(ncol(data) != n){
 		stop('number of data columns must equal the number of stations')
 	}
 	
@@ -87,38 +91,52 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		stop('All the collumns in the input dataframe must be of the same type.')
 	}
 	
+	type <- pkg.env$nc_types[data_prec][[1]]
+	
+	if(type == "NC_CHAR") {
+	  missing <- ""
+	} else if(type == "NC_INT") {
+	  missing <- -32768
+	} else {
+	  missing <- -2147483648
+	}
+	
 	# Set up data_name var.
 	data_name = data_metadata[['name']]
 	
 	if(add_to_existing) {
 		# Open existing file.
+	  orig_nc <- nc_file
+	  nc_file <- tempfile()
+	  file.copy(orig_nc, nc_file)
+	  
 		nc<-open.nc(nc_file, write = TRUE)
 		data_vars = list()
 		
-		data_vars[[1]] = var.def.nc(nc, data_name, pkg.env$nc_types[data_prec][[1]], c(pkg.env$time_dim_name, pkg.env$instance_dim_name))
-		att.put.nc(nc, data_name, "long_name", "NC_CHAR", data_metadata[['long_name']])
-		att.put.nc(nc, data_name, "missing_value", "NC_DOUBLE", -999)
-    att.put.nc(nc, data_name, "units", "NC_CHAR", data_unit)
+		add_var(nc, data_name, c(pkg.env$time_dim_name, pkg.env$instance_dim_name), 
+		        type, data_unit, missing = missing,
+		        long_name = data_metadata[['long_name']], data = data)
     
 		close.nc(nc)
 		nc<-open.nc(nc_file, write = TRUE)
 		
-		put_data_in_nc(nc,nt,n,data_name,data)
+		put_data_in_nc(nc,nt,n,data_name,data, alts)
 		
 		close.nc(nc)
+		
+		if(add_to_existing) file.rename(nc_file, orig_nc)
 		
 	} else {
 	  nc <- create.nc(nc_file)
 	  
 		dim.def.nc(nc, pkg.env$instance_dim_name, n, unlim = FALSE)
 		dim.def.nc(nc, pkg.env$time_dim_name, nt, unlim=FALSE)
-		dim.def.nc(nc, pkg.env$str_len_dim, 
-		           max(sapply(instance_names, nchar)), unlim = FALSE)
 		
 		#Setup our spatial and time info
 		add_var(nc, pkg.env$dsg_timeseries_id, 
-		        c(pkg.env$str_len_dim, pkg.env$instance_dim_name), 
-		        "NC_CHAR", long_name = "Station Names")
+		        c(pkg.env$instance_dim_name), 
+		        "NC_CHAR", long_name = "Station Names", 
+		        data = instance_names)
 		
 		add_var(nc, pkg.env$time_var_name, pkg.env$time_dim_name, "NC_DOUBLE", 
 		        'days since 1970-01-01 00:00:00', -999, 'time of measurement')
@@ -135,7 +153,9 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		}
 		
     add_var(nc, data_name, c(pkg.env$time_dim_name, pkg.env$instance_dim_name), 
-            pkg.env$nc_types[data_prec][[1]], data_unit, -999, data_metadata[['long_name']])
+            type, data_unit, missing, 
+            data_metadata[['long_name']], 
+            data = data)
 
 		close.nc(nc)
 		nc <- open.nc(nc_file, write = TRUE)
@@ -175,9 +195,9 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		}
 		var.put.nc(nc, pkg.env$dsg_timeseries_id, instance_names)
 		
-		put_data_in_nc(nc, nt, n, data_name, data)
+		put_data_in_nc(nc, nt, n, data_name, data, alts)
 		
-		close.nc(nc) 
+		close.nc(nc)
 		
 		return(nc_file)
 	}
@@ -202,8 +222,16 @@ put_data_in_nc <- function(nc, nt, n, data_name, data, alts=NA) {
 	if ( nt * n < 100000 ) {
 		var.put.nc(nc, data_name, as.matrix(data))
 	} else {
-		for ( st in 1:n ) {
-			var.put.nc(nc, data_name, as.matrix(data[,st]), start=c(1, st), count=c(nt, 1))
-		}
+	  if(is.character(data[1,1])) {
+  	    for ( st in 1:n ) {
+    	      to_write <- as.matrix(data[,st])
+	      to_write[is.na(to_write)] <- "NA"
+	      var.put.nc(nc, data_name, to_write, start=c(1, 1, st), count=c(NA, nt, 1))
+	    }
+	  } else {
+	    for ( st in 1:n ) {
+	      var.put.nc(nc, data_name, as.matrix(data[,st]), start=c(1, st), count=c(nt, 1))
+	    }
+	  }
 	}
 }

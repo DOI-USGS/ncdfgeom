@@ -26,6 +26,21 @@ test_that("Create basic DSG file",{
                                data_prec='double',
                                data_metadata=test_data$meta,
                                attributes=global_attributes)
+  
+  expect_error(
+    testnc<-write_timeseries_dsg(nc_file, 
+                                 names(test_data$var_data), 
+                                 test_data$lats, test_data$lons, 
+                                 as.character(test_data$time), 
+                                 test_data$var, 
+                                 test_data$alts[1], 
+                                 data_unit=test_data$units,	
+                                 data_prec='double',
+                                 data_metadata=test_data$meta,
+                                 attributes=global_attributes),
+    "File already exists and overwrite is false."
+  )
+  
   expect_error(
   testnc<-write_timeseries_dsg(nc_file, 
                                names(test_data$var_data), 
@@ -36,7 +51,8 @@ test_that("Create basic DSG file",{
                                data_unit=test_data$units,	
                                data_prec='double',
                                data_metadata=test_data$meta,
-                               attributes=global_attributes),
+                               attributes=global_attributes,
+                               overwrite = TRUE),
   "instance_names and alts must all be vectors of the same length"
   )
   
@@ -50,7 +66,8 @@ test_that("Create basic DSG file",{
                                  data_unit=test_data$units,	
                                  data_prec='double',
                                  data_metadata=test_data$meta,
-                                 attributes=global_attributes),
+                                 attributes=global_attributes,
+                                 overwrite = TRUE),
     "instance_names, lats, and lons must all be vectors of the same length"
   )
   
@@ -64,7 +81,8 @@ test_that("Create basic DSG file",{
                                  data_unit=test_data$units,	
                                  data_prec='double',
                                  data_metadata=test_data$meta,
-                                 attributes=global_attributes),
+                                 attributes=global_attributes,
+                                 overwrite = TRUE),
     "The length of times must match the number of rows in data"
   )
   
@@ -78,7 +96,8 @@ test_that("Create basic DSG file",{
                                  data_unit=test_data$units,	
                                  data_prec='double',
                                  data_metadata=test_data$meta,
-                                 attributes=global_attributes),
+                                 attributes=global_attributes,
+                                 overwrite = TRUE),
     "number of data columns must equal the number of stations"
   )
   
@@ -95,7 +114,8 @@ test_that("Create basic DSG file",{
                                  data_unit=test_data$units,	
                                  data_prec='double',
                                  data_metadata=test_data$meta,
-                                 attributes=global_attributes),
+                                 attributes=global_attributes,
+                                 overwrite = TRUE),
     "All the collumns in the input dataframe must be of the same type."
   )
   
@@ -110,7 +130,8 @@ test_that("Create basic DSG file",{
                                data_prec='double',
                                data_metadata=test_data$meta,
                                attributes=global_attributes,
-                               add_to_existing = TRUE)
+                               add_to_existing = TRUE,
+                               overwrite = FALSE)
   
   testnc<-nc_open(nc_file)
   
@@ -129,6 +150,54 @@ test_that("Create basic DSG file",{
   expect_equivalent(testnc$var$`BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1`$units,"mm/d")
   expect_equivalent(ncatt_get(testnc,varid=0,"summary")$value,'test summary')
   expect("duplicate" %in% names(testnc$var))
+  
+  test_data$meta <- list(name = "character", long_name = "test")
+  char_test <- dplyr::mutate_all(test_data$var_data, as.character)
+  testnc<-write_timeseries_dsg(nc_file, 
+                               names(test_data$var_data), 
+                               test_data$lats, test_data$lons, 
+                               test_data$time, char_test, 
+                               test_data$alts, 
+                               data_unit=test_data$units,	
+                               data_prec='char',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes,
+                               add_to_existing = TRUE)
+  
+  testnc<-nc_open(nc_file)
+  expect("character" %in% names(testnc$var))
+  
+  # covers no altitude and iteration to write many rows.
+  test_dat2 <- dplyr::bind_rows(test_data$var_data, test_data$var_data)
+  time <- c(test_data$time,test_data$time)
+  testnc<-write_timeseries_dsg("temp.nc", 
+                               names(test_data$var_data), 
+                               test_data$lats, test_data$lons, 
+                               time, test_dat2,
+                               data_unit=test_data$units,	
+                               data_prec='double',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes)
+                               
+  testnc<-nc_open("temp.nc")
+  expect(testnc$dim$time$len == 1460)
+  unlink("temp.nc")
+  
+  char_test <- dplyr::mutate_all(test_dat2, as.character)
+  time <- c(test_data$time,test_data$time)
+  testnc<-write_timeseries_dsg("temp.nc", 
+                               names(test_data$var_data), 
+                               test_data$lats, test_data$lons, 
+                               time, char_test,
+                               data_unit=test_data$units,	
+                               data_prec='char',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes)
+  
+  testnc<-nc_open("temp.nc")
+  expect(testnc$dim$time$len == 1460)
+  
+  unlink("temp.nc")
 })
 
 test_that('soilmoisturetools data writes as expected', {
@@ -201,6 +270,7 @@ test_that("warnings and edge cases", {
   nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
   att.delete.nc(nc, "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1", "coordinates")
   att.delete.nc(nc, "duplicate", "coordinates")
+  att.delete.nc(nc, "character", "coordinates")
   close.nc(nc)
   expect_warning(
   testlist<-read_timeseries_dsg(nc_file_borked), 
@@ -234,6 +304,7 @@ test_that("warnings and edge cases", {
   nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
   att.delete.nc(nc, "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1", "coordinates")
   att.delete.nc(nc, "duplicate", "coordinates")
+  att.delete.nc(nc, "character", "coordinates")
   att.delete.nc(nc, "lat", "standard_name")
   att.delete.nc(nc, "lon", "standard_name")
   att.delete.nc(nc, "time", "standard_name")

@@ -7,7 +7,7 @@
 write_timeseries_dsg(nc_file, instance_names, lats, lons, times, data,
   alts = NA, data_unit = "", data_prec = "double",
   data_metadata = list(name = "data", long_name = "unnamed data"),
-  attributes = list(), add_to_existing = FALSE)
+  attributes = list(), add_to_existing = FALSE, overwrite = FALSE)
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created.}
@@ -40,6 +40,8 @@ See details for useful attributes.}
 
 \item{add_to_existing}{\code{boolean} If TRUE and the file already exists, 
 variables will be added to the existing file. See details for more.}
+
+\item{overwrite}{boolean error if file exists.}
 }
 \description{
 This function creates a timeseries discrete sampling geometry NetCDF file.
