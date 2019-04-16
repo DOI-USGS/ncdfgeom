@@ -202,16 +202,16 @@ test_that("A whole shapefile can be written", {
   
   returnPolyData<-read_geometry(nc_file)
   compareSP(polygonData, returnPolyData)
+  
   for(name in names(sf::st_set_geometry(polygonData, NULL))) {
-    expect_equal(as.character(polygonData[name]), as.character(returnPolyData[name]))
+    expect_equal(as.character(sf::st_set_geometry(polygonData[name], NULL)), 
+                 as.character(sf::st_set_geometry(returnPolyData[name], NULL)))
   }
   
-  returnPolygonData_sp <- sf::as_Spatial(returnPolyData)
-  for(i in 1:length(returnPolygonData_sp@polygons)) {
-    expect_equal(length(returnPolygonData_sp@polygons[[i]]@Polygons), length(polygonData_sp@polygons[[i]]@Polygons))
-    for(j in 1:length(returnPolygonData_sp@polygons[[i]]@Polygons)) {
-      expect_equal(length(returnPolygonData_sp@polygons[[i]]@Polygons[[j]]@coords), length(polygonData_sp@polygons[[i]]@Polygons[[j]]@coords))
-    }
+  returnPolyData <- dplyr::arrange(returnPolyData, ID)
+  polygonData <- dplyr::arrange(polygonData, ID)
+  for(i in 1:nrow(polygonData)) {
+    expect_equal(st_coordinates(polygonData[i, ]), st_coordinates(returnPolyData[i, ]), info = paste("error in poly", i))
   }
 })
 
