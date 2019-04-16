@@ -173,9 +173,9 @@ test_that("A whole shapefile can be written", {
   }
   
   coords<-sf::st_coordinates(sf::st_geometry(polygonData)[[1]])[, c("X", "Y")]
-  expect_equal(as.numeric(coords[nrow(coords):1,1]),
+  expect_equal(as.numeric(coords[1:nrow(coords),1]),
                as.numeric(ncvar_get(nc, varid = pkg.env$x_nodes, start = c(1), count = c(118))))
-  expect_equal(as.numeric(coords[nrow(coords):1,2]),
+  expect_equal(as.numeric(coords[1:nrow(coords),2]),
                as.numeric(ncvar_get(nc, varid = pkg.env$y_nodes, start = c(1), count = c(118))))
   # Check to make sure a hole is encoded correctly.
   node_count <- ncvar_get(nc, pkg.env$node_count_var_name)

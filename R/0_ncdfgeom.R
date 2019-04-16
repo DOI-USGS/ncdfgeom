@@ -57,8 +57,8 @@ pkg.env$timeseries_id_cf_role <- "timeseries_id"
 pkg.env$nc_types <- list(double = "NC_DOUBLE", float = "NC_FLOAT", numeric="NC_DOUBLE", short = "NC_SHORT", integer = "NC_INT", char="NC_CHAR", character="NC_CHAR")
 
 check_geomData <- function(geomData) {
-	if (any(c("sf", "sfc") %in% class(geomData))) {
-		geomData <- sf::as_Spatial(geomData)
+	if (!any(c("sf", "sfc") %in% class(geomData))) {
+		geomData <- sf::st_as_sf(geomData)
 	}
 	return(geomData)
 }

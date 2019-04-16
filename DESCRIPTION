@@ -9,7 +9,7 @@ Authors@R: c(person("David", "Blodgett", role = c("aut", "cre"),
 Description: Tools to create discrete sampling geometry and spatial geometry NetCDF files.
 URL: https://code.usgs.gov/water/ncdfgeom
 BugReports: https://github.com/USGS-R/ncdfgeom/issues
-Imports: RNetCDF, ncmeta, sf, sp, rgdal, methods, dplyr, rgeos
+Imports: RNetCDF, ncmeta, sf, sp, methods, dplyr, rgeos
 Depends:
   R (>= 3.0)
 Suggests: ncdf4, testthat, geoknife, maptools, knitr, rmarkdown, pkgdown, tidyr

@@ -63,3 +63,4 @@ test_that("shapefile line data works", {
     expect_equal(c(lineData[name]), c(returnLineData[name]))
   }
 })
+

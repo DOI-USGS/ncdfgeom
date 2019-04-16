@@ -36,5 +36,5 @@ names(huc_poly)
 
 }
 \references{
-https://github.com/twhiteaker/netCDF-CF-simple-geometry
+http://cfconventions.org/index.html
 }

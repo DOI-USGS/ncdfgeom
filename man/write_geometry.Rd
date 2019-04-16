@@ -5,7 +5,7 @@
 \title{Write sp or sf geometries and attributes to NetCDF-CF}
 \usage{
 write_geometry(nc_file, geomData = NULL, instance_dim_name = NULL,
-  lats = NULL, lons = NULL, variables = list())
+  variables = list())
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created.}
@@ -16,10 +16,6 @@ or an sf \code{data.frame}. Note that three dimensional geometries are not suppo
 \item{instance_dim_name}{\code{character} Not required if adding geometry to a 
 NetCDF-CF Discrete Sampling Geometries timeSeries file. For a new file, will 
 use package default -- "instance" -- if not supplied.}
-
-\item{lats}{Vector of latitudes}
-
-\item{lons}{Vector of longitudes}
 
 \item{variables}{\code{character} If a an existing netcdf files is provided, this 
 list of variables that should be related to the geometries.}
@@ -40,5 +36,5 @@ cat(ncdump ,sep = "\\n")
 
 }
 \references{
-https://github.com/twhiteaker/netCDF-CF-simple-geometry
+http://cfconventions.org/index.html
 }

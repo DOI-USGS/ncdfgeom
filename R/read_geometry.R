@@ -6,7 +6,7 @@
 #'Attemps to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame.
 #'
 #'@references
-#'https://github.com/twhiteaker/netCDF-CF-simple-geometry
+#'http://cfconventions.org/index.html
 #'
 #'@importFrom RNetCDF open.nc var.get.nc close.nc
 #'@importFrom sp Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame CRS Line Lines SpatialLines SpatialLinesDataFrame SpatialPointsDataFrame

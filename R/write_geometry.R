@@ -6,8 +6,6 @@
 #' use package default -- "instance" -- if not supplied.
 #' @param geomData object of class \code{SpatialLines}, \code{SpatialPolygons}
 #' or an sf \code{data.frame}. Note that three dimensional geometries are not supported.
-#' @param lats Vector of latitudes
-#' @param lons Vector of longitudes
 #' @param variables \code{character} If a an existing netcdf files is provided, this 
 #' list of variables that should be related to the geometries.
 #'
@@ -17,10 +15,9 @@
 #' Will also add attributes if provided data has them.
 #'
 #' @references
-#' https://github.com/twhiteaker/netCDF-CF-simple-geometry
+#' http://cfconventions.org/index.html
 #'
-#' @importFrom sp SpatialLinesDataFrame polygons SpatialPoints
-#'
+#' @importFrom sf st_set_geometry st_geometry
 #' @export
 #' 
 #' @examples 
@@ -32,47 +29,35 @@
 #' ncdump <- system(paste("ncdump -h", hucPolygons_nc), intern = TRUE)
 #' cat(ncdump ,sep = "\n")
 #' 
-write_geometry = function(nc_file, geomData = NULL, instance_dim_name = NULL, lats = NULL, lons = NULL, variables = list()){
+write_geometry = function(nc_file, geomData = NULL, instance_dim_name = NULL, variables = list()) {
 
 	geomData <- check_geomData(geomData)
 	
   pointsMode <- FALSE
 
-  if(class(geomData) == "SpatialPolygonsDataFrame") {
-    attData<-geomData@data
-    geomData<-polygons(geomData)
-  } else if(class(geomData) == "SpatialLinesDataFrame") {
-    attData<-geomData@data
-  } else if(class(geomData) == "SpatialPolygons") {
-    geomData<-polygons(geomData)
-  } else if(class(geomData) == "SpatialLines") {
-    geomData<-geomData
-  } else if(class(geomData) == "SpatialPoints") {
-    pointsMode<-TRUE
-  } else if(class(geomData) == "SpatialPointsDataFrame") {
-    pointsMode<-TRUE
-    attData<-geomData@data
-  } else if(class(geomData) == "SpatialMultiPointsDataFrame" | class(geomData) == "SpatialMultiPoints") {
+  type <- get_type(geomData)
+    
+  if(grepl("^POINT$", type)) {
+    pointsMode <- TRUE
+  } else if(grepl("MULTIPOINT", type)) {
   	stop("Multi point not supported yet.")
-  } else if(!is.null(lats)) {
-    pointsMode<-TRUE
-    geomData <- SpatialPoints(as.data.frame(list(x=lons, y=lats)),proj4string = CRS("+proj=longlat +datum=WGS84"))
-  } else {
+  } else if(!grepl("POLYGON", type) & !grepl("LINESTRING", type)) {
     stop("Did not find supported spatial data.")
   }
+  
+  attData <- st_set_geometry(geomData, NULL)
+  geomData <- st_geometry(geomData)
 
   if(is.null(instance_dim_name)) {
     instance_dim_name <- pkg.env$instance_dim_name
   }
 
-  if(exists("attData")) {
-  	if(ncol(attData) > 0) {
-  		itemp <- sapply(attData, is.factor)
-  		attData[itemp] <- lapply(attData[itemp], as.character)
-  		nc_file <- write_attribute_data(nc_file, attData, instance_dim_name)
-  		variables <- c(variables, names(attData))
-  	}
-  }
+	if(ncol(attData) > 0) {
+		itemp <- sapply(attData, is.factor)
+		attData[itemp] <- lapply(attData[itemp], as.character)
+		nc_file <- write_attribute_data(nc_file, attData, instance_dim_name)
+		variables <- c(variables, names(attData))
+	}
 
   nc_file <- write_geom_data(nc_file, geomData, instance_dim_name, variables = variables)
 
@@ -100,70 +85,104 @@ write_geometry = function(nc_file, geomData = NULL, instance_dim_name = NULL, la
 #'
 #' @importFrom RNetCDF open.nc close.nc create.nc var.put.nc att.put.nc
 #' @importFrom stats setNames
+#' @importFrom sf st_geometry_type st_crs st_coordinates
 #' @noRd
 write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c()) {
   
   geomData <- check_geomData(geomData)
+  
+  type <- get_type(geomData)
+  
+  crs <- ncmeta::nc_prj_to_gridmapping(st_crs(geomData)$proj4string)
+  crs <- setNames(crs$value, crs$name)
+  
+  if(length(crs) == 0) {
+    crs <- list(grid_mapping_name = "latitude_longitude",
+                semi_major_axis = 6378137,
+                inverse_flattening = 298.257223563,
+                longitude_of_prime_meridian = 0)
+    warning("No CRS was found. Assuming WGS84 Lat Lon.")
+  }
   
   node_dim_name <- pkg.env$node_dim_name
   
   linesMode <- FALSE
   pointsMode <- FALSE
   
-  if(class(geomData) == "SpatialLines" || class(geomData) == "SpatialLinesDataFrame") {
+  if(grepl("LINESTRING", type)) {
     linesMode<-TRUE
   }
   
-  if(class(geomData) == "SpatialPoints" || class(geomData) == "SpatialPointsDataFrame") {
+  if(grepl("POINT", type)) {
     pointsMode <- TRUE
-    xCoords<-geomData@coords[,1]
-    yCoords<-geomData@coords[,2]
   }
   
   holes <- FALSE
   multis <- FALSE
   
   if(pointsMode) {
-    ids <- attributes(geomData@coords)$dimnames[[1]]
-    uIds <- unique(ids)
-    node_count <- c(1:length(uIds))
-    if(length(ids) != length(uIds)) {
-      multis <- TRUE
-      for(i in 1:length(uIds)) {
-        node_count[i] <- length(which(ids == uIds[i]))
-      }
-    } else {
-      node_dim_name <- pkg.env$instance_dim_name
-    }
-    xVals <- geomData@coords[,1]
-    yVals <- geomData@coords[,2]
+
+    geomData <- st_coordinates(geomData)
+    
+    node_count <- c(1:nrow(geomData))
+    
+    node_dim_name <- pkg.env$instance_dim_name
+    
+    xVals <- geomData[,1]
+    yVals <- geomData[,2]
+    
   } else {
-    nCoords <- 0
-    nParts <- 0
-    nGeoms <- length(geomData)
-    for(geom in 1:nGeoms) {
-      if(linesMode) { gData <- geomData@lines[[geom]]@Lines
-      } else { gData <- geomData@polygons[[geom]]@Polygons }
-      nParts <- nParts + length(gData)
-      for(part in 1:length(gData)) {
-        nCoords <- nCoords + length(gData[[part]]@coords[,1])
-      }
+    geomData <- st_coordinates(geomData)
+    f <- ncol(geomData) # Feature designator is always last col.
+    
+    if(type == "MULTIPOLYGON") {
+      p_id <- f - 1
+      h_id <- f - 2
+      
+      hole_dif <- diff(geomData[, h_id])
+      hole_dif[hole_dif < 0] <- 0
+      part_dif <- diff(geomData[, p_id])
+      
+      geomData[, p_id] <- c(1, cumsum(hole_dif + part_dif) + 1)
+      
+    } else if(type == "POLYGON") {
+      h_id <- f - 1
+      p_id <- 0
+    } else if(type == "MULTILINESTRING") {
+      p_id <- f - 1
+      h_id <- 0
+    }  else if(type == "LINESTRING") {
+      p_id <- 0
+      h_id <- 0
     }
-    part_type <- rep(NA,nParts)
+    
+    nGeoms <- length(unique(geomData[, f]))
+    
+    nParts <- nGeoms
+    if(p_id > 0) nParts <- length(unique(geomData[, p_id]))
+    
+    nCoords <- nrow(geomData)
+    
+    part_type <- rep(NA, nParts)
     part_node_count <- part_type
     node_count <- rep(NA, nGeoms)
     xVals <- rep(NA, nCoords)
     yVals <- xVals
     part <- 0
     coord <- 1
+    
     for(geom in 1:nGeoms) {
       nCount <- 0
-      if(linesMode) { gData <- geomData@lines[[geom]]@Lines
-      } else { gData <- geomData@polygons[[geom]]@Polygons }
-      for(gPart in 1:length(gData)) {
+      gData <- geomData[geomData[, f] == geom, ]
+      parts <- 1
+      if(p_id > 0) parts <- length(unique(gData[, p_id]))
+      if(p_id == 0 & h_id > 0) parts <- length(unique(gData[, h_id]))
+      for(gPart in 1:parts) {
         part <- part + 1
         if(gPart > 1) {
-          if(!linesMode && gData[[gPart]]@hole) {
+          if(!linesMode && 
+             any(gData[gData[, p_id] == gPart, h_id] > 1) || 
+             (p_id == 0 & any(gData[gData[, h_id] == gPart] > 1))) {
             part_type[part] <- pkg.env$hole_val
             holes <- TRUE
           } else {
@@ -173,18 +192,28 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
         } else {
           part_type[part] <-pkg.env$multi_val
         }
-        coords<-gData[[gPart]]@coords
-        pCount <- length(coords[,1])
+        
+        if(p_id == 0 & h_id == 0) {
+          coords <- gData[, c(1,2)]
+        } else if(h_id == 0 & p_id > 0) {
+          coords <- gData[gData[, p_id] == gPart, c(1,2)]
+        } else if(p_id == 0 & h_id > 0) {
+          coords <- gData[gData[, h_id] == gPart, c(1,2)]
+        } else {
+          coords <- gData[gData[, p_id] == gPart, c(1,2)]
+        }
+        
+        pCount <- nrow(coords)
         nCount <- nCount + pCount
         part_node_count[part] <-  pCount
         if(linesMode) {
-          xVals[coord:(coord+length(coords[,1])-1)] <- coords[,1]
-          yVals[coord:(coord+length(coords[,2])-1)] <- coords[,2]
+          xVals[coord:(coord+nrow(coords)-1)] <- coords[,1]
+          yVals[coord:(coord+nrow(coords)-1)] <- coords[,2]
         } else {
-          xVals[coord:(coord+length(coords[,1])-1)]<-coords[nrow(coords):1,1]
-          yVals[coord:(coord+length(coords[,2])-1)]<-coords[nrow(coords):1,2]
+          xVals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 1]
+          yVals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 2]
         }
-        coord <- coord + length(coords[,1])
+        coord <- coord + nrow(coords)
       }
       node_count[geom] <- nCount
     }
@@ -243,17 +272,6 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
   
   att.put.nc(nc, pkg.env$geom_container_var_name, pkg.env$node_coordinates, "NC_CHAR", paste(pkg.env$x_nodes, pkg.env$y_nodes))
   
-  crs <- ncmeta::nc_prj_to_gridmapping(geomData@proj4string)
-  crs <- setNames(crs$value, crs$name)
-  
-  if(length(crs) == 0) {
-    crs <- list(grid_mapping_name = "latitude_longitude",
-                semi_major_axis = 6378137,
-                inverse_flattening = 298.257223563,
-                longitude_of_prime_meridian = 0)
-    warning("No CRS was found. Assuming WGS84 Lat Lon.")
-  }
-  
   if(length(crs) > 0) {
     att.put.nc(nc, pkg.env$geom_container_var_name, pkg.env$crs, "NC_CHAR", pkg.env$crs_var_name)
     
@@ -295,3 +313,10 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
   return(nc_file)
 }
 
+get_type <- function(geomData) {
+  type <- unique(st_geometry_type(geomData))
+  
+  if(length(type) > 1) stop("Found multiple geometry types, only one is supported.")
+  
+  return(type)
+}
