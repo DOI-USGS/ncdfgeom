@@ -153,7 +153,7 @@ Next we can write the geometry data into the same file.
 ```{r write_geom}
 climdiv_poly <- st_sf(st_cast(climdiv_poly, "MULTIPOLYGON"))
 write_geometry(nc_file = "climdiv_prcp.nc", 
-               geomData = climdiv_poly,
+               geom_data = climdiv_poly,
                variables = "climdiv_prcp_inches") -> nc_file
 ```
 Now we have a file with an `ncdump` that looks like:

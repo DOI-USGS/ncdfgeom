@@ -4,13 +4,13 @@
 \alias{write_geometry}
 \title{Write sp or sf geometries and attributes to NetCDF-CF}
 \usage{
-write_geometry(nc_file, geomData = NULL, instance_dim_name = NULL,
+write_geometry(nc_file, geom_data = NULL, instance_dim_name = NULL,
   variables = list())
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created.}
 
-\item{geomData}{object of class \code{SpatialLines}, \code{SpatialPolygons}
+\item{geom_data}{object of class \code{SpatialLines}, \code{SpatialPolygons}
 or an sf \code{data.frame}. Note that three dimensional geometries are not supported.}
 
 \item{instance_dim_name}{\code{character} Not required if adding geometry to a 
@@ -30,7 +30,7 @@ Will also add attributes if provided data has them.
 hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package = 'ncdfgeom'))
 
 hucPolygons_nc <- ncdfgeom::write_geometry(nc_file=tempfile(), 
-                                           geomData = hucPolygons)
+                                           geom_data = hucPolygons)
 ncdump <- system(paste("ncdump -h", hucPolygons_nc), intern = TRUE)
 cat(ncdump ,sep = "\\n")
 

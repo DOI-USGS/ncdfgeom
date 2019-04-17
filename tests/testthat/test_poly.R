@@ -3,7 +3,7 @@ context("polygon")
 
 test_that("data for basic polygon", {
   polygonData <- get_fixture_data("polygon")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(nc$dim$instance$vals,c(1))
@@ -19,11 +19,6 @@ test_that("data for basic polygon", {
 
   expect_equivalent(ncatt_get(nc, 0,"Conventions")$value,
                     pkg.env$cf_version)
-
-  expect_equivalent(ncatt_get(nc, pkg.env$x_nodes,"standard_name")$value,
-                    "longitude")
-  expect_equivalent(ncatt_get(nc, pkg.env$y_nodes,"standard_name")$value,
-                    "latitude")
 
   expect_equal(ncatt_get(nc, pkg.env$x_nodes,"axis")$value,
                pkg.env$x_axis)
@@ -48,7 +43,7 @@ test_that("data for basic polygon", {
 
 test_that("polygon with a hole.", {
   polygonData <- get_fixture_data("polygon_hole")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(nc$dim$instance$vals,c(1))
@@ -75,7 +70,7 @@ test_that("polygon with a hole.", {
 
 test_that("multipolygon.", {
   polygonData <- get_fixture_data("multipolygon")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$node_count_var_name)),
@@ -92,7 +87,7 @@ test_that("multipolygon.", {
 
 test_that("multipolygon with a hole.", {
   polygonData <-get_fixture_data("multipolygon_hole")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$node_count_var_name)),
@@ -124,7 +119,7 @@ test_that("multipolygon with a hole.", {
 
 test_that("multipolygons with holes.", {
   polygonData <- get_fixture_data("multipolygons_holes")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc, pkg.env$part_type_var_name)),
@@ -147,7 +142,7 @@ test_that("multipolygons with holes.", {
 
 test_that("A whole shapefile can be written", {
   polygonData <- read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
   
   crs <- list(grid_mapping_name = "albers_conical_equal_area",

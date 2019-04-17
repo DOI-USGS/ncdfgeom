@@ -27,7 +27,7 @@
 #'names(hucPolygons)
 #'
 #'hucPolygons_nc <- ncdfgeom::write_geometry(nc_file=huc_eta_nc, 
-#'                                           geomData = hucPolygons, 
+#'                                           geom_data = hucPolygons, 
 #'                                           instance_dim_name = "station", 
 #'                                           variables = vars$name)
 #'huc_poly <- read_geometry(huc_eta_nc)

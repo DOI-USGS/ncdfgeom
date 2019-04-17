@@ -52,7 +52,7 @@ Now we can use the `write_geometry` function to add the polygon data to the NetC
 vars <- ncmeta::nc_vars(example_file)
 
 ncdfgeom::write_geometry(nc_file=example_file,
-                         geomData = hucPolygons, 
+                         geom_data = hucPolygons, 
                          instance_dim_name = "station", 
                          variables = vars$name) -> example_file
 ```

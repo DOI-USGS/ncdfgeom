@@ -4,7 +4,7 @@ context("point")
 test_that("Point_timeSeries", {
 
   pointData <- get_fixture_data("point")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = pointData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = pointData)
   nc<-nc_open(nc_file)
 
   expect_equal(nc$dim$instance$vals,
@@ -27,11 +27,6 @@ test_that("Point_timeSeries", {
   expect_equivalent(ncatt_get(nc, pkg.env$geom_container_var_name, pkg.env$geom_type_attr_name)$value,
                     "point")
 
-  expect_equivalent(ncatt_get(nc,varid=pkg.env$y_nodes,"standard_name")$value,
-                    "latitude")
-  expect_equivalent(ncatt_get(nc,varid=pkg.env$x_nodes,"standard_name")$value,
-                    "longitude")
-
   returnPointData<-read_geometry(nc_file)
   expect_equal(as.numeric(st_coordinates(pointData)), 
   						 as.numeric(st_coordinates(st_as_sf(returnPointData))))
@@ -42,7 +37,7 @@ test_that("Point_timeSeries", {
 test_that("multiPoint_timeSeries", {
   multipointData <- get_fixture_data("multipoint")
 
-	expect_error(write_geometry(nc_file=tempfile(), geomData = multipointData),
+	expect_error(write_geometry(nc_file=tempfile(), geom_data = multipointData),
 							 "Multi point not supported yet.")
   
   # expect_error(read_geometry(nc_file), "Reading multipoint is not supported yet.")
@@ -50,7 +45,7 @@ test_that("multiPoint_timeSeries", {
 
 test_that("shapefile_point", {
   pointData <- sf::read_sf("data/se_sites/se_sitest.shp")
-  nc_file <- write_geometry(nc_file = tempfile(), geomData = pointData)
+  nc_file <- write_geometry(nc_file = tempfile(), geom_data = pointData)
   nc <- nc_open(nc_file)
   pointData_nogeo <- sf::st_set_geometry(pointData, NULL)
   
