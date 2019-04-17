@@ -87,13 +87,13 @@ write_geometry = function(nc_file, geomData = NULL, instance_dim_name = NULL, va
 #' @importFrom stats setNames
 #' @importFrom sf st_geometry_type st_crs st_coordinates
 #' @noRd
-write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c()) {
+write_geom_data<-function(nc_file, geom_data, instance_dim_name, variables = c()) {
   
-  geomData <- check_geomData(geomData)
+  geom_data <- check_geomData(geom_data)
   
-  type <- get_type(geomData)
+  type <- get_type(geom_data)
   
-  crs <- ncmeta::nc_prj_to_gridmapping(st_crs(geomData)$proj4string)
+  crs <- ncmeta::nc_prj_to_gridmapping(st_crs(geom_data)$proj4string)
   crs <- setNames(crs$value, crs$name)
   
   if(length(crs) == 0) {
@@ -122,28 +122,30 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
   
   if(pointsMode) {
 
-    geomData <- st_coordinates(geomData)
+    geom_data <- st_coordinates(geom_data)
     
-    node_count <- c(1:nrow(geomData))
+    node_count <- c(1:nrow(geom_data))
     
     node_dim_name <- pkg.env$instance_dim_name
     
-    xVals <- geomData[,1]
-    yVals <- geomData[,2]
+    x_vals <- geom_data[,1]
+    y_vals <- geom_data[,2]
     
   } else {
-    geomData <- st_coordinates(geomData)
-    f <- ncol(geomData) # Feature designator is always last col.
+    geom_data <- st_coordinates(geom_data)
+    f <- ncol(geom_data) # Feature designator is always last col.
     
     if(type == "MULTIPOLYGON") {
       p_id <- f - 1
       h_id <- f - 2
       
-      hole_dif <- diff(geomData[, h_id])
+      hole_dif <- diff(geom_data[, h_id])
       hole_dif[hole_dif < 0] <- 0
-      part_dif <- diff(geomData[, p_id])
+      part_dif <- diff(geom_data[, p_id])
+      part_dif[part_dif < 0] <- 0
+      geom_dif <- diff(geom_data[, f])
       
-      geomData[, p_id] <- c(1, cumsum(hole_dif + part_dif) + 1)
+      geom_data[, p_id] <- c(1, cumsum(hole_dif + part_dif + geom_dif) + 1)
       
     } else if(type == "POLYGON") {
       h_id <- f - 1
@@ -156,62 +158,62 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
       h_id <- 0
     }
     
-    nGeoms <- length(unique(geomData[, f]))
+    n_geoms <- length(unique(geom_data[, f]))
     
-    nParts <- nGeoms
-    if(p_id > 0) nParts <- length(unique(geomData[, p_id]))
+    n_parts <- n_geoms
+    if(p_id > 0) n_parts <- length(unique(geom_data[, p_id]))
     
-    nCoords <- nrow(geomData)
+    nCoords <- nrow(geom_data)
     
-    part_type <- rep(NA, nParts)
+    part_type <- rep(NA, n_parts)
     part_node_count <- part_type
-    node_count <- rep(NA, nGeoms)
-    xVals <- rep(NA, nCoords)
-    yVals <- xVals
-    part <- 0
+    node_count <- rep(NA, n_geoms)
+    x_vals <- rep(NA, nCoords)
+    y_vals <- x_vals
+    string <- 0
     coord <- 1
     
-    for(geom in 1:nGeoms) {
+    for(geom in 1:n_geoms) {
       nCount <- 0
-      gData <- geomData[geomData[, f] == geom, ]
-      parts <- 1
-      if(p_id > 0) parts <- length(unique(gData[, p_id]))
-      if(p_id == 0 & h_id > 0) parts <- length(unique(gData[, h_id]))
-      for(gPart in 1:parts) {
-        part <- part + 1
+      g_data <- geom_data[geom_data[, f] == geom, ]
+      strings <- 1
+      if(p_id > 0) strings <- length(unique(g_data[, p_id]))
+      if(p_id == 0 & h_id > 0) strings <- length(unique(g_data[, h_id]))
+      for(gPart in 1:strings) {
+        string <- string + 1
         if(gPart > 1) {
           if(!linesMode && 
-             any(gData[gData[, p_id] == gPart, h_id] > 1) || 
-             (p_id == 0 & any(gData[gData[, h_id] == gPart] > 1))) {
-            part_type[part] <- pkg.env$hole_val
+             any(g_data[g_data[, p_id] == gPart, h_id] > 1) || 
+             (p_id == 0 & any(g_data[g_data[, h_id] == gPart] > 1))) {
+            part_type[string] <- pkg.env$hole_val
             holes <- TRUE
           } else {
-            part_type[part] <- pkg.env$multi_val
+            part_type[string] <- pkg.env$multi_val
             multis <- TRUE
           }
         } else {
-          part_type[part] <-pkg.env$multi_val
+          part_type[string] <-pkg.env$multi_val
         }
         
         if(p_id == 0 & h_id == 0) {
-          coords <- gData[, c(1,2)]
+          coords <- g_data[, c(1,2)]
         } else if(h_id == 0 & p_id > 0) {
-          coords <- gData[gData[, p_id] == gPart, c(1,2)]
+          coords <- g_data[g_data[, p_id] == gPart, c(1,2)]
         } else if(p_id == 0 & h_id > 0) {
-          coords <- gData[gData[, h_id] == gPart, c(1,2)]
+          coords <- g_data[g_data[, h_id] == gPart, c(1,2)]
         } else {
-          coords <- gData[gData[, p_id] == gPart, c(1,2)]
+          coords <- g_data[g_data[, p_id] == string, c(1,2)]
         }
         
         pCount <- nrow(coords)
         nCount <- nCount + pCount
-        part_node_count[part] <-  pCount
+        part_node_count[string] <-  pCount
         if(linesMode) {
-          xVals[coord:(coord+nrow(coords)-1)] <- coords[,1]
-          yVals[coord:(coord+nrow(coords)-1)] <- coords[,2]
+          x_vals[coord:(coord+nrow(coords)-1)] <- coords[,1]
+          y_vals[coord:(coord+nrow(coords)-1)] <- coords[,2]
         } else {
-          xVals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 1]
-          yVals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 2]
+          x_vals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 1]
+          y_vals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 2]
         }
         coord <- coord + nrow(coords)
       }
@@ -225,7 +227,7 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
     nc <- create.nc(nc_file, large = TRUE)
   }
   
-  try(dim.def.nc(nc, node_dim_name, length(xVals), unlim = FALSE), silent = TRUE)
+  try(dim.def.nc(nc, node_dim_name, length(x_vals), unlim = FALSE), silent = TRUE)
   
   var.def.nc(nc, pkg.env$x_nodes, "NC_DOUBLE", node_dim_name)
   var.def.nc(nc, pkg.env$y_nodes, "NC_DOUBLE", node_dim_name)
@@ -236,8 +238,8 @@ write_geom_data<-function(nc_file, geomData, instance_dim_name, variables = c())
   close.nc(nc)
   nc <- open.nc(nc_file, write = TRUE)
   
-  var.put.nc(nc, pkg.env$x_nodes, xVals)
-  var.put.nc(nc, pkg.env$y_nodes, yVals)
+  var.put.nc(nc, pkg.env$x_nodes, x_vals)
+  var.put.nc(nc, pkg.env$y_nodes, y_vals)
   att.put.nc(nc, pkg.env$x_nodes, 'standard_name', "NC_CHAR", 'longitude')
   att.put.nc(nc, pkg.env$y_nodes, 'standard_name', "NC_CHAR", 'latitude')
   att.put.nc(nc, pkg.env$x_nodes, "axis", "NC_CHAR", "X")

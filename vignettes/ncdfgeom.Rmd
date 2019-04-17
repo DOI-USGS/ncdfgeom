@@ -53,7 +53,7 @@ library(ncdfgeom)
 ```
 ```{r setup_secret, echo = FALSE}
 # Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt
-prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190304"
+prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190408"
 prcp_file <- "prcp.txt"
 if(!file.exists(prcp_file)) {
   download.file(url = prcp_url, destfile = prcp_file, quiet = TRUE)
@@ -151,10 +151,10 @@ cat(ncdump ,sep = "\n")
 
 Next we can write the geometry data into the same file.
 ```{r write_geom}
+climdiv_poly <- st_sf(st_cast(climdiv_poly, "MULTIPOLYGON"))
 write_geometry(nc_file = "climdiv_prcp.nc", 
                geomData = climdiv_poly,
                variables = "climdiv_prcp_inches") -> nc_file
-
 ```
 Now we have a file with an `ncdump` that looks like:
 
@@ -242,7 +242,7 @@ plot(prcp["prcp"], lwd = 0.1, pal = p_colors,
 This is the code used to download and prep the precipitation data.
 ```{r setup, echo = FALSE}
 # Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt
-prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190304"
+prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190408"
 prcp_file <- "prcp.txt"
 if(!file.exists(prcp_file)) {
   download.file(url = prcp_url, destfile = prcp_file, quiet = TRUE)

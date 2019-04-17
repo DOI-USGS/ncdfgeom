@@ -9,7 +9,7 @@
 #'http://cfconventions.org/index.html
 #'
 #'@importFrom RNetCDF open.nc var.get.nc close.nc
-#'@importFrom sf st_sf st_sfc st_linestring st_polygon st_crs
+#'@importFrom sf st_sf st_sfc st_linestring st_polygon st_multipolygon st_multilinestring st_crs
 #'
 #'@return sf \code{data.frame} containing spatial geometry of type found in the NetCDF-CF DSG file.
 #'
