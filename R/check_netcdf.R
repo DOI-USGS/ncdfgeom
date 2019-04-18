@@ -96,11 +96,13 @@ check_netcdf <- function(nc) {
     crs <- stats::setNames(crs$value, crs$name)
   }
 
-  return(list(instance_id = instance_id,
+  out <- list(instance_id = instance_id,
               instance_dim = instance_dim,
               geom_container = geom_container,
               variable_list = variable_list,
-              crs = crs))
+              crs = crs)
+  class(out) <- geom_container$geom_type
+  return(out)
 }
 
 get_att <- function(atts, var, att = NULL) {

@@ -24,8 +24,10 @@ read_attribute_data <- function(nc, instance_dim) {
   
   nc_meta <- nc_meta(nc)
 	
-  nc <- open.nc(nc)
-  on.exit(close.nc(nc), add  = TRUE)
+  if(is.character(nc)) {
+    nc <- open.nc(nc)
+    on.exit(close.nc(nc), add  = TRUE)
+  }
   
   nc_dim <- filter(nc_meta$dimension, name == instance_dim)
   
