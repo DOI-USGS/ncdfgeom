@@ -1,17 +1,19 @@
-#' @title Write sp or sf geometries and attributes to NetCDF-CF
+#' @title Write geometries and attributes to NetCDF-CF
 #'
 #' @param nc_file \code{character} file path to the nc file to be created.
+#' @param geom_data sf \code{data.frame} with POINT, LINESTRING, MULTILINESTRING, 
+#' POLYGON, or MULTIPOLYGON geometries. Note that three dimensional geometries 
+#' are not supported. sp geometries will be coerced to sf with sf::as_Spatial.
 #' @param instance_dim_name \code{character} Not required if adding geometry to a 
 #' NetCDF-CF Discrete Sampling Geometries timeSeries file. For a new file, will 
 #' use package default -- "instance" -- if not supplied.
-#' @param geom_data object of class \code{SpatialLines}, \code{SpatialPolygons}
-#' or an sf \code{data.frame}. Note that three dimensional geometries are not supported.
 #' @param variables \code{character} If a an existing netcdf files is provided, this 
 #' list of variables that should be related to the geometries.
 #'
 #' @description
 #' Creates a file with point, line or polygon instance data ready for the 
 #' extended NetCDF-CF timeSeries featuretype format.
+#' 
 #' Will also add attributes if provided data has them.
 #'
 #' @references
@@ -29,19 +31,17 @@
 #' ncdump <- system(paste("ncdump -h", hucPolygons_nc), intern = TRUE)
 #' cat(ncdump ,sep = "\n")
 #' 
-write_geometry = function(nc_file, geom_data = NULL, instance_dim_name = NULL, variables = list()) {
+write_geometry = function(nc_file, geom_data, instance_dim_name = NULL, variables = list()) {
 
 	geom_data <- check_geom_data(geom_data)
-	
-  points_mode <- FALSE
 
   type <- get_type(geom_data)
     
-  if(grepl("^POINT$", type)) {
-    points_mode <- TRUE
-  } else if(grepl("MULTIPOINT", type)) {
+  if(grepl("MULTIPOINT", type)) {
   	stop("Multi point not supported yet.")
-  } else if(!grepl("POLYGON", type) & !grepl("LINESTRING", type)) {
+  } else if(!grepl("POLYGON", type) & 
+            !grepl("LINESTRING", type) &
+            type != "POINT") {
     stop("Did not find supported spatial data.")
   }
   
@@ -55,13 +55,13 @@ write_geometry = function(nc_file, geom_data = NULL, instance_dim_name = NULL, v
 	if(ncol(att_data) > 0) {
 		itemp <- sapply(att_data, is.factor)
 		att_data[itemp] <- lapply(att_data[itemp], as.character)
+		
 		nc_file <- write_attribute_data(nc_file, att_data, instance_dim_name)
+		
 		variables <- c(variables, names(att_data))
 	}
 
-  nc_file <- write_geom_data(nc_file, geom_data, instance_dim_name, variables = variables)
-
-  return(nc_file)
+  return(write_geom_data(geom_data, nc_file, instance_dim_name, variables = variables))
 }
 
 #'@title Put geometry data in a NetCDF-CF File
@@ -87,14 +87,257 @@ write_geometry = function(nc_file, geom_data = NULL, instance_dim_name = NULL, v
 #' @importFrom stats setNames
 #' @importFrom sf st_geometry_type st_crs st_coordinates
 #' @noRd
-write_geom_data<-function(nc_file, geom_data, instance_dim_name, variables = c()) {
+write_geom_data <- function(geom_data, ...) 
+  UseMethod("write_geom_data")
+
+#' @name write_geom_data
+write_geom_data.sfc_POINT <- function(geom_data, nc_file, instance_dim_name, variables = c()) {
+  crs <- get_crs(geom_data)
   
-  geom_data <- check_geom_data(geom_data)
+  geom_data <- st_coordinates(geom_data)
   
-  type <- get_type(geom_data)
+  node_count <- c(1:nrow(geom_data))
   
-  node_dim_name <- pkg.env$node_dim_name
+  x_vals <- geom_data[,1]
+  y_vals <- geom_data[,2]
   
+  node_dim_name <- instance_dim_name
+  
+  nc <- init_ncdf(nc_file, x_vals, y_vals, instance_dim_name)
+  
+  write_geom_POINT(nc)
+  
+  put_meta_nc(nc, crs, variables)
+  
+  close.nc(nc)
+  
+  return(nc_file)
+}
+
+#' @name write_geom_data
+write_geom_data.sfc_LINESTRING <- function(geom_data, nc_file, instance_dim_name, variables = c()) {
+  crs <- get_crs(geom_data)
+  
+  geom_data <- st_coordinates(geom_data)
+  
+  n_geoms <- length(unique(geom_data[, 3]))
+  
+  node_count <- rep(NA, n_geoms)
+  x_vals <- rep(NA, nrow(geom_data))
+  y_vals <- x_vals
+  coord <- 1
+  
+  for(geom in 1:n_geoms) {
+    coords <- geom_data[geom_data[, 3] == geom, ][, c(1,2)]
+    nrc <- nrow(coords)
+
+    x_vals[coord:(coord + nrc - 1)] <- coords[,1]
+    y_vals[coord:(coord + nrc - 1)] <- coords[,2]
+    
+    node_count[geom] <- nrc
+    coord <- coord + nrc
+  }
+  
+  nc <- init_ncdf(nc_file, x_vals, y_vals, pkg.env$node_dim_name)
+  
+  write_geom_LINESTRING(nc, node_count, instance_dim_name, NULL)
+  
+  put_meta_nc(nc, crs, variables)
+  
+  close.nc(nc)
+  
+  return(nc_file)
+}
+
+
+#' @name write_geom_data
+write_geom_data.sfc_MULTILINESTRING <- function(geom_data, nc_file, 
+                                                instance_dim_name, variables = c()) {
+  crs <- get_crs(geom_data)
+  
+  geom_data <- st_coordinates(geom_data)
+  
+  part_dif <- diff(geom_data[, 3])
+  part_dif[part_dif < 0] <- 0
+  geom_dif <- diff(geom_data[, 4])
+  geom_data[, 3] <- c(1, cumsum(part_dif + geom_dif) + 1)
+  
+  n_geoms <- length(unique(geom_data[, 4]))
+  n_parts <- length(unique(geom_data[, 3]))
+  
+  nCoords <- nrow(geom_data)
+  
+  part_node_count <- rep(NA, n_parts)
+  node_count <- rep(NA, n_geoms)
+  
+  x_vals <- rep(NA, nCoords)
+  y_vals <- x_vals
+  nc_part <- 0
+  coord <- 1
+  
+  for(geom in 1:n_geoms) {
+    nd_count <- 0
+    
+    g_data <- geom_data[geom_data[, 4] == geom, ]
+
+    for(g_part in 1:length(unique(g_data[, 3]))) {
+      nc_part <- nc_part + 1
+      
+      coords <- g_data[g_data[, 3] == g_part, c(1,2)]
+      nrc <- nrow(coords)
+      
+      x_vals[coord:(coord+nrc-1)] <- coords[,1]
+      y_vals[coord:(coord+nrc-1)] <- coords[,2]
+      
+      nd_count <- nd_count + nrc
+      part_node_count[nc_part] <- nrc
+      coord <- coord + nrc
+    }
+    node_count[geom] <- nd_count
+  }
+  
+  nc <- init_ncdf(nc_file, x_vals, y_vals, pkg.env$node_dim_name)
+  
+  write_geom_LINESTRING(nc, node_count, instance_dim_name, part_node_count)
+  
+  put_meta_nc(nc, crs, variables)
+  
+  close.nc(nc)
+  
+  return(nc_file)
+}
+
+#' @name write_geom_data
+write_geom_data.sfc_POLYGON <- function(geom_data, nc_file, instance_dim_name, variables = c()) {
+  crs <- get_crs(geom_data)
+  
+  geom_data <- st_coordinates(geom_data)
+  
+  hole_dif <- diff(geom_data[, 3])
+  hole_dif[hole_dif < 0] <- 0
+  
+  n_geoms <- length(unique(geom_data[, 4]))
+  n_parts <- n_geoms + sum(hole_dif)
+  
+  nCoords <- nrow(geom_data)
+  
+  part_node_count <- rep(NA, n_parts)  
+  part_type <- rep(pkg.env$multi_val, n_parts)
+  node_count <- rep(NA, n_geoms)
+  
+  x_vals <- rep(NA, nCoords)
+  y_vals <- x_vals
+  nc_part <- 0
+  coord <- 1
+  
+  for(geom in 1:n_geoms) {
+    nd_count <- 0
+    g_data <- geom_data[geom_data[, 4] == geom, ]
+    
+    nc_parts <- length(unique(g_data[, 3]))
+    
+    for(g_part in 1:nc_parts) {
+      nc_part <- nc_part + 1
+      
+      if(g_part > 1) {
+        part_type[nc_part] <- pkg.env$hole_val
+      }
+      
+      coords <- g_data[g_data[, 3] == g_part, c(1,2)]
+      nrc <- nrow(coords)
+      
+      x_vals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 1]
+      y_vals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 2]
+        
+      nd_count <- nd_count + nrc
+      part_node_count[nc_part] <-  nrc
+      coord <- coord + nrc
+    }
+    node_count[geom] <- nd_count
+  }
+  
+  nc <- init_ncdf(nc_file, x_vals, y_vals, pkg.env$node_dim_name)
+  
+  if(all(part_type == pkg.env$multi_val)) part_node_count <- part_type <- NULL
+  
+  write_geom_POLYGON(nc, node_count, instance_dim_name, part_node_count, part_type)
+  
+  put_meta_nc(nc, crs, variables)
+  
+  close.nc(nc)
+  
+  return(nc_file)
+}
+
+#' @name write_geom_data
+write_geom_data.sfc_MULTIPOLYGON <- function(geom_data, nc_file, instance_dim_name, variables = c()) {
+  
+  crs <- get_crs(geom_data)
+  
+  geom_data <- st_coordinates(geom_data)
+  
+  hole_dif <- diff(geom_data[, 3])
+  hole_dif[hole_dif < 0] <- 0
+  part_dif <- diff(geom_data[, 4])
+  part_dif[part_dif < 0] <- 0
+  geom_dif <- diff(geom_data[, 5])
+  
+  geom_data[, 4] <- c(1, cumsum(hole_dif + part_dif + geom_dif) + 1)
+  
+  n_geoms <- length(unique(geom_data[, 5]))
+  n_parts <- length(unique(geom_data[, 4]))
+  
+  nCoords <- nrow(geom_data)
+  
+  part_node_count <- rep(NA, n_parts)  
+  part_type <- rep(pkg.env$multi_val, n_parts)
+  node_count <- rep(NA, n_geoms)
+  
+  x_vals <- rep(NA, nCoords)
+  y_vals <- x_vals
+  nc_part <- 0
+  coord <- 1
+  
+    for(geom in 1:n_geoms) {
+      nd_count <- 0
+      g_data <- geom_data[geom_data[, 5] == geom, ]
+      
+      nc_parts <- length(unique(g_data[, 4]))
+      
+      for(g_part in 1:nc_parts) {
+        nc_part <- nc_part + 1
+        
+        if(g_part > 1 & g_data[g_data[, 4] == g_part, 3][1] > 1) {
+          part_type[nc_part] <- pkg.env$hole_val
+        } else {
+          part_type[nc_part] <-pkg.env$multi_val
+        }
+        
+        coords <- g_data[g_data[, 4] == nc_part, c(1,2)]
+        nrc <- nrow(coords)
+
+        x_vals[coord:(coord + nrc - 1)] <- coords[1:nrc, 1]
+        y_vals[coord:(coord + nrc - 1)] <- coords[1:nrc, 2]
+        
+        nd_count <- nd_count + nrc
+        part_node_count[nc_part] <-  nrc
+        coord <- coord + nrc
+      }
+      node_count[geom] <- nd_count
+    }
+  
+  nc <- init_ncdf(nc_file, x_vals, y_vals, pkg.env$node_dim_name)
+  
+  write_geom_POLYGON(nc, node_count, instance_dim_name, part_node_count, part_type)
+  
+  put_meta_nc(nc, crs, variables)
+  
+  close.nc(nc)
+  
+  return(nc_file)
+}
+
+get_crs <- function(geom_data) {
   crs <- ncmeta::nc_prj_to_gridmapping(st_crs(geom_data)$proj4string)
   crs <- setNames(crs$value, crs$name)
   
@@ -105,145 +348,7 @@ write_geom_data<-function(nc_file, geom_data, instance_dim_name, variables = c()
                 longitude_of_prime_meridian = 0)
     warning("No CRS was found. Assuming WGS84 Lat Lon.")
   }
-  
-  linesMode <- FALSE
-  pointsMode <- FALSE
-  
-  if(grepl("LINESTRING", type)) {
-    linesMode<-TRUE
-  }
-  
-  if(grepl("POINT", type)) {
-    pointsMode <- TRUE
-  }
-  
-  holes <- FALSE
-  multis <- FALSE
-  
-  part_type <- NULL
-  part_node_count <- NULL
-  node_count <- NULL
-  
-  if(pointsMode) {
-
-    geom_data <- st_coordinates(geom_data)
-    
-    node_count <- c(1:nrow(geom_data))
-    
-    x_vals <- geom_data[,1]
-    y_vals <- geom_data[,2]
-    
-    node_dim_name <- instance_dim_name
-    
-  } else {
-    geom_data <- st_coordinates(geom_data)
-    f <- ncol(geom_data) # Feature designator is always last col.
-    
-    if(type == "MULTIPOLYGON") {
-      p_id <- f - 1
-      h_id <- f - 2
-      
-      hole_dif <- diff(geom_data[, h_id])
-      hole_dif[hole_dif < 0] <- 0
-      part_dif <- diff(geom_data[, p_id])
-      part_dif[part_dif < 0] <- 0
-      geom_dif <- diff(geom_data[, f])
-      
-      geom_data[, p_id] <- c(1, cumsum(hole_dif + part_dif + geom_dif) + 1)
-      
-    } else if(type == "POLYGON") {
-      h_id <- f - 1
-      p_id <- 0
-    } else if(type == "MULTILINESTRING") {
-      p_id <- f - 1
-      h_id <- 0
-    }  else if(type == "LINESTRING") {
-      p_id <- 0
-      h_id <- 0
-    }
-    
-    n_geoms <- length(unique(geom_data[, f]))
-    
-    n_parts <- n_geoms
-    if(p_id > 0) n_parts <- length(unique(geom_data[, p_id]))
-    
-    nCoords <- nrow(geom_data)
-    
-
-    if(grepl("MULTI", type)) part_node_count <- rep(NA, n_parts)
-    if(grepl("MULTIPOLYGON", type)) part_type <- rep(NA, n_parts)
-    node_count <- rep(NA, n_geoms)
-    
-    x_vals <- rep(NA, nCoords)
-    y_vals <- x_vals
-    string <- 0
-    coord <- 1
-    
-    for(geom in 1:n_geoms) {
-      nCount <- 0
-      g_data <- geom_data[geom_data[, f] == geom, ]
-      strings <- 1
-      if(p_id > 0) strings <- length(unique(g_data[, p_id]))
-      if(p_id == 0 & h_id > 0) strings <- length(unique(g_data[, h_id]))
-      for(gPart in 1:strings) {
-        string <- string + 1
-        if(gPart > 1) {
-          if(!linesMode && 
-             any(g_data[g_data[, p_id] == gPart, h_id] > 1) || 
-             (p_id == 0 & any(g_data[g_data[, h_id] == gPart] > 1))) {
-            part_type[string] <- pkg.env$hole_val
-            holes <- TRUE
-          } else {
-            part_type[string] <- pkg.env$multi_val
-            multis <- TRUE
-          }
-        } else {
-          part_type[string] <-pkg.env$multi_val
-        }
-        
-        if(p_id == 0 & h_id == 0) {
-          coords <- g_data[, c(1,2)]
-        } else if(h_id == 0 & p_id > 0) {
-          coords <- g_data[g_data[, p_id] == gPart, c(1,2)]
-        } else if(p_id == 0 & h_id > 0) {
-          coords <- g_data[g_data[, h_id] == gPart, c(1,2)]
-        } else {
-          coords <- g_data[g_data[, p_id] == string, c(1,2)]
-        }
-        
-        pCount <- nrow(coords)
-        nCount <- nCount + pCount
-        part_node_count[string] <-  pCount
-        if(linesMode) {
-          x_vals[coord:(coord+nrow(coords)-1)] <- coords[,1]
-          y_vals[coord:(coord+nrow(coords)-1)] <- coords[,2]
-        } else {
-          x_vals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 1]
-          y_vals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 2]
-        }
-        coord <- coord + nrow(coords)
-      }
-      node_count[geom] <- nCount
-    }
-  }
-  
-  # HACK
-  if(type == "LINESTRING" | (type == "POLYGON" & !holes)) part_node_count <- NULL
-  if(type == "POLYGON" & !holes) part_type <- NULL
-  
-  nc <- init_ncdf(nc_file, x_vals, y_vals, node_dim_name)
-  
-  if(type == "POINT") write_geom_POINT(nc)
-  
-  if(grepl("LINESTRING", type)) write_geom_LINESTRING(nc, node_count, instance_dim_name, part_node_count)
-  
-  if(grepl("POLYGON", type)) write_geom_POLYGON(nc, node_count, instance_dim_name, part_node_count, part_type)
-  
-  put_meta_nc(nc, crs, variables)
-  
-  close.nc(nc)
-  
-  return(nc_file)
+  return(crs)
 }
 
 get_type <- function(geom_data) {

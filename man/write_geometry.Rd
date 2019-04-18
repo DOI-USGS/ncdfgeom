@@ -2,16 +2,17 @@
 % Please edit documentation in R/write_geometry.R
 \name{write_geometry}
 \alias{write_geometry}
-\title{Write sp or sf geometries and attributes to NetCDF-CF}
+\title{Write geometries and attributes to NetCDF-CF}
 \usage{
-write_geometry(nc_file, geom_data = NULL, instance_dim_name = NULL,
+write_geometry(nc_file, geom_data, instance_dim_name = NULL,
   variables = list())
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created.}
 
-\item{geom_data}{object of class \code{SpatialLines}, \code{SpatialPolygons}
-or an sf \code{data.frame}. Note that three dimensional geometries are not supported.}
+\item{geom_data}{sf \code{data.frame} with POINT, LINESTRING, MULTILINESTRING, 
+POLYGON, or MULTIPOLYGON geometries. Note that three dimensional geometries 
+are not supported. sp geometries will be coerced to sf with sf::as_Spatial.}
 
 \item{instance_dim_name}{\code{character} Not required if adding geometry to a 
 NetCDF-CF Discrete Sampling Geometries timeSeries file. For a new file, will 
@@ -23,6 +24,7 @@ list of variables that should be related to the geometries.}
 \description{
 Creates a file with point, line or polygon instance data ready for the 
 extended NetCDF-CF timeSeries featuretype format.
+
 Will also add attributes if provided data has them.
 }
 \examples{
