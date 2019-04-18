@@ -7,7 +7,8 @@
 write_timeseries_dsg(nc_file, instance_names, lats, lons, times, data,
   alts = NA, data_unit = "", data_prec = "double",
   data_metadata = list(name = "data", long_name = "unnamed data"),
-  attributes = list(), add_to_existing = FALSE, overwrite = FALSE)
+  time_units = "days since 1970-01-01 00:00:00", attributes = list(),
+  add_to_existing = FALSE, overwrite = FALSE)
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created.}
@@ -34,6 +35,8 @@ of columns in \code{data} parameter.}
 Valid options: 'short' 'integer' 'float' 'double' 'char'.}
 
 \item{data_metadata}{\code{list} A named list of strings: list(name='ShortVarName', long_name='A Long Name')}
+
+\item{time_units}{\code{character} units string in udunits format to use for time. Defaults to 'days since 1970-01-01 00:00:00'}
 
 \item{attributes}{list An optional list of attributes that will be added at the global level. 
 See details for useful attributes.}
