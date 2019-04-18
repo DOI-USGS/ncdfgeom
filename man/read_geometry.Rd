@@ -13,7 +13,7 @@ read_geometry(nc_file)
 sf \code{data.frame} containing spatial geometry of type found in the NetCDF-CF DSG file.
 }
 \description{
-Attemps to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame.
+Attempts to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame.
 }
 \examples{
 huc_eta_nc <- tempfile()
@@ -37,4 +37,8 @@ names(huc_poly)
 }
 \references{
 http://cfconventions.org/index.html
+
+\enumerate{
+  \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
+ }
 }

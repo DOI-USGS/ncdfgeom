@@ -19,7 +19,7 @@ install.packages("devtools")
 devtools::install_github("USGS-R/ncdfgeom")
 ```
 
-When available on CRAN, installation will be available via:
+`ncdfgeom` will be released on CRAN in spring/summer 2019. When available on CRAN, installation will be available via:
 
 ```
 install.packages("ncdfgeom")

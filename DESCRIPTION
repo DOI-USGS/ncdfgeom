@@ -1,18 +1,18 @@
 Package: ncdfgeom
 Type: Package
 Title: NetCDF Geometry and Timeseries
-Version: 0.6.0
-Date: 2019-03-26
+Version: 1.0.0
+Date: 2019-04-18
 Authors@R: c(person("David", "Blodgett", role = c("aut", "cre"), 
                     email = "dblodgett@usgs.gov"),
              person("Luke", "Winslow", role = "ctb"))
-Description: Tools to create discrete sampling geometry and spatial geometry NetCDF files.
+Description: Tools to create timeseries and geometry NetCDF files.
 URL: https://code.usgs.gov/water/ncdfgeom
 BugReports: https://github.com/USGS-R/ncdfgeom/issues
 Imports: RNetCDF, ncmeta, sf, methods, dplyr
 Depends:
   R (>= 3.0)
-Suggests: ncdf4, testthat, geoknife, maptools, knitr, rmarkdown, pkgdown, tidyr, sp
+Suggests: testthat, knitr, rmarkdown, pkgdown, tidyr, sp, geoknife, ncdf4
 Remotes: hypertidy/ncmeta
 License: file LICENSE
 LazyData: TRUE

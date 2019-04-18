@@ -7,7 +7,7 @@
 #' @param instance_dim_name \code{character} Not required if adding geometry to a 
 #' NetCDF-CF Discrete Sampling Geometries timeSeries file. For a new file, will 
 #' use package default -- "instance" -- if not supplied.
-#' @param variables \code{character} If a an existing netcdf files is provided, this 
+#' @param variables \code{character} If a an existing netCDF files is provided, this 
 #' list of variables that should be related to the geometries.
 #'
 #' @description
@@ -16,8 +16,10 @@
 #' 
 #' Will also add attributes if provided data has them.
 #'
-#' @references
-#' http://cfconventions.org/index.html
+#'@references
+#' \enumerate{
+#'   \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html}
+#'}
 #'
 #' @importFrom sf st_set_geometry st_geometry
 #' @export
@@ -90,6 +92,7 @@ write_geometry = function(nc_file, geom_data, instance_dim_name = NULL, variable
 write_geom_data <- function(geom_data, ...) 
   UseMethod("write_geom_data")
 
+#' @noRd
 #' @name write_geom_data
 write_geom_data.sfc_POINT <- function(geom_data, nc_file, instance_dim_name, variables = c()) {
   crs <- get_crs(geom_data)
@@ -114,6 +117,7 @@ write_geom_data.sfc_POINT <- function(geom_data, nc_file, instance_dim_name, var
   return(nc_file)
 }
 
+#' @noRd
 #' @name write_geom_data
 write_geom_data.sfc_LINESTRING <- function(geom_data, nc_file, instance_dim_name, variables = c()) {
   crs <- get_crs(geom_data)
@@ -149,7 +153,7 @@ write_geom_data.sfc_LINESTRING <- function(geom_data, nc_file, instance_dim_name
   return(nc_file)
 }
 
-
+#' @noRd
 #' @name write_geom_data
 write_geom_data.sfc_MULTILINESTRING <- function(geom_data, nc_file, 
                                                 instance_dim_name, variables = c()) {
@@ -207,6 +211,7 @@ write_geom_data.sfc_MULTILINESTRING <- function(geom_data, nc_file,
   return(nc_file)
 }
 
+#' @noRd
 #' @name write_geom_data
 write_geom_data.sfc_POLYGON <- function(geom_data, nc_file, instance_dim_name, variables = c()) {
   crs <- get_crs(geom_data)
@@ -269,6 +274,7 @@ write_geom_data.sfc_POLYGON <- function(geom_data, nc_file, instance_dim_name, v
   return(nc_file)
 }
 
+#' @noRd
 #' @name write_geom_data
 write_geom_data.sfc_MULTIPOLYGON <- function(geom_data, nc_file, instance_dim_name, variables = c()) {
   

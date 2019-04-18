@@ -19,7 +19,7 @@
 #' @description
 #' Creates a point feature type discrete sampling features NetCDF file. 
 #' Returns the created filename. 
-#' Can pass in netcdf creation options like force_v4 to pass on to nc_create().
+#' Can pass in netCDF creation options like force_v4 to pass on to nc_create().
 #'
 #'@references
 #' \enumerate{
@@ -29,7 +29,8 @@
 #'
 #'@importFrom RNetCDF open.nc close.nc var.def.nc var.put.nc att.put.nc
 #'
-#'@export
+#' @noRd
+#' @noMd
 write_point_dsg = function(nc_file, lats, lons, alts, times, data, data_units=rep('', ncol(data)), feature_names = NULL, ...){
 	
 	n = length(lats)
@@ -54,7 +55,7 @@ write_point_dsg = function(nc_file, lats, lons, alts, times, data, data_units=re
 	
 	instance_dim_name <- "obs"
 	
-	nc_file <- write_attribute_data(nc_file=nc_file, attData = data, 
+	nc_file <- write_attribute_data(nc_file=nc_file, att_data = data, 
 	                                instance_dim_name = instance_dim_name, 
 	                                units = data_units, ...)
 	

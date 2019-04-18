@@ -67,7 +67,7 @@ Any columns of class date will be converted to character." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -131,8 +131,8 @@ Any columns of class date will be converted to character.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>write_attribute_data</span>(<span class='no'>nc_file</span>, <span class='no'>attData</span>, <span class='kw'>instance_dim_name</span> <span class='kw'>=</span> <span class='st'>"instance"</span>,
-  <span class='kw'>units</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"unknown"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>ncol</a></span>(<span class='no'>attData</span>)), <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>write_attribute_data</span>(<span class='no'>nc_file</span>, <span class='no'>att_data</span>, <span class='kw'>instance_dim_name</span> <span class='kw'>=</span> <span class='st'>"instance"</span>,
+  <span class='kw'>units</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"unknown"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>ncol</a></span>(<span class='no'>att_data</span>)), <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -143,8 +143,8 @@ Any columns of class date will be converted to character.</p>
 If adding to a file, it must already have the named instance dimension.</p></td>
     </tr>
     <tr>
-      <th>attData</th>
-      <td><p><code>data.frame</code> with instances as rows and attributes as rows.</p></td>
+      <th>att_data</th>
+      <td><p><code>data.frame</code> with instances as columns and attributes as rows.</p></td>
     </tr>
     <tr>
       <th>instance_dim_name</th>
@@ -152,11 +152,11 @@ If adding to a file, it must already have the named instance dimension.</p></td>
     </tr>
     <tr>
       <th>units</th>
-      <td><p><code>character</code> vector with units for each column of attData. Defaults to "unknown" for all.</p></td>
+      <td><p><code>character</code> vector with units for each column of att_data. Defaults to "unknown" for all.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>additional arguments to be passed on to <code>nc_create</code>.</p></td>
+      <th>overwrite</th>
+      <td><p>boolean overwrite existing file? Will append if FALSE.</p></td>
     </tr>
     </table>
     
@@ -169,7 +169,7 @@ If adding to a file, it must already have the named instance dimension.</p></td>
                                     <span class='kw'>units</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"unknown"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>ncol</a></span>(<span class='no'>sample_data</span>)))
 
 <span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>example_file</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf file8fca73a43e0 {
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf file82435852fa6 {
 #&gt; dimensions:
 #&gt; 	instance = 100 ;
 #&gt; 	char = 12 ;

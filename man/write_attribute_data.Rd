@@ -4,18 +4,18 @@
 \alias{write_attribute_data}
 \title{Write attribute data to NetCDF-CF}
 \usage{
-write_attribute_data(nc_file, attData, instance_dim_name = "instance",
-  units = rep("unknown", ncol(attData)), overwrite = FALSE)
+write_attribute_data(nc_file, att_data, instance_dim_name = "instance",
+  units = rep("unknown", ncol(att_data)), overwrite = FALSE)
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created. 
 If adding to a file, it must already have the named instance dimension.}
 
-\item{attData}{\code{data.frame} with instances as rows and attributes as rows.}
+\item{att_data}{\code{data.frame} with instances as columns and attributes as rows.}
 
 \item{instance_dim_name}{\code{character} name for the instance dimension. Defaults to "instance"}
 
-\item{units}{\code{character} vector with units for each column of attData. Defaults to "unknown" for all.}
+\item{units}{\code{character} vector with units for each column of att_data. Defaults to "unknown" for all.}
 
 \item{overwrite}{boolean overwrite existing file? Will append if FALSE.}
 }

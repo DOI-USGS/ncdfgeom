@@ -1,4 +1,4 @@
-#' @title Write orthoganal array time series to NetCDF-CF
+#' @title Write time series to NetCDF-CF
 #'
 #' @param nc_file \code{character} file path to the nc file to be created.
 #' @param instance_names \code{character} or \code{numeric} vector of names for each instance 

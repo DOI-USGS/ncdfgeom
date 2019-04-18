@@ -3,7 +3,7 @@
 #'@param nc_file character file path to the nc file to be read.
 #'
 #'@description
-#'Attemps to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame.
+#'Attempts to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame.
 #'
 #'@references
 #'http://cfconventions.org/index.html
@@ -13,6 +13,10 @@
 #'
 #'@return sf \code{data.frame} containing spatial geometry of type found in the NetCDF-CF DSG file.
 #'
+#'@references
+#' \enumerate{
+#'   \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
+#'  }
 #'@export
 #'
 #'@examples
@@ -47,6 +51,7 @@ read_geometry = function(nc_file) {
 #' @noRd
 read_geom_data <- function(nc_props, nc) UseMethod("read_geom_data")
 
+#' @noRd
 #' @name read_geom_data
 read_geom_data.point <- function(nc_props, nc) {
   coord <- get_coords(nc, nc_props)
@@ -61,11 +66,13 @@ read_geom_data.point <- function(nc_props, nc) {
   return(st_as_sf(cbind(point_data, data_frame), crs = st_crs(prj), coords = c("x", "y")))
 }
 
+#' @noRd
 #' @name read_geom_data
 read_geom_data.line <- function(nc_props, nc) {
   return(parse_geom(nc_props, nc))
 }
 
+#' @noRd
 #' @name read_geom_data
 read_geom_data.polygon <- function(nc_props, nc) {
   return(parse_geom(nc_props, nc))

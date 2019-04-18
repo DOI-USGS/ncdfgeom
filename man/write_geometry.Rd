@@ -18,7 +18,7 @@ are not supported. sp geometries will be coerced to sf with sf::as_Spatial.}
 NetCDF-CF Discrete Sampling Geometries timeSeries file. For a new file, will 
 use package default -- "instance" -- if not supplied.}
 
-\item{variables}{\code{character} If a an existing netcdf files is provided, this 
+\item{variables}{\code{character} If a an existing netCDF files is provided, this 
 list of variables that should be related to the geometries.}
 }
 \description{
@@ -38,5 +38,7 @@ cat(ncdump ,sep = "\\n")
 
 }
 \references{
-http://cfconventions.org/index.html
+\enumerate{
+  \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html}
+}
 }
