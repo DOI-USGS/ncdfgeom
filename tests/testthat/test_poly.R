@@ -210,3 +210,43 @@ test_that("A whole shapefile can be written", {
   }
 })
 
+test_that("big roundtrip", {
+  dir.create("data/temp/", showWarnings = FALSE)
+  unzip("data/climdiv_prcp.nc.zip", exdir = "data/temp/")
+
+  expect_warning(prcp_data <- read_timeseries_dsg("data/temp/climdiv_prcp.nc"),
+                 "no altitude coordinate found")
+  expect_equal(length(prcp_data), 9)
+  expect_equal(length(prcp_data$time), 1500)
+  expect_s3_class(prcp_data$time[1], "POSIXct")
+  expect_equal(nrow(prcp_data$data_frames[[1]]), 1500)
+  expect_equal(ncol(prcp_data$data_frames[[1]]), 344)
+  
+  climdiv_poly <- read_geometry("data/temp/climdiv_prcp.nc")
+  
+  expect_s3_class(climdiv_poly, "sf")
+  expect_s3_class(climdiv_poly$geom, "sfc_GEOMETRY")
+
+  out_nc <- write_timeseries_dsg(nc_file = "data/temp/temp.nc", 
+                                 instance_names = names(prcp_data$data_frames[[1]]), 
+                                 lats = prcp_data$lats,
+                                 lons = prcp_data$lons, 
+                                 times = prcp_data$time, 
+                                 data = prcp_data$data_frames[[1]], 
+                                 data_unit = prcp_data$data_unit[[1]], 
+                                 data_prec = prcp_data$data_prec[[1]], 
+                                 data_metadata = prcp_data$varmeta[[1]], 
+                                 attributes = prcp_data$global_attributes[[1]], 
+                                 overwrite = TRUE)
+  
+  expect_error(write_geometry("data/temp/temp.nc", climdiv_poly, variables = "climdiv_prcp_inches"),
+               "Found multiple geometry types, only one is supported.")
+  
+  climdiv_poly <- st_sf(st_cast(climdiv_poly, "MULTIPOLYGON"))
+  
+  expect_warning(out_nc <- write_geometry("data/temp/temp.nc", climdiv_poly, variables = "climdiv_prcp_inches"),
+                 "no datum information found assuming WGS84")
+  
+  unlink("data/temp/*")
+  
+})

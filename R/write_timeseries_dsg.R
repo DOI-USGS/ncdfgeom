@@ -91,7 +91,11 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		stop('All the collumns in the input dataframe must be of the same type.')
 	}
 	
-	type <- pkg.env$nc_types[data_prec][[1]]
+	if(!data_prec %in% as.character(pkg.env$nc_types)) {
+	  type <- pkg.env$nc_types[data_prec][[1]]
+	} else {
+	  type <- data_prec
+	}
 	
 	if(type == "NC_CHAR") {
 	  missing <- ""

@@ -307,7 +307,7 @@ write_geom_data.sfc_MULTIPOLYGON <- function(geom_data, nc_file, instance_dim_na
       for(g_part in 1:nc_parts) {
         nc_part <- nc_part + 1
         
-        if(g_part > 1 & g_data[g_data[, 4] == g_part, 3][1] > 1) {
+        if(g_part > 1 && g_data[g_data[, 4] == nc_part, 3][1] > 1) {
           part_type[nc_part] <- pkg.env$hole_val
         } else {
           part_type[nc_part] <-pkg.env$multi_val

@@ -314,7 +314,7 @@ p_colors <- function (n, name = c("precip_colors")) {
 ```
 ```{r cleanup}
 unlink("GIS*")
-unlink("CONUS_CLIMATE_DIVISIONS.shp.zip")
-unlink("prcp.txt")
-unlink("climdiv_prcp.nc")
+# unlink("CONUS_CLIMATE_DIVISIONS.shp.zip")
+# unlink("prcp.txt")
+# unlink("climdiv_prcp.nc")
 ```
