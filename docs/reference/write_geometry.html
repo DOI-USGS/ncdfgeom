@@ -91,7 +91,7 @@ Will also add attributes if provided data has them." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
+      <a href="../articles/geometry.html">Reading and Writing NetCDF-CF Geometry</a>
     </li>
     <li>
       <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
@@ -151,7 +151,7 @@ use package default -- "instance" -- if not supplied.</p></td>
     </tr>
     <tr>
       <th>variables</th>
-      <td><p><code>character</code> If a an existing netcdf files is provided, this 
+      <td><p><code>character</code> If a an existing netCDF files is provided, this 
 list of variables that should be related to the geometries.</p></td>
     </tr>
     </table>
@@ -170,7 +170,7 @@ list of variables that should be related to the geometries.</p></td>
 <span class='no'>hucPolygons_nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdfgeom</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry'>write_geometry</a></span>(<span class='kw'>nc_file</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/tempfile'>tempfile</a></span>(),
                                            <span class='kw'>geom_data</span> <span class='kw'>=</span> <span class='no'>hucPolygons</span>)
 <span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>hucPolygons_nc</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf file82433c68c282 {
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf fileee7d62399989 {
 #&gt; dimensions:
 #&gt; 	instance = 2 ;
 #&gt; 	char = 38 ;

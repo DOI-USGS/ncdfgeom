@@ -92,7 +92,7 @@ timesteps per instance (e.g. geometry or station)." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
+      <a href="../articles/geometry.html">Reading and Writing NetCDF-CF Geometry</a>
     </li>
     <li>
       <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
@@ -132,7 +132,8 @@ timesteps per instance (e.g. geometry or station).</p>
     <pre class="usage"><span class='fu'>write_timeseries_dsg</span>(<span class='no'>nc_file</span>, <span class='no'>instance_names</span>, <span class='no'>lats</span>, <span class='no'>lons</span>, <span class='no'>times</span>, <span class='no'>data</span>,
   <span class='kw'>alts</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>data_unit</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>data_prec</span> <span class='kw'>=</span> <span class='st'>"double"</span>,
   <span class='kw'>data_metadata</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"data"</span>, <span class='kw'>long_name</span> <span class='kw'>=</span> <span class='st'>"unnamed data"</span>),
-  <span class='kw'>attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(), <span class='kw'>add_to_existing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='kw'>time_units</span> <span class='kw'>=</span> <span class='st'>"days since 1970-01-01 00:00:00"</span>, <span class='kw'>attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(),
+  <span class='kw'>add_to_existing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,6 +182,10 @@ Valid options: 'short' 'integer' 'float' 'double' 'char'.</p></td>
     <tr>
       <th>data_metadata</th>
       <td><p><code>list</code> A named list of strings: list(name='ShortVarName', long_name='A Long Name')</p></td>
+    </tr>
+    <tr>
+      <th>time_units</th>
+      <td><p><code>character</code> units string in udunits format to use for time. Defaults to 'days since 1970-01-01 00:00:00'</p></td>
     </tr>
     <tr>
       <th>attributes</th>

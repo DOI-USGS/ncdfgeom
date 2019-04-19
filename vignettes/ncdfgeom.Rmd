@@ -38,8 +38,8 @@ Additional read / write functions to include additional DSG feature types will b
 At the time of writing, installation is only available via `devtools` or building the package directly as one would for development purposes.
 
 ```
-install.packages("devtools")
-devtools::install_github("USGS-R/ncdfgeom")
+install.packages("remotes")
+remotes::install_github("USGS-R/ncdfgeom")
 ```
 
 When on CRAN, the package will be installed with the typical install.packages method.
@@ -48,80 +48,42 @@ When on CRAN, the package will be installed with the typical install.packages me
 install.packages("ncdfgeom")
 ```
 
-## Input Data
+For this demo, we'll use `sf`, `dplyr`, and `ncdfgeom`.
 
- We will start with two dataframes: **`prcp_data` and `climdiv_poly`.** 
-
-Code to download and prep these data is shown below. More info: [doi:10.7289/V5M32STR](https://doi.org/10.7289/V5M32STR)
-
-```{r libs, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
-library(dplyr)
-library(tidyr)
+```{r libs, message=FALSE, warning=FALSE}
 library(sf)
+library(dplyr)
 library(ncdfgeom)
 ```
-```{r setup_secret, echo = FALSE}
-# Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt
-prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190408"
-prcp_file <- "prcp.txt"
-if(!file.exists(prcp_file)) {
-  download.file(url = prcp_url, destfile = prcp_file, quiet = TRUE)
-}
 
-division_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/CONUS_CLIMATE_DIVISIONS.shp.zip"
-division_file <- "CONUS_CLIMATE_DIVISIONS.shp.zip"
-if(!file.exists(division_file)) {
-  download.file(url = division_url, destfile = division_file, quiet = TRUE)
-  unzip("CONUS_CLIMATE_DIVISIONS.shp.zip")
-}
+## Sample Data
 
-suppressWarnings(climdiv_poly <- read_sf("GIS.OFFICIAL_CLIM_DIVISIONS.shp") %>%
-  select("CLIMDIV", CLIMDIV_NAME = "NAME") %>%
-  mutate(CLIMDIV = ifelse(nchar(as.character(CLIMDIV)) == 3, 
-                          paste0("0",as.character(CLIMDIV)),
-                          as.character(CLIMDIV))) %>%
-  st_simplify(dTolerance = 0.0125))
+ We will start with two dataframes: **`prcp_data` and `climdiv_poly`** containing precipitation estimate timeseries and polygon geometries that describe the boundaries of climate divisions respectively. The precipitation data has one time series for each geometry.
 
-month_strings <- c("jan", "feb", "mar", "apr", "may", "jun", 
-                   "jul", "aug", "sep", "oct", "nov", "dec")
+Code to download and prep these data is shown at the bottom. More info about the data can be found at: [doi:10.7289/V5M32STR](https://doi.org/10.7289/V5M32STR)
 
-prcp_data <- read.table(prcp_file, header = FALSE, 
-                        colClasses = c("character", 
-                                       rep("numeric", 12)),
-                        col.names = c("meta", month_strings))
-
-# Here we gather the data into a long format and prep it for ncdfgeom.
-prcp_data <- prcp_data %>%
-  gather(key = "month", value = "precip_inches", -meta) %>%
-  mutate(climdiv = paste0(substr(meta, 1, 2), substr(meta, 3, 4)),
-         year = substr(meta, 7, 10),
-         precip_inches = ifelse(precip_inches < 0, NA, precip_inches)) %>%
-  mutate(date = as.Date(paste0("01", "-", month, "-", year), 
-                        format = "%d-%b-%Y")) %>%
-  select(-meta, -month, -year) %>%
-  filter(climdiv %in% climdiv_poly$CLIMDIV) %>%
-  spread(key = "climdiv", value = "precip_inches") %>%
-  as_tibble()
-
-# Now make sure things are in the same order.
-climdiv_names <- names(prcp_data)[2:length(names(prcp_data))]
-climdiv_row_order <- match(climdiv_names, climdiv_poly$CLIMDIV)
-climdiv_poly <- climdiv_poly[climdiv_row_order, ]
-```
+The data required for this demo has been cached in the `ncdfgeom` package and is available as shown below.
 
 ### `prcp_data`
-```{r data_shape_2, echo=FALSE}
-options(tibble.width = 50, tibble.print_max = 10)
+```{r data_shape_2}
+prcp_data <- readRDS(system.file("extdata/climdiv-pcpndv.rds", package = "ncdfgeom"))
 print(prcp_data, n_extra = 0)
+plot(prcp_data$date, prcp_data$`0101`, col = "red", 
+     xlab = "date", ylab = "monthly precip (inches)", main = "Sample Timeseries for 0101-'Northern Valley'")
+lines(prcp_data$date, prcp_data$`0101`)
 ```
 
 ### `climdiv_poly`
-```{r data_shape, echo=FALSE}
-climdiv_poly
+```{r data_shape}
+climdiv_poly <- read_sf(system.file("extdata/climdiv.gpkg", package = "ncdfgeom"))
+print(climdiv_poly)
+plot(st_geometry(climdiv_poly), main = "Climate Divisions with 0101-'Northern Valley' Highlighted")
+plot(st_geometry(filter(climdiv_poly, CLIMDIV == "0101")), col = "red", add = TRUE)
 ```
 
 As shown above, we have two `data.frame`s. One has 344 columns and the other 344 rows. These 344 climate divisions will be our "instance" dimension when we write to NetCDF. 
 
+## Write Timeseries and Geometry to NetCDF
 The NetCDF discrete sampling geometries timeseries standard requires point lat/lon coordinate locations for timeseries data. In the code below, we calculate these values and write the timeseries data to a netcdf file.
 
 ```{r write_ts, warning = FALSE} 
@@ -150,27 +112,29 @@ write_timeseries_dsg(nc_file = nc_file,
                      data_prec = "float", 
                      data_metadata = prcp_meta, 
                      attributes = list(title = "Demonstation of ncdfgeom"), 
-                     add_to_existing = FALSE) -> nc_file
+                     add_to_existing = FALSE)
 
 climdiv_poly <- st_sf(st_cast(climdiv_poly, "MULTIPOLYGON"))
 
 write_geometry(nc_file = "climdiv_prcp.nc", 
                geom_data = climdiv_poly,
-               variables = "climdiv_prcp_inches") -> nc_file
+               variables = "climdiv_prcp_inches")
 ```
 Now we have a file with a structure as shown in the `ncdump` output below.
-```{r ncdump, echo=FALSE}
+```{r ncdump}
 ncdump <- system(paste("ncdump -h", nc_file), intern = TRUE)
-cat(ncdump ,sep = "\n")
+cat(ncdump, sep = "\n")
 ```
 
 For more information about the polygon and timeseries data structures used here, see the [NetCDF-CF standard.](http://cfconventions.org/cf-conventions/cf-conventions.html)  
 
-## Read Data
-
+## Read Timeseries and Geometry from NetCDF
 Now that we have all our data in a single file, we can read it back in.
 ```{r read}
+# First read the timeseries.
 prcp_data <- read_timeseries_dsg("climdiv_prcp.nc")
+
+# Now read the geometry.
 climdiv_poly <- read_geometry("climdiv_prcp.nc")
 ```
 
@@ -185,8 +149,6 @@ str(names(prcp_data$data_frames$climdiv_prcp_inches))
 prcp_data$global_attributes
 names(climdiv_poly)
 ```
-
-To better understand what is actually in this file, let's visualize the data we just read. Below we join a sum of the precipitation timeseries to the climate division polygons and plot them up.
 
 ```{r p_colors_source, echo=FALSE}
 # Because we've gotta have pretty colors!
@@ -213,6 +175,8 @@ p_colors <- function (n, name = c("precip_colors")) {
     palette
 }
 ```
+
+To better understand what is actually in this file, let's visualize the data we just read. Below we join a sum of the precipitation timeseries to the climate division polygons and plot them up.
 
 ```{r plot, fig.height=6, fig.width=8}
 climdiv_poly <- climdiv_poly %>%
@@ -241,27 +205,27 @@ plot(prcp["prcp"], lwd = 0.1, pal = p_colors,
   
 ```
 
-This is the code used to download and prep the precipitation data.
-```{r setup, eval = FALSE}
+This is the code used to download and prep the precipitation and spatial data. Provided for reproducibility and  is not run here.
+```{r setup_secret, eval = FALSE}
 # Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt
 prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190408"
+
 prcp_file <- "prcp.txt"
-if(!file.exists(prcp_file)) {
-  download.file(url = prcp_url, destfile = prcp_file, quiet = TRUE)
-}
+
+download.file(url = prcp_url, destfile = prcp_file, quiet = TRUE)
 
 division_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/CONUS_CLIMATE_DIVISIONS.shp.zip"
 division_file <- "CONUS_CLIMATE_DIVISIONS.shp.zip"
-if(!file.exists(division_file)) {
-  download.file(url = division_url, destfile = division_file, quiet = TRUE)
-  unzip("CONUS_CLIMATE_DIVISIONS.shp.zip")
-}
+
+download.file(url = division_url, destfile = division_file, quiet = TRUE)
+unzip("CONUS_CLIMATE_DIVISIONS.shp.zip")
 
 climdiv_poly <- read_sf("GIS.OFFICIAL_CLIM_DIVISIONS.shp") %>%
   select("CLIMDIV", CLIMDIV_NAME = "NAME") %>%
   mutate(CLIMDIV = ifelse(nchar(as.character(CLIMDIV)) == 3, 
                           paste0("0",as.character(CLIMDIV)),
-                          as.character(CLIMDIV)))
+                          as.character(CLIMDIV))) %>%
+  st_simplify(dTolerance = 0.0125)
 
 month_strings <- c("jan", "feb", "mar", "apr", "may", "jun", 
                    "jul", "aug", "sep", "oct", "nov", "dec")
@@ -281,12 +245,21 @@ prcp_data <- prcp_data %>%
                         format = "%d-%b-%Y")) %>%
   select(-meta, -month, -year) %>%
   filter(climdiv %in% climdiv_poly$CLIMDIV) %>%
-  spread(key = "climdiv", value = "precip_inches")
+  spread(key = "climdiv", value = "precip_inches") %>%
+  filter(!is.na(`0101`))
+  as_tibble()
 
 # Now make sure things are in the same order.
 climdiv_names <- names(prcp_data)[2:length(names(prcp_data))]
 climdiv_row_order <- match(climdiv_names, climdiv_poly$CLIMDIV)
 climdiv_poly <- climdiv_poly[climdiv_row_order, ]
+
+sf::write_sf(climdiv_poly, "climdiv.gpkg")
+saveRDS(prcp_data, "climdiv-pcpndv.rds")
+
+unlink("GIS*")
+unlink("CONUS_CLIMATE_DIVISIONS.shp.zip")
+unlink("prcp.txt")
 ```
 
 Here's the `p_colors` function used in plotting above.
@@ -315,8 +288,5 @@ p_colors <- function (n, name = c("precip_colors")) {
 }
 ```
 ```{r cleanup, echo=FALSE}
-unlink("GIS*")
-unlink("CONUS_CLIMATE_DIVISIONS.shp.zip")
-unlink("prcp.txt")
 unlink("climdiv_prcp.nc")
 ```
