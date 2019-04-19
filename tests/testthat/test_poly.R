@@ -3,7 +3,7 @@ context("polygon")
 
 test_that("data for basic polygon", {
   polygonData <- get_fixture_data("polygon")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(nc$dim$instance$vals,c(1))
@@ -19,11 +19,6 @@ test_that("data for basic polygon", {
 
   expect_equivalent(ncatt_get(nc, 0,"Conventions")$value,
                     pkg.env$cf_version)
-
-  expect_equivalent(ncatt_get(nc, pkg.env$x_nodes,"standard_name")$value,
-                    "longitude")
-  expect_equivalent(ncatt_get(nc, pkg.env$y_nodes,"standard_name")$value,
-                    "latitude")
 
   expect_equal(ncatt_get(nc, pkg.env$x_nodes,"axis")$value,
                pkg.env$x_axis)
@@ -48,7 +43,7 @@ test_that("data for basic polygon", {
 
 test_that("polygon with a hole.", {
   polygonData <- get_fixture_data("polygon_hole")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(nc$dim$instance$vals,c(1))
@@ -75,7 +70,7 @@ test_that("polygon with a hole.", {
 
 test_that("multipolygon.", {
   polygonData <- get_fixture_data("multipolygon")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$node_count_var_name)),
@@ -92,7 +87,7 @@ test_that("multipolygon.", {
 
 test_that("multipolygon with a hole.", {
   polygonData <-get_fixture_data("multipolygon_hole")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc,pkg.env$node_count_var_name)),
@@ -124,7 +119,7 @@ test_that("multipolygon with a hole.", {
 
 test_that("multipolygons with holes.", {
   polygonData <- get_fixture_data("multipolygons_holes")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc, pkg.env$part_type_var_name)),
@@ -147,7 +142,7 @@ test_that("multipolygons with holes.", {
 
 test_that("A whole shapefile can be written", {
   polygonData <- read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
   
   crs <- list(grid_mapping_name = "albers_conical_equal_area",
@@ -173,9 +168,9 @@ test_that("A whole shapefile can be written", {
   }
   
   coords<-sf::st_coordinates(sf::st_geometry(polygonData)[[1]])[, c("X", "Y")]
-  expect_equal(as.numeric(coords[nrow(coords):1,1]),
+  expect_equal(as.numeric(coords[1:nrow(coords),1]),
                as.numeric(ncvar_get(nc, varid = pkg.env$x_nodes, start = c(1), count = c(118))))
-  expect_equal(as.numeric(coords[nrow(coords):1,2]),
+  expect_equal(as.numeric(coords[1:nrow(coords),2]),
                as.numeric(ncvar_get(nc, varid = pkg.env$y_nodes, start = c(1), count = c(118))))
   # Check to make sure a hole is encoded correctly.
   node_count <- ncvar_get(nc, pkg.env$node_count_var_name)
@@ -202,16 +197,56 @@ test_that("A whole shapefile can be written", {
   
   returnPolyData<-read_geometry(nc_file)
   compareSP(polygonData, returnPolyData)
+  
   for(name in names(sf::st_set_geometry(polygonData, NULL))) {
-    expect_equal(as.character(polygonData[name]), as.character(returnPolyData[name]))
+    expect_equal(as.character(sf::st_set_geometry(polygonData[name], NULL)), 
+                 as.character(sf::st_set_geometry(returnPolyData[name], NULL)))
   }
   
-  returnPolygonData_sp <- sf::as_Spatial(returnPolyData)
-  for(i in 1:length(returnPolygonData_sp@polygons)) {
-    expect_equal(length(returnPolygonData_sp@polygons[[i]]@Polygons), length(polygonData_sp@polygons[[i]]@Polygons))
-    for(j in 1:length(returnPolygonData_sp@polygons[[i]]@Polygons)) {
-      expect_equal(length(returnPolygonData_sp@polygons[[i]]@Polygons[[j]]@coords), length(polygonData_sp@polygons[[i]]@Polygons[[j]]@coords))
-    }
+  returnPolyData <- dplyr::arrange(returnPolyData, ID)
+  polygonData <- dplyr::arrange(polygonData, ID)
+  for(i in 1:nrow(polygonData)) {
+    expect_equal(st_coordinates(polygonData[i, ]), st_coordinates(returnPolyData[i, ]), info = paste("error in poly", i))
   }
 })
 
+test_that("big roundtrip", {
+  dir.create("data/temp/", showWarnings = FALSE)
+  unzip("data/climdiv_prcp.nc.zip", exdir = "data/temp/")
+
+  expect_warning(prcp_data <- read_timeseries_dsg("data/temp/climdiv_prcp.nc"),
+                 "no altitude coordinate found")
+  expect_equal(length(prcp_data), 9)
+  expect_equal(length(prcp_data$time), 1500)
+  expect_s3_class(prcp_data$time[1], "POSIXct")
+  expect_equal(nrow(prcp_data$data_frames[[1]]), 1500)
+  expect_equal(ncol(prcp_data$data_frames[[1]]), 344)
+  
+  climdiv_poly <- read_geometry("data/temp/climdiv_prcp.nc")
+  
+  expect_s3_class(climdiv_poly, "sf")
+  expect_s3_class(climdiv_poly$geom, "sfc_GEOMETRY")
+
+  out_nc <- write_timeseries_dsg(nc_file = "data/temp/temp.nc", 
+                                 instance_names = names(prcp_data$data_frames[[1]]), 
+                                 lats = prcp_data$lats,
+                                 lons = prcp_data$lons, 
+                                 times = prcp_data$time, 
+                                 data = prcp_data$data_frames[[1]], 
+                                 data_unit = prcp_data$data_unit[[1]], 
+                                 data_prec = prcp_data$data_prec[[1]], 
+                                 data_metadata = prcp_data$varmeta[[1]], 
+                                 attributes = prcp_data$global_attributes[[1]], 
+                                 overwrite = TRUE)
+  
+  expect_error(write_geometry("data/temp/temp.nc", climdiv_poly, variables = "climdiv_prcp_inches"),
+               "Found multiple geometry types, only one is supported.")
+  
+  climdiv_poly <- st_sf(st_cast(climdiv_poly, "MULTIPOLYGON"))
+  
+  expect_warning(out_nc <- write_geometry("data/temp/temp.nc", climdiv_poly, variables = "climdiv_prcp_inches"),
+                 "no datum information found assuming WGS84")
+  
+  unlink("data/temp/*")
+  
+})

@@ -1,4 +1,4 @@
-context("orthoganal netcdf timeseries")
+context("orthogonal netcdf timeseries")
 
 test_that("Create basic DSG file",{
   nc_summary<-'test summary'

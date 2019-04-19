@@ -6,7 +6,7 @@ NetCDF-CF Geometry and Timeseries Tools for R
 
 It implements the NetCDF-CF Spatial Geometries specification and the timeSeries feature type of the [Discrete Sampling Geometry](http://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries) NetCDF-CF specification. 
 
-**Visit the [`pkgdown` site](http://usgs-r.github.io/ncdfgeom/dev/articles/ncdfgeom.html) for a complete overview of the package.**
+**Visit the [`pkgdown` site](http://usgs-r.github.io/ncdfgeom/articles/ncdfgeom.html) for a complete overview of the package.**
 
 Given that this package is fairly new and in active development, please test it out 
 and consider [submitting issues and/or contributions!](https://github.com/USGS-R/ncdfgeom/issues)
@@ -19,7 +19,7 @@ install.packages("devtools")
 devtools::install_github("USGS-R/ncdfgeom")
 ```
 
-When available on CRAN, installation will be available via:
+`ncdfgeom` will be released on CRAN in spring/summer 2019. When available on CRAN, installation will be available via:
 
 ```
 install.packages("ncdfgeom")

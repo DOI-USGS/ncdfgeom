@@ -32,7 +32,7 @@
 
 <meta property="og:title" content="Read NetCDF-CF spatial geometries — read_geometry" />
 
-<meta property="og:description" content="Attemps to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame." />
+<meta property="og:description" content="Attempts to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
+      <a href="../articles/geometry.html">Reading and Writing NetCDF-CF Geometry</a>
     </li>
     <li>
       <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
@@ -119,7 +119,7 @@
 
     <div class="ref-description">
     
-    <p>Attemps to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame.</p>
+    <p>Attempts to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame.</p>
     
     </div>
 
@@ -140,7 +140,10 @@
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>https://github.com/twhiteaker/netCDF-CF-simple-geometry</p>
+    <p>http://cfconventions.org/index.html</p>
+<ol>
+<li><p><a href='http://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types'>http://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types</a></p></li>
+</ol>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -155,7 +158,7 @@
 #&gt; [11] "HUC12"      "NAME"       "HUTYPE"     "HUMOD"      "TOHUC"     
 #&gt; [16] "NONCONTRIB" "NONCONTR_1" "SHAPE_Leng" "SHAPE_Area" "geometry"  </div><div class='input'>
 <span class='no'>hucPolygons_nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdfgeom</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry'>write_geometry</a></span>(<span class='kw'>nc_file</span><span class='kw'>=</span><span class='no'>huc_eta_nc</span>,
-                                          <span class='kw'>geomData</span> <span class='kw'>=</span> <span class='no'>hucPolygons</span>,
+                                          <span class='kw'>geom_data</span> <span class='kw'>=</span> <span class='no'>hucPolygons</span>,
                                           <span class='kw'>instance_dim_name</span> <span class='kw'>=</span> <span class='st'>"station"</span>,
                                           <span class='kw'>variables</span> <span class='kw'>=</span> <span class='no'>vars</span>$<span class='no'>name</span>)
 <span class='no'>huc_poly</span> <span class='kw'>&lt;-</span> <span class='fu'>read_geometry</span>(<span class='no'>huc_eta_nc</span>)
@@ -163,7 +166,7 @@
 #&gt;  [6] "SOURCEDATA"   "SOURCEORIG"   "SOURCEFEAT"   "LOADDATE"     "GNIS_ID"     
 #&gt; [11] "AREAACRES"    "AREASQKM"     "STATES"       "HUC12"        "NAME"        
 #&gt; [16] "HUTYPE"       "HUMOD"        "TOHUC"        "NONCONTRIB"   "NONCONTR_1"  
-#&gt; [21] "SHAPE_Leng"   "SHAPE_Area"   "geometry"    </div><div class='input'>
+#&gt; [21] "SHAPE_Leng"   "SHAPE_Area"   "geom"        </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -2,7 +2,7 @@ context("line")
 
 test_that("linedata works", {
   lineData <- get_fixture_data("linestring")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = lineData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = lineData)
   nc<-nc_open(nc_file)
 
   expect_equal(as.numeric(ncvar_get(nc, pkg.env$x_nodes)), st_coordinates(lineData)[,"X"])
@@ -17,7 +17,7 @@ test_that("linedata works", {
 
 test_that("multiLine data works", {
   lineData <- get_fixture_data("multilinestring")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = lineData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = lineData)
   nc<-nc_open(nc_file)
 
   num_coords <- c(nrow(st_geometry(lineData)[[1]][[1]]),
@@ -37,7 +37,7 @@ test_that("multiline data frame works", {
   lineData <- get_fixture_data("multilinestring")
   testdata<-as.data.frame(list("name"=c("test_name"), "id"=c(1)), stringsAsFactors = FALSE)
   lineData <- dplyr::bind_cols(lineData, testdata)
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = lineData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = lineData)
 
   nc<-nc_open(nc_file)
   
@@ -48,7 +48,7 @@ test_that("multiline data frame works", {
 test_that("shapefile line data works", {
   lineData <- sf::st_zm(sf::read_sf("data/NHDLine/NHDLine.shp"))
   nc_file <- write_geometry(nc_file=tempfile(), 
-                      geomData = lineData)
+                      geom_data = lineData)
   nc<-nc_open(nc_file)
   returnLineData<-read_geometry(nc_file)
   compareSL(lineData, returnLineData)
@@ -63,3 +63,4 @@ test_that("shapefile line data works", {
     expect_equal(c(lineData[name]), c(returnLineData[name]))
   }
 })
+

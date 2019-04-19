@@ -4,7 +4,7 @@ context("instance attributes")
 test_that("A dataframe can be round tripped to netCDF.", {
   dataFrame <- sf::st_set_geometry(sf::read_sf("data/NHDLine/NHDLine.shp"), NULL)
   units<-c("unitless","date","unitless","unitless","unitless","km","unitless","unitless","unknown")
-  nc_file <- write_attribute_data(nc_file=tempfile(), attData = dataFrame, instance_dim_name = "instance", units = units)
+  nc_file <- write_attribute_data(nc_file=tempfile(), att_data = dataFrame, instance_dim_name = "instance", units = units)
   nc <- nc_open(nc_file)
   
   expect_equal(as.character(ncvar_get(nc, nc$var$COMID)), as.character(dataFrame$COMID))

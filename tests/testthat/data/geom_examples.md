@@ -10,15 +10,13 @@ dimensions:
 variables:
 	double x_nodes(instance) ;
 		x_nodes:units = "degrees_east" ;
-		x_nodes:standard_name = "longitude" ;
 		x_nodes:axis = "X" ;
 	double y_nodes(instance) ;
 		y_nodes:units = "degrees_north" ;
-		y_nodes:standard_name = "latitude" ;
 		y_nodes:axis = "Y" ;
 	int geometry_container ;
-		geometry_container:geometry_type = "point" ;
 		geometry_container:node_coordinates = "x_nodes y_nodes" ;
+		geometry_container:geometry_type = "point" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 	int grid_mapping ;
 		grid_mapping:grid_mapping_name = "latitude_longitude" ;
@@ -52,16 +50,14 @@ dimensions:
 variables:
 	double x_nodes(node) ;
 		x_nodes:units = "degrees_east" ;
-		x_nodes:standard_name = "longitude" ;
 		x_nodes:axis = "X" ;
 	double y_nodes(node) ;
 		y_nodes:units = "degrees_north" ;
-		y_nodes:standard_name = "latitude" ;
 		y_nodes:axis = "Y" ;
 	int geometry_container ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "line" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
@@ -99,16 +95,14 @@ dimensions:
 variables:
 	double x_nodes(node) ;
 		x_nodes:units = "degrees_east" ;
-		x_nodes:standard_name = "longitude" ;
 		x_nodes:axis = "X" ;
 	double y_nodes(node) ;
 		y_nodes:units = "degrees_north" ;
-		y_nodes:standard_name = "latitude" ;
 		y_nodes:axis = "Y" ;
 	int geometry_container ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
@@ -147,27 +141,25 @@ dimensions:
 variables:
 	double x_nodes(node) ;
 		x_nodes:units = "degrees_east" ;
-		x_nodes:standard_name = "longitude" ;
 		x_nodes:axis = "X" ;
 	double y_nodes(node) ;
 		y_nodes:units = "degrees_north" ;
-		y_nodes:standard_name = "latitude" ;
 		y_nodes:axis = "Y" ;
 	int geometry_container ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "line" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x_nodes y_nodes" ;
-		geometry_container:grid_mapping = "grid_mapping" ;
 		geometry_container:part_node_count = "part_node_count" ;
+		geometry_container:grid_mapping = "grid_mapping" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
+	int part_node_count(part) ;
+		part_node_count:long_name = "count of nodes in each geometry part" ;
 	int grid_mapping ;
 		grid_mapping:grid_mapping_name = "latitude_longitude" ;
 		grid_mapping:semi_major_axis = 6378137. ;
 		grid_mapping:inverse_flattening = 298.257223563 ;
 		grid_mapping:longitude_of_prime_meridian = 0. ;
-	int part_node_count(part) ;
-		part_node_count:long_name = "count of nodes in each geometry part" ;
 
 // global attributes:
 		:Conventions = "CF-1.8" ;
@@ -181,9 +173,9 @@ data:
 
  node_count = 7 ;
 
- grid_mapping = _ ;
-
  part_node_count = 3, 4 ;
+
+ grid_mapping = _ ;
 }
   
 ```  
@@ -200,27 +192,28 @@ dimensions:
 variables:
 	double x_nodes(node) ;
 		x_nodes:units = "degrees_east" ;
-		x_nodes:standard_name = "longitude" ;
 		x_nodes:axis = "X" ;
 	double y_nodes(node) ;
 		y_nodes:units = "degrees_north" ;
-		y_nodes:standard_name = "latitude" ;
 		y_nodes:axis = "Y" ;
 	int geometry_container ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x_nodes y_nodes" ;
-		geometry_container:grid_mapping = "grid_mapping" ;
 		geometry_container:part_node_count = "part_node_count" ;
+		geometry_container:interior_ring = "interior_ring" ;
+		geometry_container:grid_mapping = "grid_mapping" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
+	int part_node_count(part) ;
+		part_node_count:long_name = "count of nodes in each geometry part" ;
+	int interior_ring(part) ;
+		interior_ring:long_name = "type of each geometry part" ;
 	int grid_mapping ;
 		grid_mapping:grid_mapping_name = "latitude_longitude" ;
 		grid_mapping:semi_major_axis = 6378137. ;
 		grid_mapping:inverse_flattening = 298.257223563 ;
 		grid_mapping:longitude_of_prime_meridian = 0. ;
-	int part_node_count(part) ;
-		part_node_count:long_name = "count of nodes in each geometry part" ;
 
 // global attributes:
 		:Conventions = "CF-1.8" ;
@@ -234,9 +227,11 @@ data:
 
  node_count = 9 ;
 
- grid_mapping = _ ;
-
  part_node_count = 4, 5 ;
+
+ interior_ring = 0, 0 ;
+
+ grid_mapping = _ ;
 }
   
 ```  
@@ -253,30 +248,28 @@ dimensions:
 variables:
 	double x_nodes(node) ;
 		x_nodes:units = "degrees_east" ;
-		x_nodes:standard_name = "longitude" ;
 		x_nodes:axis = "X" ;
 	double y_nodes(node) ;
 		y_nodes:units = "degrees_north" ;
-		y_nodes:standard_name = "latitude" ;
 		y_nodes:axis = "Y" ;
 	int geometry_container ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x_nodes y_nodes" ;
-		geometry_container:grid_mapping = "grid_mapping" ;
 		geometry_container:part_node_count = "part_node_count" ;
 		geometry_container:interior_ring = "interior_ring" ;
+		geometry_container:grid_mapping = "grid_mapping" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
+	int part_node_count(part) ;
+		part_node_count:long_name = "count of nodes in each geometry part" ;
+	int interior_ring(part) ;
+		interior_ring:long_name = "type of each geometry part" ;
 	int grid_mapping ;
 		grid_mapping:grid_mapping_name = "latitude_longitude" ;
 		grid_mapping:semi_major_axis = 6378137. ;
 		grid_mapping:inverse_flattening = 298.257223563 ;
 		grid_mapping:longitude_of_prime_meridian = 0. ;
-	int part_node_count(part) ;
-		part_node_count:long_name = "count of nodes in each geometry part" ;
-	int interior_ring(part) ;
-		interior_ring:long_name = "type of each geometry part" ;
 
 // global attributes:
 		:Conventions = "CF-1.8" ;
@@ -290,11 +283,11 @@ data:
 
  node_count = 9 ;
 
- grid_mapping = _ ;
-
  part_node_count = 5, 4 ;
 
  interior_ring = 0, 1 ;
+
+ grid_mapping = _ ;
 }
   
 ```  
@@ -311,30 +304,28 @@ dimensions:
 variables:
 	double x_nodes(node) ;
 		x_nodes:units = "degrees_east" ;
-		x_nodes:standard_name = "longitude" ;
 		x_nodes:axis = "X" ;
 	double y_nodes(node) ;
 		y_nodes:units = "degrees_north" ;
-		y_nodes:standard_name = "latitude" ;
 		y_nodes:axis = "Y" ;
 	int geometry_container ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x_nodes y_nodes" ;
-		geometry_container:grid_mapping = "grid_mapping" ;
 		geometry_container:part_node_count = "part_node_count" ;
 		geometry_container:interior_ring = "interior_ring" ;
+		geometry_container:grid_mapping = "grid_mapping" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
+	int part_node_count(part) ;
+		part_node_count:long_name = "count of nodes in each geometry part" ;
+	int interior_ring(part) ;
+		interior_ring:long_name = "type of each geometry part" ;
 	int grid_mapping ;
 		grid_mapping:grid_mapping_name = "latitude_longitude" ;
 		grid_mapping:semi_major_axis = 6378137. ;
 		grid_mapping:inverse_flattening = 298.257223563 ;
 		grid_mapping:longitude_of_prime_meridian = 0. ;
-	int part_node_count(part) ;
-		part_node_count:long_name = "count of nodes in each geometry part" ;
-	int interior_ring(part) ;
-		interior_ring:long_name = "type of each geometry part" ;
 
 // global attributes:
 		:Conventions = "CF-1.8" ;
@@ -348,11 +339,11 @@ data:
 
  node_count = 14 ;
 
- grid_mapping = _ ;
-
  part_node_count = 4, 6, 4 ;
 
  interior_ring = 0, 0, 1 ;
+
+ grid_mapping = _ ;
 }
   
 ```  
@@ -369,30 +360,28 @@ dimensions:
 variables:
 	double x_nodes(node) ;
 		x_nodes:units = "degrees_east" ;
-		x_nodes:standard_name = "longitude" ;
 		x_nodes:axis = "X" ;
 	double y_nodes(node) ;
 		y_nodes:units = "degrees_north" ;
-		y_nodes:standard_name = "latitude" ;
 		y_nodes:axis = "Y" ;
 	int geometry_container ;
+		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:node_coordinates = "x_nodes y_nodes" ;
-		geometry_container:grid_mapping = "grid_mapping" ;
 		geometry_container:part_node_count = "part_node_count" ;
 		geometry_container:interior_ring = "interior_ring" ;
+		geometry_container:grid_mapping = "grid_mapping" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
+	int part_node_count(part) ;
+		part_node_count:long_name = "count of nodes in each geometry part" ;
+	int interior_ring(part) ;
+		interior_ring:long_name = "type of each geometry part" ;
 	int grid_mapping ;
 		grid_mapping:grid_mapping_name = "latitude_longitude" ;
 		grid_mapping:semi_major_axis = 6378137. ;
 		grid_mapping:inverse_flattening = 298.257223563 ;
 		grid_mapping:longitude_of_prime_meridian = 0. ;
-	int part_node_count(part) ;
-		part_node_count:long_name = "count of nodes in each geometry part" ;
-	int interior_ring(part) ;
-		interior_ring:long_name = "type of each geometry part" ;
 
 // global attributes:
 		:Conventions = "CF-1.8" ;
@@ -408,11 +397,11 @@ data:
 
  node_count = 25 ;
 
- grid_mapping = _ ;
-
  part_node_count = 5, 4, 4, 4, 4, 4 ;
 
  interior_ring = 0, 1, 1, 1, 0, 0 ;
+
+ grid_mapping = _ ;
 }
   
 ```  

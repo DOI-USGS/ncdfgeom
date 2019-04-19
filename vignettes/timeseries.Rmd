@@ -1,6 +1,5 @@
 ---
 title: "Reading and Writing Timeseries"
-author: "David Blodgett"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Reading and Writing Timeseries}
@@ -8,16 +7,21 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## Write a Timeseries to NetCDF
-
-`ncdfgeom` expects timeseries data to be written into a file first. See the main vignette example for a full workflow. The vignette example goes into a bit more detail on writing timeseries data. 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width=6, 
+  fig.height=4
+)
+options(scipen = 9999)
+```
 
 First, we'll load up some time series data. 
 
 ```{r attributes}
 attribute_file<-system.file('extdata/yahara_alb_attributes.csv', package = "ncdfgeom")
 
-# Grab some attributes
 attributes <- read.csv(attribute_file, colClasses='character')
 lats <- as.numeric(attributes$YCOORD)
 lons <- as.numeric(attributes$XCOORD)
@@ -113,12 +117,8 @@ names(timeseries_dataset)
 1. `varmeta` has one entry per timeseries variable read from the NetCDF file and contains the `name` and `long_name` attribute of each variable. 
 1. `data_unit` and `data_prec` contain units and precision metadata for each variable. 
 1. `data_frames` is a list containing one `data.frame` for each variable read from the NetCDF file. 
-1. `global_attributes` contains standard glabal attributes found in the file. All of the variables that have one element per timeseries variable, are named the same as the NetCDF variable names so they can be accessed by name as shown below.
+1. `global_attributes` contains standard global attributes found in the file. All of the variables that have one element per timeseries variable, are named the same as the NetCDF variable names so they can be accessed by name as shown below.
 
-```{r names}
-varNames <- names(timeseries_dataset$varmeta)
-timeseries_dataset$data_unit[varNames[1]][[1]]
-```
 ```{r delete, echo=F, message=F}
 t <- file.remove(nc_file)
 ```

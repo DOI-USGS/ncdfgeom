@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -56,7 +56,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
+      <a href="../articles/geometry.html">Reading and Writing NetCDF-CF Geometry</a>
     </li>
     <li>
       <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
@@ -77,7 +77,6 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Reading and Writing Timeseries</h1>
-                        <h4 class="author">David Blodgett</h4>
             
       
       
@@ -87,18 +86,13 @@
 
     
     
-<div id="write-a-timeseries-to-netcdf" class="section level2">
-<h2 class="hasAnchor">
-<a href="#write-a-timeseries-to-netcdf" class="anchor"></a>Write a Timeseries to NetCDF</h2>
-<p><code>ncdfgeom</code> expects timeseries data to be written into a file first. See the main vignette example for a full workflow. The vignette example goes into a bit more detail on writing timeseries data.</p>
 <p>First, we’ll load up some time series data.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">attribute_file&lt;-<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">'extdata/yahara_alb_attributes.csv'</span>, <span class="dt">package =</span> <span class="st">"ncdfgeom"</span>)</a>
 <a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co"># Grab some attributes</span></a>
-<a class="sourceLine" id="cb1-4" title="4">attributes &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/read.table">read.csv</a></span>(attribute_file, <span class="dt">colClasses=</span><span class="st">'character'</span>)</a>
-<a class="sourceLine" id="cb1-5" title="5">lats &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(attributes<span class="op">$</span>YCOORD)</a>
-<a class="sourceLine" id="cb1-6" title="6">lons &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(attributes<span class="op">$</span>XCOORD)</a>
-<a class="sourceLine" id="cb1-7" title="7">alts &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(lats)) <span class="co"># Making up altitude for the sake of demonstration.</span></a></code></pre></div>
+<a class="sourceLine" id="cb1-3" title="3">attributes &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/read.table">read.csv</a></span>(attribute_file, <span class="dt">colClasses=</span><span class="st">'character'</span>)</a>
+<a class="sourceLine" id="cb1-4" title="4">lats &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(attributes<span class="op">$</span>YCOORD)</a>
+<a class="sourceLine" id="cb1-5" title="5">lons &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(attributes<span class="op">$</span>XCOORD)</a>
+<a class="sourceLine" id="cb1-6" title="6">alts &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rep">rep</a></span>(<span class="dv">1</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(lats)) <span class="co"># Making up altitude for the sake of demonstration.</span></a></code></pre></div>
 <p>We now have vectors of latitudes, longitudes, altitudes for each of our time series.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">timeseries_file &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">'extdata/yahara_alb_gdp_file.csv'</span>, <span class="dt">package =</span> <span class="st">"ncdfgeom"</span>)</a>
 <a class="sourceLine" id="cb2-2" title="2"></a>
@@ -147,87 +141,87 @@
 <li>one called “time” that is the length of the number of time series, and</li>
 <li>one called “name_strlen” that is the length of the longest timeseries ID (which is stored as a string).</li>
 </ol>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">ncmeta<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncmeta/topics/nc_dims">nc_dims</a></span>(nc_file)</a></code></pre></div>
-<pre><code>## # A tibble: 3 x 4
-##      id name        length unlim
-##   &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;lgl&gt;
-## 1     0 instance        71 FALSE
-## 2     1 time           730 FALSE
-## 3     2 name_strlen      2 FALSE</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">ncmeta<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncmeta/topics/nc_dims">nc_dims</a></span>(nc_file)</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt; # A tibble: 3 x 4</span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt;      id name               length unlim</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;lgl&gt;</span></a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; 1     0 instance               71 FALSE</span></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt; 2     1 time                  730 FALSE</span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="co">#&gt; 3     2 instance_name_char      2 FALSE</span></a></code></pre></div>
 <p>The file has variables for latitude, longitude, altitude, timeseries IDs, and a data variable.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">ncmeta<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncmeta/topics/nc_vars">nc_vars</a></span>(nc_file)</a></code></pre></div>
-<pre><code>## # A tibble: 6 x 5
-##      id name                                        type      ndims natts
-##   &lt;dbl&gt; &lt;chr&gt;                                       &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;
-## 1     0 instance_name                               NC_CHAR       2     2
-## 2     1 time                                        NC_DOUBLE     1     4
-## 3     2 lat                                         NC_DOUBLE     1     4
-## 4     3 lon                                         NC_DOUBLE     1     4
-## 5     4 alt                                         NC_DOUBLE     1     4
-## 6     5 BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1 NC_DOUBLE     2     4</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">ncmeta<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncmeta/topics/nc_vars">nc_vars</a></span>(nc_file)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt; # A tibble: 6 x 5</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt;      id name                                        type      ndims natts</span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;                                       &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt; 1     0 instance_name                               NC_CHAR       2     2</span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; 2     1 time                                        NC_DOUBLE     1     4</span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt; 3     2 lat                                         NC_DOUBLE     1     4</span></a>
+<a class="sourceLine" id="cb5-8" title="8"><span class="co">#&gt; 4     3 lon                                         NC_DOUBLE     1     4</span></a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="co">#&gt; 5     4 alt                                         NC_DOUBLE     1     4</span></a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="co">#&gt; 6     5 BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1 NC_DOUBLE     2     4</span></a></code></pre></div>
 <p>The primary dimensions in the file are of length, number of time steps and number of time series.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">ncmeta<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncmeta/topics/nc_dims">nc_dims</a></span>(nc_file)</a></code></pre></div>
-<pre><code>## # A tibble: 3 x 4
-##      id name        length unlim
-##   &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;lgl&gt;
-## 1     0 instance        71 FALSE
-## 2     1 time           730 FALSE
-## 3     2 name_strlen      2 FALSE</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">ncmeta<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncmeta/topics/nc_dims">nc_dims</a></span>(nc_file)</a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt; # A tibble: 3 x 4</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt;      id name               length unlim</span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;lgl&gt;</span></a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="co">#&gt; 1     0 instance               71 FALSE</span></a>
+<a class="sourceLine" id="cb6-6" title="6"><span class="co">#&gt; 2     1 time                  730 FALSE</span></a>
+<a class="sourceLine" id="cb6-7" title="7"><span class="co">#&gt; 3     2 instance_name_char      2 FALSE</span></a></code></pre></div>
 <p>The header of the resulting NetCDF file looks like:</p>
-<pre><code>## netcdf demo_nc {
-## dimensions:
-##  instance = 71 ;
-##  time = 730 ;
-##  name_strlen = 2 ;
-## variables:
-##  char instance_name(instance, name_strlen) ;
-##      instance_name:long_name = "Station Names" ;
-##      instance_name:cf_role = "timeseries_id" ;
-##  double time(time) ;
-##      time:units = "days since 1970-01-01 00:00:00" ;
-##      time:missing_value = -999. ;
-##      time:long_name = "time of measurement" ;
-##      time:standard_name = "time" ;
-##  double lat(instance) ;
-##      lat:units = "degrees_north" ;
-##      lat:missing_value = -999. ;
-##      lat:long_name = "latitude of the observation" ;
-##      lat:standard_name = "latitude" ;
-##  double lon(instance) ;
-##      lon:units = "degrees_east" ;
-##      lon:missing_value = -999. ;
-##      lon:long_name = "longitude of the observation" ;
-##      lon:standard_name = "longitude" ;
-##  double alt(instance) ;
-##      alt:units = "m" ;
-##      alt:missing_value = -999. ;
-##      alt:long_name = "vertical distance above the surface" ;
-##      alt:standard_name = "height" ;
-##  double BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1(instance, time) ;
-##      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:units = "mm/d" ;
-##      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:missing_value = -999. ;
-##      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:long_name = "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1 area weighted MEAN in mm/d" ;
-##      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:coordinates = "time lat lon" ;
-## 
-## // global attributes:
-##      :Conventions = "CF-1.8" ;
-##      :featureType = "timeSeries" ;
-##      :cdm_data_type = "Station" ;
-##      :standard_name_vocabulary = "CF-1.8" ;
-##      :title = "example title" ;
-##      :summary = "example summary" ;
-##      :date_created = "2099-01-01" ;
-##      :creator_name = "example creator" ;
-##      :creator_email = "example@test.com" ;
-##      :project = "example ncdfgeom" ;
-##      :processing_level = "just an example no processing" ;
-## }</code></pre>
+<pre><code>#&gt; netcdf demo_nc {
+#&gt; dimensions:
+#&gt;  instance = 71 ;
+#&gt;  time = 730 ;
+#&gt;  instance_name_char = 2 ;
+#&gt; variables:
+#&gt;  char instance_name(instance, instance_name_char) ;
+#&gt;      instance_name:long_name = "Station Names" ;
+#&gt;      instance_name:cf_role = "timeseries_id" ;
+#&gt;  double time(time) ;
+#&gt;      time:units = "days since 1970-01-01 00:00:00" ;
+#&gt;      time:missing_value = -999. ;
+#&gt;      time:long_name = "time of measurement" ;
+#&gt;      time:standard_name = "time" ;
+#&gt;  double lat(instance) ;
+#&gt;      lat:units = "degrees_north" ;
+#&gt;      lat:missing_value = -999. ;
+#&gt;      lat:long_name = "latitude of the observation" ;
+#&gt;      lat:standard_name = "latitude" ;
+#&gt;  double lon(instance) ;
+#&gt;      lon:units = "degrees_east" ;
+#&gt;      lon:missing_value = -999. ;
+#&gt;      lon:long_name = "longitude of the observation" ;
+#&gt;      lon:standard_name = "longitude" ;
+#&gt;  double alt(instance) ;
+#&gt;      alt:units = "m" ;
+#&gt;      alt:missing_value = -999. ;
+#&gt;      alt:long_name = "vertical distance above the surface" ;
+#&gt;      alt:standard_name = "height" ;
+#&gt;  double BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1(instance, time) ;
+#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:units = "mm/d" ;
+#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:missing_value = -2147483648. ;
+#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:long_name = "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1 area weighted MEAN in mm/d" ;
+#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:coordinates = "time lat lon alt" ;
+#&gt; 
+#&gt; // global attributes:
+#&gt;      :Conventions = "CF-1.8" ;
+#&gt;      :featureType = "timeSeries" ;
+#&gt;      :cdm_data_type = "Station" ;
+#&gt;      :standard_name_vocabulary = "CF-1.8" ;
+#&gt;      :title = "example title" ;
+#&gt;      :summary = "example summary" ;
+#&gt;      :date_created = "2099-01-01" ;
+#&gt;      :creator_name = "example creator" ;
+#&gt;      :creator_email = "example@test.com" ;
+#&gt;      :project = "example ncdfgeom" ;
+#&gt;      :processing_level = "just an example no processing" ;
+#&gt; }</code></pre>
 <p>This file can be read back into R with the function <code>read_timeseries_dsg</code>. The response is a list of variables as shown below.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">timeseries_dataset &lt;-<span class="st"> </span>ncdfgeom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncdfgeom/topics/read_timeseries_dsg">read_timeseries_dsg</a></span>(nc_file)</a>
-<a class="sourceLine" id="cb11-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(timeseries_dataset)</a></code></pre></div>
-<pre><code>## [1] "time"              "lats"              "lons"             
-## [4] "alts"              "varmeta"           "data_unit"        
-## [7] "data_prec"         "data_frames"       "global_attributes"</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">timeseries_dataset &lt;-<span class="st"> </span>ncdfgeom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncdfgeom/topics/read_timeseries_dsg">read_timeseries_dsg</a></span>(nc_file)</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(timeseries_dataset)</a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; [1] "time"              "lats"              "lons"             </span></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="co">#&gt; [4] "alts"              "varmeta"           "data_unit"        </span></a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="co">#&gt; [7] "data_prec"         "data_frames"       "global_attributes"</span></a></code></pre></div>
 <ol style="list-style-type: decimal">
 <li>
 <code>time</code>, <code>lats</code>, <code>lons</code>, and <code>alts</code> are vectors that apply to the whole dataset.</li>
@@ -238,22 +232,11 @@
 <li>
 <code>data_frames</code> is a list containing one <code>data.frame</code> for each variable read from the NetCDF file.</li>
 <li>
-<code>global_attributes</code> contains standard glabal attributes found in the file. All of the variables that have one element per timeseries variable, are named the same as the NetCDF variable names so they can be accessed by name as shown below.</li>
+<code>global_attributes</code> contains standard global attributes found in the file. All of the variables that have one element per timeseries variable, are named the same as the NetCDF variable names so they can be accessed by name as shown below.</li>
 </ol>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">varNames &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/names">names</a></span>(timeseries_dataset<span class="op">$</span>varmeta)</a>
-<a class="sourceLine" id="cb13-2" title="2">timeseries_dataset<span class="op">$</span>data_unit[varNames[<span class="dv">1</span>]][[<span class="dv">1</span>]]</a></code></pre></div>
-<pre><code>## [1] "mm/d"</code></pre>
 </div>
-  </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#write-a-timeseries-to-netcdf">Write a Timeseries to NetCDF</a></li>
-      </ul>
-</div>
       </div>
 
 </div>

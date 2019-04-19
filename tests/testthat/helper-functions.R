@@ -3,8 +3,8 @@ library(ncdf4)
 library(sf)
 library(sp)
 compareSP <- function(polygonData, returnPolyData) {
-	polygonData <- check_geomData(polygonData)
-	returnPolyData <- check_geomData(returnPolyData)	
+	polygonData <- sf::as_Spatial(polygonData)
+	returnPolyData <- sf::as_Spatial(returnPolyData)	
   expect_equal(length(polygonData@polygons[[1]]@Polygons), length(returnPolyData@polygons[[1]]@Polygons))
   for(i in 1:length(length(polygonData@polygons[[1]]@Polygons))) {
     expect_equal(as.numeric(returnPolyData@polygons[[1]]@Polygons[[i]]@coords),
@@ -20,8 +20,8 @@ compareSP <- function(polygonData, returnPolyData) {
 }
 
 compareSL <- function(lineData, returnLineData) {
-	lineData <- check_geomData(lineData)
-	returnLineData <- check_geomData(returnLineData)	
+	lineData <- sf::as_Spatial(lineData)
+	returnLineData <- sf::as_Spatial(returnLineData)	
   expect_equal(length(lineData@lines[[1]]@Lines), length(returnLineData@lines[[1]]@Lines))
   for(i in 1:length(length(lineData@lines[[1]]@Lines))) {
     expect_equal(as.numeric(returnLineData@lines[[1]]@Lines[[i]]@coords),
@@ -32,7 +32,7 @@ compareSL <- function(lineData, returnLineData) {
 }
 
 checkAllPoly <- function(polygonData, node_count, part_node_count = NULL, part_type = NULL) {
-	polygonData <- check_geomData(polygonData)
+	polygonData <- sf::as_Spatial(polygonData)
   i<-1 # counter for parts
   for(g in 1:length(polygonData@polygons)) {
     j<-0 # counter for coords in a geom

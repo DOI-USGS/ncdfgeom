@@ -2,9 +2,9 @@
 #'
 #' @param nc_file \code{character} file path to the nc file to be created. 
 #' If adding to a file, it must already have the named instance dimension.
-#'@param attData \code{data.frame} with instances as rows and attributes as rows.  
+#'@param att_data \code{data.frame} with instances as columns and attributes as rows.  
 #'@param instance_dim_name \code{character} name for the instance dimension. Defaults to "instance"
-#'@param units \code{character} vector with units for each column of attData. Defaults to "unknown" for all.
+#'@param units \code{character} vector with units for each column of att_data. Defaults to "unknown" for all.
 #'@param overwrite boolean overwrite existing file? Will append if FALSE.
 #'
 #'@description
@@ -29,19 +29,19 @@
 #' ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
 #' cat(ncdump ,sep = "\n")
 #' 
-write_attribute_data <- function(nc_file, attData, instance_dim_name = "instance", 
-                                 units = rep("unknown", ncol(attData)), overwrite = FALSE) {
+write_attribute_data <- function(nc_file, att_data, instance_dim_name = "instance", 
+                                 units = rep("unknown", ncol(att_data)), overwrite = FALSE) {
   
   if(file.exists(nc_file) & overwrite == FALSE) {
     nc <- open.nc(nc_file, write = TRUE)
   } else if(overwrite == TRUE) {
     unlink(nc_file)
-    nc <- create.nc(nc_file)
+    nc <- create.nc(nc_file, large = TRUE)
   } else {
-    nc <- create.nc(nc_file)
+    nc <- create.nc(nc_file, large = TRUE)
   }
   
-	n <- nrow(attData)
+	n <- nrow(att_data)
 	
 	instance_dim <- tryCatch({
 	  dim.inq.nc(nc, instance_dim_name)$id
@@ -55,13 +55,13 @@ write_attribute_data <- function(nc_file, attData, instance_dim_name = "instance
 	types <- list(numeric="NC_DOUBLE", integer = "NC_INT", character="NC_CHAR")
 	
 	# Convert any dates to character. This could be improved later.
-	i <- sapply(attData, is, class2 = "Date")
-	attData[i] <- lapply(attData[i], as.character)
+	i <- sapply(att_data, is, class2 = "Date")
+	att_data[i] <- lapply(att_data[i], as.character)
 	
 	charDimLen<-0
-	for(colName in names(attData)) {
-		if(grepl(class(attData[colName][[1]]), "character")) {
-			charDimLen<-max(sapply(attData[colName][[1]], nchar, keepNA=FALSE), charDimLen)
+	for(colName in names(att_data)) {
+		if(grepl(class(att_data[colName][[1]]), "character")) {
+			charDimLen<-max(sapply(att_data[colName][[1]], nchar, keepNA=FALSE), charDimLen)
 		}
 	}
 	if(charDimLen>0) {
@@ -69,22 +69,22 @@ write_attribute_data <- function(nc_file, attData, instance_dim_name = "instance
 		char_dim <- dim.inq.nc(nc, "char")$id
 	}
 	col <- 1
-	for(colName in names(attData)) {
-		if(grepl(class(attData[colName][[1]]), "character")) {
+	for(colName in names(att_data)) {
+		if(grepl(class(att_data[colName][[1]]), "character")) {
 		  dim <- c(char_dim, instance_dim)
 		  missval <- ""
 		  char <- TRUE
-		  attData[colName][[1]][is.na(attData[colName][[1]])] <- ""
-		} else if(grepl(class(attData[colName][[1]]), "integer")) {
+		  att_data[colName][[1]][is.na(att_data[colName][[1]])] <- ""
+		} else if(grepl(class(att_data[colName][[1]]), "integer")) {
 		  dim <- instance_dim
 		  missval <- -9999
 		} else {
 		  dim <- instance_dim
 		  missval <- -9999.999
 		}
-	  var.def.nc(nc, colName, types[[class(attData[colName][[1]])]], dim)
+	  var.def.nc(nc, colName, types[[class(att_data[colName][[1]])]], dim)
 	  att.put.nc(nc, colName, "units", "NC_CHAR", units[col])
-	  att.put.nc(nc, colName, "missing_value", types[[class(attData[colName][[1]])]], missval)
+	  att.put.nc(nc, colName, "missing_value", types[[class(att_data[colName][[1]])]], missval)
 		col <- col + 1
 	}
 
@@ -92,9 +92,9 @@ write_attribute_data <- function(nc_file, attData, instance_dim_name = "instance
 	
 	nc <- open.nc(nc_file, write = TRUE)
 	
-	if(!is.null(attData)) {
-		for(colName in names(attData)) {
-			var.put.nc(nc, colName, attData[colName][[1]])
+	if(!is.null(att_data)) {
+		for(colName in names(att_data)) {
+			var.put.nc(nc, colName, att_data[colName][[1]])
 		}
 	}
 	

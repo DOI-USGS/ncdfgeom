@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Write sp or sf geometries and attributes to NetCDF-CF — write_geometry • ncdfgeom</title>
+<title>Write geometries and attributes to NetCDF-CF — write_geometry • ncdfgeom</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Write sp or sf geometries and attributes to NetCDF-CF — write_geometry" />
+<meta property="og:title" content="Write geometries and attributes to NetCDF-CF — write_geometry" />
 
 <meta property="og:description" content="Creates a file with point, line or polygon instance data ready for the 
 extended NetCDF-CF timeSeries featuretype format.
@@ -65,7 +65,7 @@ Will also add attributes if provided data has them." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@ Will also add attributes if provided data has them." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
+      <a href="../articles/geometry.html">Reading and Writing NetCDF-CF Geometry</a>
     </li>
     <li>
       <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
@@ -114,7 +114,7 @@ Will also add attributes if provided data has them." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Write sp or sf geometries and attributes to NetCDF-CF</h1>
+    <h1>Write geometries and attributes to NetCDF-CF</h1>
     
     <div class="hidden name"><code>write_geometry.Rd</code></div>
     </div>
@@ -122,13 +122,13 @@ Will also add attributes if provided data has them." />
     <div class="ref-description">
     
     <p>Creates a file with point, line or polygon instance data ready for the 
-extended NetCDF-CF timeSeries featuretype format.
-Will also add attributes if provided data has them.</p>
+extended NetCDF-CF timeSeries featuretype format.</p>
+<p>Will also add attributes if provided data has them.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>write_geometry</span>(<span class='no'>nc_file</span>, <span class='kw'>geomData</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>instance_dim_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>lats</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lons</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>variables</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>())</pre>
+    <pre class="usage"><span class='fu'>write_geometry</span>(<span class='no'>nc_file</span>, <span class='no'>geom_data</span>, <span class='kw'>instance_dim_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>variables</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -138,9 +138,10 @@ Will also add attributes if provided data has them.</p>
       <td><p><code>character</code> file path to the nc file to be created.</p></td>
     </tr>
     <tr>
-      <th>geomData</th>
-      <td><p>object of class <code>SpatialLines</code>, <code>SpatialPolygons</code>
-or an sf <code>data.frame</code>. Note that three dimensional geometries are not supported.</p></td>
+      <th>geom_data</th>
+      <td><p>sf <code>data.frame</code> with POINT, LINESTRING, MULTILINESTRING, 
+POLYGON, or MULTIPOLYGON geometries. Note that three dimensional geometries 
+are not supported. sp geometries will be coerced to sf with sf::as_Spatial.</p></td>
     </tr>
     <tr>
       <th>instance_dim_name</th>
@@ -149,23 +150,17 @@ NetCDF-CF Discrete Sampling Geometries timeSeries file. For a new file, will
 use package default -- "instance" -- if not supplied.</p></td>
     </tr>
     <tr>
-      <th>lats</th>
-      <td><p>Vector of latitudes</p></td>
-    </tr>
-    <tr>
-      <th>lons</th>
-      <td><p>Vector of longitudes</p></td>
-    </tr>
-    <tr>
       <th>variables</th>
-      <td><p><code>character</code> If a an existing netcdf files is provided, this 
+      <td><p><code>character</code> If a an existing netCDF files is provided, this 
 list of variables that should be related to the geometries.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>https://github.com/twhiteaker/netCDF-CF-simple-geometry</p>
+    <ol>
+<li><p><a href='http://cfconventions.org/cf-conventions/cf-conventions.html'>http://cfconventions.org/cf-conventions/cf-conventions.html</a></p></li>
+</ol>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -173,9 +168,9 @@ list of variables that should be related to the geometries.</p></td>
 <span class='no'>hucPolygons</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>read_sf</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>'extdata'</span>,<span class='st'>'example_huc_eta.json'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'ncdfgeom'</span>))
 
 <span class='no'>hucPolygons_nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdfgeom</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry'>write_geometry</a></span>(<span class='kw'>nc_file</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/tempfile'>tempfile</a></span>(),
-                                           <span class='kw'>geomData</span> <span class='kw'>=</span> <span class='no'>hucPolygons</span>)
+                                           <span class='kw'>geom_data</span> <span class='kw'>=</span> <span class='no'>hucPolygons</span>)
 <span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>hucPolygons_nc</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf file8fca53d55a79 {
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf fileee7d62399989 {
 #&gt; dimensions:
 #&gt; 	instance = 2 ;
 #&gt; 	char = 38 ;
@@ -278,16 +273,14 @@ list of variables that should be related to the geometries.</p></td>
 #&gt; 		SHAPE_Area:geometry = "geometry_container" ;
 #&gt; 	double x_nodes(node) ;
 #&gt; 		x_nodes:units = "degrees_east" ;
-#&gt; 		x_nodes:standard_name = "longitude" ;
 #&gt; 		x_nodes:axis = "X" ;
 #&gt; 	double y_nodes(node) ;
 #&gt; 		y_nodes:units = "degrees_north" ;
-#&gt; 		y_nodes:standard_name = "latitude" ;
 #&gt; 		y_nodes:axis = "Y" ;
 #&gt; 	int geometry_container ;
+#&gt; 		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 #&gt; 		geometry_container:geometry_type = "polygon" ;
 #&gt; 		geometry_container:node_count = "node_count" ;
-#&gt; 		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 #&gt; 		geometry_container:grid_mapping = "grid_mapping" ;
 #&gt; 	int node_count(instance) ;
 #&gt; 		node_count:long_name = "count of coordinates in each instance geometry" ;

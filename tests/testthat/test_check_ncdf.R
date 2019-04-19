@@ -2,7 +2,7 @@ context("checkncdf")
 
 test_that("line", {
   lineData <- get_fixture_data("linestring")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = lineData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = lineData)
 
   checkVals <- ncdfgeom:::check_netcdf(nc_file)
 
@@ -18,7 +18,7 @@ test_that("line", {
 
 test_that("line", {
   lineData <- get_fixture_data("multilinestring")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = lineData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = lineData)
 
   checkVals <- ncdfgeom:::check_netcdf(nc_file)
   expect_equal(checkVals$geom_container$geom_type, "line")
@@ -29,7 +29,7 @@ test_that("line", {
 
 test_that("multi polygon holes", {
   polygonData <- get_fixture_data("multipolygons_holes")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   checkVals <- ncdfgeom:::check_netcdf(nc_file)
@@ -42,7 +42,7 @@ test_that("multi polygon holes", {
 
 test_that("polygon", {
   polygonData <- get_fixture_data("polygon")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
 
   checkVals <- ncdfgeom:::check_netcdf(nc_file)
@@ -55,7 +55,7 @@ test_that("polygon", {
 
 test_that("basic point works", {
   pointData <- get_fixture_data("point")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = pointData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = pointData)
   nc<-nc_open(nc_file)
 
   checkVals <- ncdfgeom:::check_netcdf(nc_file)
@@ -65,7 +65,7 @@ test_that("basic point works", {
 
 test_that("a crs gets found correctly", {
   polygonData <- sf::read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = polygonData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
   checkVals <- ncdfgeom:::check_netcdf(nc_file)
   crs <- list(grid_mapping_name = "albers_conical_equal_area",
@@ -78,17 +78,18 @@ test_that("a crs gets found correctly", {
               inverse_flattening = 298.257223563,
               longitude_of_prime_meridian = 0)
   expect_equal(checkVals$crs, crs)
+  unlink("test.nc")
 })
 
 test_that("errors", {
   pointData <- get_fixture_data("point")
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = pointData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = pointData)
   nc <- nc_open(nc_file, write = TRUE)
   ncatt_put(nc, nc$var$y, pkg.env$geom_type_attr_name, "garbage")
   nc_close(nc)
   expect_error(ncdfgeom:::check_netcdf(nc_file), "only one geometry container per file supported")
 
-  nc_file <- write_geometry(nc_file=tempfile(), geomData = pointData)
+  nc_file <- write_geometry(nc_file=tempfile(), geom_data = pointData)
   nc <- nc_open(nc_file, write = TRUE)
   ncatt_put(nc, 0,"Conventions", "garbage")
   expect_warning(ncdfgeom:::check_netcdf(nc_file), 'File does not advertise CF conventions, unexpected behavior may result.')
@@ -123,7 +124,7 @@ test_that("errors", {
   hucPolygons <- sf::read_sf(system.file('extdata/example_huc_eta.json', package = 'ncdfgeom'))
   
   ncdfgeom::write_geometry(nc_file=nc_file,
-                           geomData = hucPolygons, 
+                           geom_data = hucPolygons, 
                            instance_dim_name = "station", 
                            variables = vars$name) -> nc_file
   

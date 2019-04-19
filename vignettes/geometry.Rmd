@@ -1,6 +1,5 @@
 ---
-title: "Reading and Writing Geometry"
-author: "David Blodgett"
+title: "Reading and Writing NetCDF-CF Geometry"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Reading and Writing Geometry}
@@ -20,13 +19,17 @@ options(scipen = 9999)
 
 ## Introduction
 
-This example shows how to add polygon data to a NetCDF-CF Discrete Sampling Geometry timeSeries featureType file, read the polygon data from the NetCDF file, and write it to a standard GIS format. Below the example, all the geometry types that `ncdfgeom` handles are shown in detail. 
+This example shows how to 
 
-Note that the expected workflow is to create timeseries NetCDF files first then add geometry to the file. Geometry can be added to a NetCDF file with timeseries data, but as of v0.5.0 of `ncdfgeom` timeseries can not be added to already existing geometry.
+1. add polygon data to a NetCDF-CF Discrete Sampling Geometry timeSeries featureType file, 
+1. read the polygon data from the NetCDF file, 
+1. and write it to a standard GIS format.  
 
-## Example
+Below the example, all the geometry types that `ncdfgeom` handles are shown in detail. 
 
-First, we copy a NetCDF file with time series data in it into our working direcotry and open some geojson data containing polygons we want to add to the NetCDF file. These files are both included in "extdata" of `ncdfgeom`. Use `list.files(system.file("extdata", package = "ncdfgeom"))` to see other available data.
+## Load Spatial Data
+
+Tables of point, line, or polygon features with associated timeseries are the target for this functionality. Here, we use some sample data from the `ncdfgeom` package.
 ```{r libs}
 example_file <- "example.nc"
 
@@ -34,12 +37,11 @@ file.copy(from = system.file('extdata/example_huc_eta.nc', package = 'ncdfgeom')
 					to = example_file, 
 					overwrite = TRUE) -> quiet
 
-hucPolygons <- sf::read_sf(system.file('extdata/example_huc_eta.json', package = 'ncdfgeom'))
+polygons <- sf::read_sf(system.file('extdata/example_huc_eta.json', package = 'ncdfgeom'))
 
-# Just select a few attribtues for example
-hucPolygons <- dplyr::select(hucPolygons, LOADDATE, AREASQKM, HUC12, NAME)
+polygons <- dplyr::select(polygons, LOADDATE, AREASQKM, HUC12, NAME)
 
-plot(sf::st_geometry(hucPolygons))
+plot(sf::st_geometry(polygons))
 ```
 
 Now we have the polygons as shown above and a NetCDF file with a header that looks like:
@@ -49,35 +51,33 @@ cat(ncdump ,sep = "\n")
 ```
 Now we can use the `write_geometry` function to add the polygon data to the NetCDF file.
 ```{r demo}
-vars <- ncmeta::nc_vars(example_file)
+(vars <- ncmeta::nc_vars(example_file))
 
 ncdfgeom::write_geometry(nc_file=example_file,
-                         geomData = hucPolygons, 
+                         geom_data = polygons, 
                          instance_dim_name = "station", 
                          variables = vars$name) -> example_file
 ```
 
-Now the header of the NetCDF file looks like:
+Now the NetCDF file looks like:
 ```{r dump_polygons_ts, echo=FALSE}
 ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
 cat(ncdump ,sep = "\n")
 ```
 
-Now we can read the polygon data from the file and write it out to a normal GIS file.
+Read the polygon data from the file and write it out to a geopackage.
 
 ```{r read, warning=F}
-hucPolygons_sf <- ncdfgeom::read_geometry(example_file)
+polygons_sf <- ncdfgeom::read_geometry(example_file)
 
-plot(sf::st_geometry(hucPolygons_sf))
-sf::write_sf(hucPolygons_sf, "hucPolygons.gpkg")
+plot(sf::st_geometry(polygons_sf))
+sf::write_sf(polygons_sf, "polygons.gpkg")
 ```
 
 ```{r cleanup, echo=F}
-temp <- file.remove(example_file, "hucPolygons.gpkg")
+temp <- file.remove(example_file, "polygons.gpkg")
 ```
 
 ##   Geometry Types
-
-`ncdfgeom` works with a number of geometry types. The content below is generated automatically by a test that can be [seen here.](https://github.com/USGS-R/ncdfgeom/blob/master/tests/testthat/test_geom_examples.R)
 
 ```{r examples, child="../tests/testthat/data/geom_examples.md"}

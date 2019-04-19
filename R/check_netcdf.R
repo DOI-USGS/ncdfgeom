@@ -4,7 +4,7 @@
 #'@param nc A NetCDF path or URL to be opened.
 #'
 #'@description
-#'Introspects a netcdf file and tries to interpret it as a NetCDF-DSG file. Returns a named
+#'Introspects a netCDF file and tries to interpret it as a NetCDF-DSG file. Returns a named
 #'\code{list} containing \code{instance_id} \code{instance_dim} \code{node_count}
 #'\code{part_node_count} \code{part_type} If these values aren't found or aren't applicable,
 #'they are returned \code{NULL}.
@@ -96,11 +96,13 @@ check_netcdf <- function(nc) {
     crs <- stats::setNames(crs$value, crs$name)
   }
 
-  return(list(instance_id = instance_id,
+  out <- list(instance_id = instance_id,
               instance_dim = instance_dim,
               geom_container = geom_container,
               variable_list = variable_list,
-              crs = crs))
+              crs = crs)
+  class(out) <- geom_container$geom_type
+  return(out)
 }
 
 get_att <- function(atts, var, att = NULL) {
