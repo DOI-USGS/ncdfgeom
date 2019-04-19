@@ -28,18 +28,18 @@ options(scipen = 9999)
 
 For timeseries, two formats are supported:  
 
-1. a `data.frame` with timesteps in rows and geometry "instances" in columns with required attributes of geometry "instances" provided separately. This format lends its self to data where the same timestamps are used for every row and data exists for all geometry instances for all time steps -- it is sometimes referred to as the orthogonal array encoding.
-1. a long format where each row contains all the geometry "instance" metadata, a time stamp, and the variables to be stored for that time step. This format lends its self to data where each geometry instance has unique timesteps and/or data is not available for each geometry instance at the same timesteps.
+1. a wide format `data.frame` with timesteps in rows and geometry "instances" in columns with required attributes of geometry "instances" provided separately. This format lends its self to data where the same timestamps are used for every row and data exists for all geometry instances for all time steps -- it is sometimes referred to as the orthogonal array, or "space-wide", encoding.
+1. a long format `data.frame` where each row contains all the geometry "instance" metadata, a time stamp, and the variables to be stored for that time step. This format lends it self to data where each geometry instance has unique timesteps and/or data is not available for each geometry instance at the same timesteps (sparse arrays).
 
 Additional read / write functions to include additional DSG feature types will be implemented in the future and contributions are welcomed. `ncdfgeom` is a work in progress. Please review the ["issues"](https://github.com/USGS-R/ncdfgeom/issues) list to submit issues and/or see what changes are planned.
 
 ## Installation
 
-At the time of writing, installation is only available via `devtools` or building the package directly as one would for development purposes.
+At the time of writing, installation is only available via `remotes` or building the package directly as one would for development purposes.
 
 ```
-install.packages("devtools")
-devtools::install_github("USGS-R/ncdfgeom")
+install.packages("remotes")
+remotes::install_github("USGS-R/ncdfgeom")
 ```
 
 When on CRAN, the package will be installed with the typical install.packages method.
@@ -125,6 +125,10 @@ As shown above, we have two `data.frame`s. One has 344 columns and the other 344
 The NetCDF discrete sampling geometries timeseries standard requires point lat/lon coordinate locations for timeseries data. In the code below, we calculate these values and write the timeseries data to a netcdf file.
 
 ```{r write_ts, warning = FALSE} 
+library(tidyverse)
+library(sf)
+library(ncdfgeom)
+
 climdiv_centroids <- climdiv_poly %>%
   st_transform(5070) %>% # Albers Equal Area
   st_set_agr("constant") %>%
@@ -243,6 +247,8 @@ plot(prcp["prcp"], lwd = 0.1, pal = p_colors,
 
 This is the code used to download and prep the precipitation data.
 ```{r setup, eval = FALSE}
+library(tidyverse)
+library(sf)
 # Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt
 prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190408"
 prcp_file <- "prcp.txt"
