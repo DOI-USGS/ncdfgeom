@@ -149,7 +149,7 @@ test_that("Create basic DSG file",{
   expect_equivalent(ncvar_get(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,71],test_data$all_data$`71`)
   expect_equivalent(testnc$var$`BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1`$units,"mm/d")
   expect_equivalent(ncatt_get(testnc,varid=0,"summary")$value,'test summary')
-  expect("duplicate" %in% names(testnc$var))
+  expect("duplicate" %in% names(testnc$var), failure_message = names(testnc$var))
   
   nc_close(testnc)
   
