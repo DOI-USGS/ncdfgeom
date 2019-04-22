@@ -33,7 +33,9 @@ sample_data <- sf::st_set_geometry(sf::read_sf(system.file("shape/nc.shp",
 example_file <-write_attribute_data(tempfile(), sample_data,
                                     units = rep("unknown", ncol(sample_data)))
 
-ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
-cat(ncdump ,sep = "\\n")
+try({
+  ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
+  cat(ncdump ,sep = "\\n")
+}, silent = TRUE)
 
 }
