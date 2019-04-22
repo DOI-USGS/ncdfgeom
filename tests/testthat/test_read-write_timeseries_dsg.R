@@ -151,6 +151,8 @@ test_that("Create basic DSG file",{
   expect_equivalent(ncatt_get(testnc,varid=0,"summary")$value,'test summary')
   expect("duplicate" %in% names(testnc$var))
   
+  nc_close(testnc)
+  
   test_data$meta <- list(name = "character", long_name = "test")
   char_test <- dplyr::mutate_all(test_data$var_data, as.character)
   testnc<-write_timeseries_dsg(nc_file, 
@@ -165,12 +167,13 @@ test_that("Create basic DSG file",{
                                add_to_existing = TRUE)
   
   testnc<-nc_open(nc_file)
-  expect("character" %in% names(testnc$var))
+  
+  expect("character" %in% names(testnc$var), failure_message = names(testnc$var))
   
   # covers no altitude and iteration to write many rows.
   test_dat2 <- dplyr::bind_rows(test_data$var_data, test_data$var_data)
   time <- c(test_data$time,test_data$time)
-  testnc<-write_timeseries_dsg("temp.nc", 
+  testnc<-write_timeseries_dsg(tempfile(), 
                                names(test_data$var_data), 
                                test_data$lats, test_data$lons, 
                                time, test_dat2,
@@ -179,13 +182,12 @@ test_that("Create basic DSG file",{
                                data_metadata=test_data$meta,
                                attributes=global_attributes)
                                
-  testnc<-nc_open("temp.nc")
+  testnc<-nc_open(testnc)
   expect(testnc$dim$time$len == 1460)
-  unlink("temp.nc")
   
   char_test <- dplyr::mutate_all(test_dat2, as.character)
   time <- c(test_data$time,test_data$time)
-  testnc<-write_timeseries_dsg("temp.nc", 
+  testnc<-write_timeseries_dsg(tempfile(), 
                                names(test_data$var_data), 
                                test_data$lats, test_data$lons, 
                                time, char_test,
@@ -194,53 +196,10 @@ test_that("Create basic DSG file",{
                                data_metadata=test_data$meta,
                                attributes=global_attributes)
   
-  testnc<-nc_open("temp.nc")
+  testnc<-nc_open(testnc)
   expect(testnc$dim$time$len == 1460)
   
-  unlink("temp.nc")
-})
-
-test_that('soilmoisturetools data writes as expected', {
-  ok<-readRDS("data/soilmoisturetools/ok.rds")
-  ok_meta<-readRDS("data/soilmoisturetools/ok_meta.rds")
-  attributes <- list(
-    title = 'National Soil Moisture Network SOS',
-    abstract = 'This service provides soil moisture data from the U.S.
-    National Soil Moisture Network Pilot and serves data from SCAN, CRN,
-    West Texas and Oklahoma Mesonets. This SOS web service delivers the data
-    using GML.',
-    'provider name' = 'U.S. Geological Survey, Office of Water Information,
-    Center for Integrated Data Analytics, United States Government',
-    'provider site' = 'http://cida.usgs.gov',
-    description = 'Percentile of Volumetric Soil Moisture as compared
-    to the historical distribution. Percentiles are calculated using
-    cumulative distribution functions and range from 0-100.'
-  )
-  nc_file <- write_timeseries_dsg(
-    nc_file = tempfile(),
-    instance_names = ok$station,
-    lats = ok_meta$latitude,
-    lons = ok_meta$longitude,
-    alts = ok_meta$elevation,
-    times = ok$datetime[1],
-    data = as.data.frame(array(ok$value, dim = c(
-      1, length(ok$value)
-    ))),
-    data_unit = "percent",
-    data_prec = "double",
-    attributes = attributes
-  )
-  
-  nc <- nc_open(nc_file)
-  
-  expect(file.exists(nc_file))
-})
-
-test_that("Read basic DSG file",{
-	
 	test_data <- get_sample_timeseries_data()
-	
-	nc_file<-'data/test_output.nc'
 	
 	testlist<-read_timeseries_dsg(nc_file)
 	
@@ -261,11 +220,7 @@ test_that("Read basic DSG file",{
 	expect_equivalent(testlist$global_attributes$nc_title,'test title')
 	expect_equivalent(testlist$data_frames[1][[1]],test_data$var_data) # Plan to have the dataframes work for 1 to many variables.
 	
-})
-
-test_that("warnings and edge cases", {
-  nc_file <- "data/test_output.nc"
-  nc_file_borked <- "data/test_output_borked.nc"
+  nc_file_borked <- tempfile()
   file.copy(nc_file, nc_file_borked, overwrite = TRUE)
   nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
   att.delete.nc(nc, "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1", "coordinates")
@@ -323,4 +278,40 @@ test_that("warnings and edge cases", {
   
   unlink(nc_file)
   unlink(nc_file_borked)
+})
+
+test_that('soilmoisturetools data writes as expected', {
+  ok<-readRDS("data/soilmoisturetools/ok.rds")
+  ok_meta<-readRDS("data/soilmoisturetools/ok_meta.rds")
+  attributes <- list(
+    title = 'National Soil Moisture Network SOS',
+    abstract = 'This service provides soil moisture data from the U.S.
+    National Soil Moisture Network Pilot and serves data from SCAN, CRN,
+    West Texas and Oklahoma Mesonets. This SOS web service delivers the data
+    using GML.',
+    'provider name' = 'U.S. Geological Survey, Office of Water Information,
+    Center for Integrated Data Analytics, United States Government',
+    'provider site' = 'http://cida.usgs.gov',
+    description = 'Percentile of Volumetric Soil Moisture as compared
+    to the historical distribution. Percentiles are calculated using
+    cumulative distribution functions and range from 0-100.'
+  )
+  nc_file <- write_timeseries_dsg(
+    nc_file = tempfile(),
+    instance_names = ok$station,
+    lats = ok_meta$latitude,
+    lons = ok_meta$longitude,
+    alts = ok_meta$elevation,
+    times = ok$datetime[1],
+    data = as.data.frame(array(ok$value, dim = c(
+      1, length(ok$value)
+    ))),
+    data_unit = "percent",
+    data_prec = "double",
+    attributes = attributes
+  )
+  
+  nc <- nc_open(nc_file)
+  
+  expect(file.exists(nc_file))
 })

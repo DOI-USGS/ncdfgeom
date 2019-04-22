@@ -211,7 +211,6 @@ test_that("A whole shapefile can be written", {
 })
 
 test_that("big roundtrip", {
-  unzip("data/climdiv_prcp.nc.zip", exdir = "data/")
 
   nc_file <- "data/climdiv_prcp.nc"
   
@@ -249,6 +248,4 @@ test_that("big roundtrip", {
   
   expect_warning(out_nc <- write_geometry(out_nc, climdiv_poly, variables = "climdiv_prcp_inches"),
                  "no datum information found assuming WGS84")
-  
-  unlink(nc_file)
 })
