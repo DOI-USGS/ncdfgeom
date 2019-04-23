@@ -1,6 +1,7 @@
 context("orthogonal netcdf timeseries")
 
-test_that("Create basic DSG file",{
+test_that("Create basic DSG file", {
+  unlink(nc_file)
   nc_summary<-'test summary'
   nc_date_create<-'2099-01-01'
   nc_creator_name='test creator'
@@ -11,8 +12,6 @@ test_that("Create basic DSG file",{
   global_attributes<-list(title = nc_title, summary = nc_summary, date_created=nc_date_create, 
                           creator_name=nc_creator_name,creator_email=nc_creator_email,
                           project=nc_project, processing_level=nc_proc_level)
-  
-  nc_file<-'data/test_output.nc'
   
   test_data <- get_sample_timeseries_data()
   
@@ -149,6 +148,37 @@ test_that("Create basic DSG file",{
   expect_equivalent(ncvar_get(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,71],test_data$all_data$`71`)
   expect_equivalent(testnc$var$`BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1`$units,"mm/d")
   expect_equivalent(ncatt_get(testnc,varid=0,"summary")$value,'test summary')
+  
+  # covers no altitude and iteration to write many rows.
+  test_dat2 <- dplyr::bind_rows(test_data$var_data, test_data$var_data)
+  time <- c(test_data$time,test_data$time)
+  testnc<-write_timeseries_dsg(tempfile(), 
+                               names(test_data$var_data), 
+                               test_data$lats, test_data$lons, 
+                               time, test_dat2,
+                               data_unit=test_data$units,	
+                               data_prec='double',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes)
+  
+  testnc<-nc_open(testnc)
+  expect(testnc$dim$time$len == 1460)
+  
+  char_test <- dplyr::mutate_all(test_dat2, as.character)
+  time <- c(test_data$time,test_data$time)
+  testnc<-write_timeseries_dsg(tempfile(), 
+                               names(test_data$var_data), 
+                               test_data$lats, test_data$lons, 
+                               time, char_test,
+                               data_unit=test_data$units,	
+                               data_prec='char',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes)
+  
+  testnc<-nc_open(testnc)
+  expect(testnc$dim$time$len == 1460)
+  
+  testthat::skip_on_cran()
   expect("duplicate" %in% names(testnc$var), failure_message = names(testnc$var))
   
   nc_close(testnc)
@@ -169,35 +199,9 @@ test_that("Create basic DSG file",{
   testnc<-nc_open(nc_file)
   
   expect("character" %in% names(testnc$var), failure_message = names(testnc$var))
+})
   
-  # covers no altitude and iteration to write many rows.
-  test_dat2 <- dplyr::bind_rows(test_data$var_data, test_data$var_data)
-  time <- c(test_data$time,test_data$time)
-  testnc<-write_timeseries_dsg(tempfile(), 
-                               names(test_data$var_data), 
-                               test_data$lats, test_data$lons, 
-                               time, test_dat2,
-                               data_unit=test_data$units,	
-                               data_prec='double',
-                               data_metadata=test_data$meta,
-                               attributes=global_attributes)
-                               
-  testnc<-nc_open(testnc)
-  expect(testnc$dim$time$len == 1460)
-  
-  char_test <- dplyr::mutate_all(test_dat2, as.character)
-  time <- c(test_data$time,test_data$time)
-  testnc<-write_timeseries_dsg(tempfile(), 
-                               names(test_data$var_data), 
-                               test_data$lats, test_data$lons, 
-                               time, char_test,
-                               data_unit=test_data$units,	
-                               data_prec='char',
-                               data_metadata=test_data$meta,
-                               attributes=global_attributes)
-  
-  testnc<-nc_open(testnc)
-  expect(testnc$dim$time$len == 1460)
+test_that("bork the file", {
   
 	test_data <- get_sample_timeseries_data()
 	
@@ -314,4 +318,5 @@ test_that('soilmoisturetools data writes as expected', {
   nc <- nc_open(nc_file)
   
   expect(file.exists(nc_file))
+  unlink(nc_file)
 })
