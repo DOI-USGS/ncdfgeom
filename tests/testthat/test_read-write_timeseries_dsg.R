@@ -178,7 +178,6 @@ test_that("Create basic DSG file", {
   testnc<-nc_open(testnc)
   expect(testnc$dim$time$len == 1460)
   
-  testthat::skip_on_cran()
   expect("duplicate" %in% names(testnc$var), failure_message = names(testnc$var))
   
   nc_close(testnc)

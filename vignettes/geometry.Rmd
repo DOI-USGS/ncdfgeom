@@ -31,7 +31,7 @@ Below the example, all the geometry types that `ncdfgeom` handles are shown in d
 
 Tables of point, line, or polygon features with associated timeseries are the target for this functionality. Here, we use some sample data from the `ncdfgeom` package.
 ```{r libs}
-example_file <- "example.nc"
+example_file <- tempfile()
 
 file.copy(from = system.file('extdata/example_huc_eta.nc', package = 'ncdfgeom'), 
 					to = example_file, 
