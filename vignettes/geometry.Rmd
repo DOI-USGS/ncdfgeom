@@ -31,7 +31,7 @@ Below the example, all the geometry types that `ncdfgeom` handles are shown in d
 
 Tables of point, line, or polygon features with associated timeseries are the target for this functionality. Here, we use some sample data from the `ncdfgeom` package.
 ```{r libs}
-example_file <- "example.nc"
+example_file <- tempfile()
 
 file.copy(from = system.file('extdata/example_huc_eta.nc', package = 'ncdfgeom'), 
 					to = example_file, 
@@ -45,9 +45,9 @@ plot(sf::st_geometry(polygons))
 ```
 
 Now we have the polygons as shown above and a NetCDF file with a header that looks like:
-```{r dump_polygons, echo=FALSE}
-ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
-cat(ncdump ,sep = "\n")
+```{r dump_polygons, echo=FALSE, cache=TRUE, eval = FALSE}
+try({ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
+     cat(ncdump ,sep = "\n")}, silent = TRUE)
 ```
 Now we can use the `write_geometry` function to add the polygon data to the NetCDF file.
 ```{r demo}
@@ -61,8 +61,8 @@ ncdfgeom::write_geometry(nc_file=example_file,
 
 Now the NetCDF file looks like:
 ```{r dump_polygons_ts, echo=FALSE}
-ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
-cat(ncdump ,sep = "\n")
+try({ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
+cat(ncdump ,sep = "\n")}, silent = TRUE)
 ```
 
 Read the polygon data from the file and write it out to a geopackage.

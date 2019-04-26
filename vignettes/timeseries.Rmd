@@ -102,8 +102,8 @@ ncmeta::nc_dims(nc_file)
 The header of the resulting NetCDF file looks like:
 
 ```{r dump_polygons, echo=FALSE}
-ncdump <- system(paste("ncdump -h", nc_file), intern = TRUE)
-cat(ncdump ,sep = "\n")
+try({ncdump <- system(paste("ncdump -h", nc_file), intern = TRUE)
+cat(ncdump ,sep = "\n")}, silent = TRUE)
 ```
 
 This file can be read back into R with the function `read_timeseries_dsg`. The response is a list of variables as shown below.

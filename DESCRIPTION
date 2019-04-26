@@ -9,11 +9,10 @@ Authors@R: c(person("David", "Blodgett", role = c("aut", "cre"),
 Description: Tools to create timeseries and geometry NetCDF files.
 URL: https://code.usgs.gov/water/ncdfgeom
 BugReports: https://github.com/USGS-R/ncdfgeom/issues
-Imports: RNetCDF, ncmeta, sf, methods, dplyr
+Imports: RNetCDF, ncmeta, sf, dplyr, methods
 Depends:
   R (>= 3.0)
-Suggests: testthat, knitr, rmarkdown, pkgdown, tidyr, sp, geoknife, ncdf4
-Remotes: hypertidy/ncmeta
+Suggests: testthat, knitr, rmarkdown, pkgdown, tidyverse, sp, geoknife, ncdf4, jsonlite
 License: file LICENSE
 LazyData: TRUE
 Encoding: UTF-8

@@ -48,11 +48,11 @@ When on CRAN, the package will be installed with the typical install.packages me
 install.packages("ncdfgeom")
 ```
 
-For this demo, we'll use `sf`, `dplyr`, and `ncdfgeom`.
+For this demo, we'll use `sf`, `tidyverse`, and `ncdfgeom`.
 
 ```{r libs, message=FALSE, warning=FALSE}
 library(sf)
-library(dplyr)
+library(tidyverse)
 library(ncdfgeom)
 ```
 
@@ -87,10 +87,6 @@ As shown above, we have two `data.frame`s. One has 344 columns and the other 344
 The NetCDF discrete sampling geometries timeseries standard requires point lat/lon coordinate locations for timeseries data. In the code below, we calculate these values and write the timeseries data to a netcdf file.
 
 ```{r write_ts, warning = FALSE} 
-library(tidyverse)
-library(sf)
-library(ncdfgeom)
-
 climdiv_centroids <- climdiv_poly %>%
   st_transform(5070) %>% # Albers Equal Area
   st_set_agr("constant") %>%
@@ -126,8 +122,8 @@ write_geometry(nc_file = "climdiv_prcp.nc",
 ```
 Now we have a file with a structure as shown in the `ncdump` output below.
 ```{r ncdump}
-ncdump <- system(paste("ncdump -h", nc_file), intern = TRUE)
-cat(ncdump, sep = "\n")
+try({ncdump <- system(paste("ncdump -h", nc_file), intern = TRUE)
+cat(ncdump, sep = "\n")}, silent = TRUE)
 ```
 
 For more information about the polygon and timeseries data structures used here, see the [NetCDF-CF standard.](http://cfconventions.org/cf-conventions/cf-conventions.html)  
@@ -211,8 +207,6 @@ plot(prcp["prcp"], lwd = 0.1, pal = p_colors,
 
 This is the code used to download and prep the precipitation and spatial data. Provided for reproducibility and  is not run here.
 ```{r setup_dontrun, eval = FALSE}
-library(tidyverse)
-library(sf)
 # Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt
 prcp_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190408"
 

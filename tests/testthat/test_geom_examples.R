@@ -17,6 +17,7 @@ test_that("create geom_examples.md", {
   sink(geom_examples)
   cat(paste("# Examples - Contiguous Ragged Arrays  \n\n"))
   
+  try({
   for(geom in 1:length(namesstr)) {
     cat(paste0("## ", namesstr[geom],"  \nWell Known Text (WKT): ```",fixtureData[["2d"]][order[geom]]),"```  \n")
     fileName<-paste0("sample_",order[geom],".nc")
@@ -26,12 +27,13 @@ test_that("create geom_examples.md", {
       write_geometry(fileName, get_fixture_data(order[geom]))
     }
     cat("Common Data Language (CDL):\n```  \n")
-    t<-system(paste0("ncdump ", fileName), intern = TRUE)
-    cat(t,sep = "\n")
+    t <- system(paste0("ncdump ", fileName), intern = TRUE)
+    cat(t, sep = "\n")
     cat("  \n```  \n\n")
     system(paste("rm", fileName))
   }
   sink()
-  
+  testthat::skip_on_cran()
   expect(file.exists(geom_examples))
+  }, silent = TRUE)
 })

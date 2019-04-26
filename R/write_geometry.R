@@ -30,8 +30,10 @@
 #'
 #' hucPolygons_nc <- ncdfgeom::write_geometry(nc_file=tempfile(), 
 #'                                            geom_data = hucPolygons)
-#' ncdump <- system(paste("ncdump -h", hucPolygons_nc), intern = TRUE)
-#' cat(ncdump ,sep = "\n")
+#' try({
+#'   ncdump <- system(paste("ncdump -h", hucPolygons_nc), intern = TRUE)
+#'   cat(ncdump ,sep = "\n")
+#' }, silent = TRUE)
 #' 
 write_geometry = function(nc_file, geom_data, instance_dim_name = NULL, variables = list()) {
 

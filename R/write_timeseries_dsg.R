@@ -62,10 +62,10 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 																time_units = 'days since 1970-01-01 00:00:00',
 																attributes=list(), add_to_existing=FALSE, overwrite = FALSE){
 	
-  if(!overwrite && !add_to_existing && file.exists(nc_file)) stop("File already exists and overwrite is false.")
-  if(overwrite && !add_to_existing) unlink(file.exists(nc_file))
+  if(!overwrite & !add_to_existing & file.exists(nc_file)) stop("File already exists and overwrite is false.")
+  if(overwrite & !add_to_existing) unlink(file.exists(nc_file))
   
-	if(add_to_existing && !file.exists(nc_file)) add_to_existing=FALSE
+	if(add_to_existing & !file.exists(nc_file)) add_to_existing=FALSE
 	
 	if(!is(times, 'POSIXct')){
 		times = as.POSIXct(times)

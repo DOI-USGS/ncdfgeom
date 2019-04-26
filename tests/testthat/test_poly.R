@@ -211,23 +211,25 @@ test_that("A whole shapefile can be written", {
 })
 
 test_that("big roundtrip", {
-  dir.create("data/temp/", showWarnings = FALSE)
-  unzip("data/climdiv_prcp.nc.zip", exdir = "data/temp/")
 
-  expect_warning(prcp_data <- read_timeseries_dsg("data/temp/climdiv_prcp.nc"),
-                 "no altitude coordinate found")
+  nc_file <- "data/climdiv_prcp.nc"
+  
+  expect_warning(
+    prcp_data <- read_timeseries_dsg(nc_file),
+    "no altitude coordinate found")
+  
   expect_equal(length(prcp_data), 9)
   expect_equal(length(prcp_data$time), 1500)
   expect_s3_class(prcp_data$time[1], "POSIXct")
   expect_equal(nrow(prcp_data$data_frames[[1]]), 1500)
   expect_equal(ncol(prcp_data$data_frames[[1]]), 344)
   
-  climdiv_poly <- read_geometry("data/temp/climdiv_prcp.nc")
+  climdiv_poly <- read_geometry(nc_file)
   
   expect_s3_class(climdiv_poly, "sf")
   expect_s3_class(climdiv_poly$geom, "sfc_GEOMETRY")
 
-  out_nc <- write_timeseries_dsg(nc_file = "data/temp/temp.nc", 
+  out_nc <- write_timeseries_dsg(nc_file = tempfile(), 
                                  instance_names = names(prcp_data$data_frames[[1]]), 
                                  lats = prcp_data$lats,
                                  lons = prcp_data$lons, 
@@ -239,14 +241,11 @@ test_that("big roundtrip", {
                                  attributes = prcp_data$global_attributes[[1]], 
                                  overwrite = TRUE)
   
-  expect_error(write_geometry("data/temp/temp.nc", climdiv_poly, variables = "climdiv_prcp_inches"),
+  expect_error(write_geometry(out_nc, climdiv_poly, variables = "climdiv_prcp_inches"),
                "Found multiple geometry types, only one is supported.")
   
   climdiv_poly <- st_sf(st_cast(climdiv_poly, "MULTIPOLYGON"))
   
-  expect_warning(out_nc <- write_geometry("data/temp/temp.nc", climdiv_poly, variables = "climdiv_prcp_inches"),
+  expect_warning(out_nc <- write_geometry(out_nc, climdiv_poly, variables = "climdiv_prcp_inches"),
                  "no datum information found assuming WGS84")
-  
-  unlink("data/temp/*")
-  
 })

@@ -26,8 +26,10 @@
 #' example_file <-write_attribute_data(tempfile(), sample_data,
 #'                                     units = rep("unknown", ncol(sample_data)))
 #' 
-#' ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
-#' cat(ncdump ,sep = "\n")
+#' try({
+#'   ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
+#'   cat(ncdump ,sep = "\n")
+#' }, silent = TRUE)
 #' 
 write_attribute_data <- function(nc_file, att_data, instance_dim_name = "instance", 
                                  units = rep("unknown", ncol(att_data)), overwrite = FALSE) {

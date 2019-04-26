@@ -33,8 +33,10 @@ hucPolygons <- sf::read_sf(system.file('extdata','example_huc_eta.json', package
 
 hucPolygons_nc <- ncdfgeom::write_geometry(nc_file=tempfile(), 
                                            geom_data = hucPolygons)
-ncdump <- system(paste("ncdump -h", hucPolygons_nc), intern = TRUE)
-cat(ncdump ,sep = "\\n")
+try({
+  ncdump <- system(paste("ncdump -h", hucPolygons_nc), intern = TRUE)
+  cat(ncdump ,sep = "\\n")
+}, silent = TRUE)
 
 }
 \references{

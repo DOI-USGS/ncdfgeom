@@ -2,6 +2,9 @@ library(RNetCDF)
 library(ncdf4)
 library(sf)
 library(sp)
+
+nc_file<-tempfile()
+
 compareSP <- function(polygonData, returnPolyData) {
 	polygonData <- sf::as_Spatial(polygonData)
 	returnPolyData <- sf::as_Spatial(returnPolyData)	
