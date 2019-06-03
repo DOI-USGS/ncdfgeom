@@ -1,7 +1,8 @@
 context("orthogonal netcdf timeseries")
 
 test_that("Create basic DSG file", {
-  unlink(nc_file)
+  
+  nc_file<-tempfile()
   nc_summary<-'test summary'
   nc_date_create<-'2099-01-01'
   nc_creator_name='test creator'
@@ -162,7 +163,7 @@ test_that("Create basic DSG file", {
                                attributes=global_attributes)
   
   testnc<-nc_open(testnc)
-  expect(testnc$dim$time$len == 1460)
+  expect_true(testnc$dim$time$len == 1460)
   
   char_test <- dplyr::mutate_all(test_dat2, as.character)
   time <- c(test_data$time,test_data$time)
@@ -176,7 +177,7 @@ test_that("Create basic DSG file", {
                                attributes=global_attributes)
   
   testnc<-nc_open(testnc)
-  expect(testnc$dim$time$len == 1460)
+  expect_true(testnc$dim$time$len == 1460)
   
   expect("duplicate" %in% names(testnc$var), failure_message = names(testnc$var))
   
@@ -198,9 +199,8 @@ test_that("Create basic DSG file", {
   testnc<-nc_open(nc_file)
   
   expect("character" %in% names(testnc$var), failure_message = names(testnc$var))
-})
   
-test_that("bork the file", {
+  nc_close(testnc)
   
 	test_data <- get_sample_timeseries_data()
 	
@@ -268,7 +268,7 @@ test_that("bork the file", {
   att.delete.nc(nc, "time", "standard_name")
   close.nc(nc)
   warn <- capture_warnings(testlist<-read_timeseries_dsg(nc_file_borked))
-  expect(all(c("no data variables found, attempting to infer via shared dimensions",
+  expect_true(all(c("no data variables found, attempting to infer via shared dimensions",
            "no latitude coordinate found",                                     
            "no longitude coordinate found") %in% warn))
     
@@ -316,6 +316,6 @@ test_that('soilmoisturetools data writes as expected', {
   
   nc <- nc_open(nc_file)
   
-  expect(file.exists(nc_file))
+  expect_true(file.exists(nc_file))
   unlink(nc_file)
 })

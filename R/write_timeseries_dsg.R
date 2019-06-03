@@ -111,10 +111,6 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 	data_name = data_metadata[['name']]
 	
 	if(add_to_existing) {
-		# Open existing file.
-	  orig_nc <- nc_file
-	  nc_file <- tempfile()
-	  file.copy(orig_nc, nc_file)
 	  
 		nc<-open.nc(nc_file, write = TRUE)
 		data_vars = list()
@@ -130,7 +126,7 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		
 		close.nc(nc)
 		
-		if(add_to_existing) file.rename(nc_file, orig_nc)
+		return(nc_file)
 		
 	} else {
 	  nc <- create.nc(nc_file, large = TRUE)
