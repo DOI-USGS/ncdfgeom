@@ -1,7 +1,8 @@
 context("orthogonal netcdf timeseries")
 
 test_that("Create basic DSG file", {
-  unlink(nc_file)
+  
+  nc_file<-tempfile()
   nc_summary<-'test summary'
   nc_date_create<-'2099-01-01'
   nc_creator_name='test creator'
@@ -195,12 +196,11 @@ test_that("Create basic DSG file", {
                                attributes=global_attributes,
                                add_to_existing = TRUE)
   
-  testnc<-nc_open(nc_file)
+  testnc<-nc_open(testnc)
   
   expect("character" %in% names(testnc$var), failure_message = names(testnc$var))
-})
   
-test_that("bork the file", {
+  nc_close(testnc)
   
 	test_data <- get_sample_timeseries_data()
 	
