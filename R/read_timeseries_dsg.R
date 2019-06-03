@@ -50,6 +50,10 @@ read_timeseries_dsg = function(nc_file){
 	nc_meta <- nc_meta(nc_file)
 	nc_atts <- nc_meta$attribute
 	
+	if(!"name" %in% names(nc_atts)) {
+  	names(nc_atts) <- c("name", "variable", "value")
+	}
+
 	nc_list<-list()
 	
 	# Check important global atts
