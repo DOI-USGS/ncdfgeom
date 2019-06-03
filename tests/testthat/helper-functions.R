@@ -54,7 +54,7 @@ checkAllPoly <- function(polygonData, node_count, part_node_count = NULL, part_t
 }
 
 get_fixture_data <- function(geom_type) {
-  fixtureData <- jsonlite::fromJSON("data/fixture_wkt.json")
+  fixtureData <- jsonlite::fromJSON(txt = system.file('extdata/fixture_wkt.json', package = 'ncdfgeom'))
   
   return(sf::st_sf(geom = sf::st_as_sfc(fixtureData[["2d"]][geom_type]), 
                    crs = "+init=epsg:4326"))

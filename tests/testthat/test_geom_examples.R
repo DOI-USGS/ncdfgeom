@@ -3,7 +3,7 @@ context("geom_examples.md")
 test_that("create geom_examples.md", {
   geom_examples <- "data/geom_examples.md"
   
-  fixtureData <- jsonlite::fromJSON("data/fixture_wkt.json")
+  fixtureData <- jsonlite::fromJSON(system.file('extdata/fixture_wkt.json', package = 'ncdfgeom'))
   # "multipoint", "MultiPoint (2D)", 
   order<-c("point", "linestring", "polygon",
            "multilinestring", "multipolygon",
