@@ -112,10 +112,7 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 	
 	if(add_to_existing) {
 	  
-	  temp_file <- tempfile()
-	  file.copy(nc_file, temp_file)
-	  
-		nc<-open.nc(temp_file, write = TRUE)
+		nc<-open.nc(nc_file, write = TRUE)
 		data_vars = list()
 		
 		add_var(nc, data_name, c(pkg.env$time_dim_name, pkg.env$instance_dim_name), 
@@ -123,13 +120,11 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		        long_name = data_metadata[['long_name']], data = data)
     
 		close.nc(nc)
-		nc<-open.nc(temp_file, write = TRUE)
+		nc<-open.nc(nc_file, write = TRUE)
 		
 		put_data_in_nc(nc,nt,n,data_name,data, alts)
 		
 		close.nc(nc)
-		
-		file.rename(temp_file, nc_file)
 		
 		return(nc_file)
 		

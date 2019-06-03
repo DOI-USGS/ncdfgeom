@@ -196,7 +196,7 @@ test_that("Create basic DSG file", {
                                attributes=global_attributes,
                                add_to_existing = TRUE)
   
-  testnc<-nc_open(testnc)
+  testnc<-nc_open(nc_file)
   
   expect("character" %in% names(testnc$var), failure_message = names(testnc$var))
   
