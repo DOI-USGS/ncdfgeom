@@ -54,7 +54,8 @@ checkAllPoly <- function(polygonData, node_count, part_node_count = NULL, part_t
 }
 
 get_fixture_data <- function(geom_type) {
-  fixtureData <- jsonlite::fromJSON(txt = system.file('extdata/fixture_wkt.json', package = 'ncdfgeom'))
+  fixtureData <- jsonlite::fromJSON(txt = system.file("extdata/fixture_wkt.json", 
+                                                      package = "ncdfgeom"))
   
   return(sf::st_sf(geom = sf::st_as_sfc(fixtureData[["2d"]][geom_type]), 
                    crs = "+init=epsg:4326"))
@@ -73,8 +74,10 @@ get_sample_timeseries_data <- function() {
   lons<-lon_lat[,"X"]
   alts<-rep(1,length(lats))
   
-  all_data <- geoknife::parseTimeseries("data/yahara_alb_gdp_file.csv",
-                                        delim=',',with.units=TRUE)
+  local_file <- system.file("extdata/yahara_alb_gdp_file.csv", 
+                            package = "ncdfgeom")
+  all_data <- geoknife::parseTimeseries(local_file,
+                                        delim=',', with.units=TRUE)
   var_data <- all_data[2:(ncol(all_data)-3)]
   
   units <- all_data$units[1]
