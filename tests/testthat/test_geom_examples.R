@@ -34,6 +34,6 @@ test_that("create geom_examples.md", {
   }
   sink()
   testthat::skip_on_cran()
-  expect(file.exists(geom_examples))
+  expect_true(file.exists(geom_examples))
   }, silent = TRUE)
 })
