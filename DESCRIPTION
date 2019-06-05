@@ -1,19 +1,19 @@
 Package: ncdfgeom
 Type: Package
-Title: NetCDF Geometry and Timeseries
+Title: 'NetCDF' Geometry and Timeseries
 Version: 1.0.0
-Date: 2019-04-18
+Date: 2019-06-05
 Authors@R: c(person("David", "Blodgett", role = c("aut", "cre"), 
                     email = "dblodgett@usgs.gov"),
              person("Luke", "Winslow", role = "ctb"))
-Description: Tools to create timeseries and geometry NetCDF files.
+Description: Tools to create timeseries and geometry 'NetCDF' files.
 URL: https://code.usgs.gov/water/ncdfgeom
 BugReports: https://github.com/USGS-R/ncdfgeom/issues
 Imports: RNetCDF, ncmeta, sf, dplyr, methods
 Depends:
   R (>= 3.0)
 Suggests: testthat, knitr, rmarkdown, pkgdown, tidyverse, sp, geoknife, ncdf4, jsonlite
-License: file LICENSE
+License: CC0
 LazyData: TRUE
 Encoding: UTF-8
 VignetteBuilder: knitr
