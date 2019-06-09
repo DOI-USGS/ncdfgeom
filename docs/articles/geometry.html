@@ -101,7 +101,7 @@
 <h2 class="hasAnchor">
 <a href="#load-spatial-data" class="anchor"></a>Load Spatial Data</h2>
 <p>Tables of point, line, or polygon features with associated timeseries are the target for this functionality. Here, we use some sample data from the <code>ncdfgeom</code> package.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">example_file &lt;-<span class="st"> "example.nc"</span></a>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">example_file &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/tempfile">tempfile</a></span>()</a>
 <a class="sourceLine" id="cb1-2" title="2"></a>
 <a class="sourceLine" id="cb1-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/files">file.copy</a></span>(<span class="dt">from =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">'extdata/example_huc_eta.nc'</span>, <span class="dt">package =</span> <span class="st">'ncdfgeom'</span>), </a>
 <a class="sourceLine" id="cb1-4" title="4">                    <span class="dt">to =</span> example_file, </a>
@@ -114,61 +114,23 @@
 <a class="sourceLine" id="cb1-11" title="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(sf<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/sf/topics/st_geometry">st_geometry</a></span>(polygons))</a></code></pre></div>
 <p><img src="geometry_files/figure-html/libs-1.png" width="576"></p>
 <p>Now we have the polygons as shown above and a NetCDF file with a header that looks like:</p>
-<pre><code>#&gt; netcdf example {
-#&gt; dimensions:
-#&gt;  maxStrlen64 = 64 ;
-#&gt;  station = 2 ;
-#&gt;  time = 25 ;
-#&gt; variables:
-#&gt;  double lat(station) ;
-#&gt;      lat:units = "degrees_north" ;
-#&gt;      lat:missing_value = -999. ;
-#&gt;      lat:long_name = "latitude of the observation" ;
-#&gt;      lat:standard_name = "latitude" ;
-#&gt;  double lon(station) ;
-#&gt;      lon:units = "degrees_east" ;
-#&gt;      lon:missing_value = -999. ;
-#&gt;      lon:long_name = "longitude of the observation" ;
-#&gt;      lon:standard_name = "longitude" ;
-#&gt;  double time(time) ;
-#&gt;      time:units = "days since 1970-01-01 00:00:00" ;
-#&gt;      time:missing_value = -999. ;
-#&gt;      time:long_name = "time of measurement" ;
-#&gt;      time:standard_name = "time" ;
-#&gt;  char station_name(station, maxStrlen64) ;
-#&gt;      station_name:units = "" ;
-#&gt;      station_name:missing_value = "" ;
-#&gt;      station_name:long_name = "Station Names" ;
-#&gt;      station_name:cf_role = "timeseries_id" ;
-#&gt;      station_name:standard_name = "station_id" ;
-#&gt;  int et(station, time) ;
-#&gt;      et:units = "mm" ;
-#&gt;      et:missing_value = -999 ;
-#&gt;      et:long_name = "Area Weighted Mean Actual Evapotranspiration" ;
-#&gt;      et:coordinates = "time lat lon" ;
-#&gt; 
-#&gt; // global attributes:
-#&gt;      :Conventions = "CF-1.7" ;
-#&gt;      :featureType = "timeSeries" ;
-#&gt;      :cdm_data_type = "Station" ;
-#&gt; }</code></pre>
 <p>Now we can use the <code>write_geometry</code> function to add the polygon data to the NetCDF file.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">(vars &lt;-<span class="st"> </span>ncmeta<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncmeta/topics/nc_vars">nc_vars</a></span>(example_file))</a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="co">#&gt; # A tibble: 5 x 5</span></a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt;      id name         type      ndims natts</span></a>
-<a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb3-5" title="5"><span class="co">#&gt; 1     0 lat          NC_DOUBLE     1     4</span></a>
-<a class="sourceLine" id="cb3-6" title="6"><span class="co">#&gt; 2     1 lon          NC_DOUBLE     1     4</span></a>
-<a class="sourceLine" id="cb3-7" title="7"><span class="co">#&gt; 3     2 time         NC_DOUBLE     1     4</span></a>
-<a class="sourceLine" id="cb3-8" title="8"><span class="co">#&gt; 4     3 station_name NC_CHAR       2     5</span></a>
-<a class="sourceLine" id="cb3-9" title="9"><span class="co">#&gt; 5     4 et           NC_INT        2     4</span></a>
-<a class="sourceLine" id="cb3-10" title="10"></a>
-<a class="sourceLine" id="cb3-11" title="11">ncdfgeom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry">write_geometry</a></span>(<span class="dt">nc_file=</span>example_file,</a>
-<a class="sourceLine" id="cb3-12" title="12">                         <span class="dt">geom_data =</span> polygons, </a>
-<a class="sourceLine" id="cb3-13" title="13">                         <span class="dt">instance_dim_name =</span> <span class="st">"station"</span>, </a>
-<a class="sourceLine" id="cb3-14" title="14">                         <span class="dt">variables =</span> vars<span class="op">$</span>name) -&gt;<span class="st"> </span>example_file</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">(vars &lt;-<span class="st"> </span>ncmeta<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncmeta/topics/nc_vars">nc_vars</a></span>(example_file))</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="co">#&gt; # A tibble: 5 x 5</span></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="co">#&gt;      id name         type      ndims natts</span></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="co">#&gt;   &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt; 1     0 lat          NC_DOUBLE     1     4</span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; 2     1 lon          NC_DOUBLE     1     4</span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="co">#&gt; 3     2 time         NC_DOUBLE     1     4</span></a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt; 4     3 station_name NC_CHAR       2     5</span></a>
+<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; 5     4 et           NC_INT        2     4</span></a>
+<a class="sourceLine" id="cb2-10" title="10"></a>
+<a class="sourceLine" id="cb2-11" title="11">ncdfgeom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry">write_geometry</a></span>(<span class="dt">nc_file=</span>example_file,</a>
+<a class="sourceLine" id="cb2-12" title="12">                         <span class="dt">geom_data =</span> polygons, </a>
+<a class="sourceLine" id="cb2-13" title="13">                         <span class="dt">instance_dim_name =</span> <span class="st">"station"</span>, </a>
+<a class="sourceLine" id="cb2-14" title="14">                         <span class="dt">variables =</span> vars<span class="op">$</span>name) -&gt;<span class="st"> </span>example_file</a></code></pre></div>
 <p>Now the NetCDF file looks like:</p>
-<pre><code>#&gt; netcdf example {
+<pre><code>#&gt; netcdf file2f0013a281f6 {
 #&gt; dimensions:
 #&gt;  maxStrlen64 = 64 ;
 #&gt;  station = 2 ;
@@ -257,11 +219,11 @@
 #&gt;      :cdm_data_type = "Station" ;
 #&gt; }</code></pre>
 <p>Read the polygon data from the file and write it out to a geopackage.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">polygons_sf &lt;-<span class="st"> </span>ncdfgeom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncdfgeom/topics/read_geometry">read_geometry</a></span>(example_file)</a>
-<a class="sourceLine" id="cb5-2" title="2"></a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(sf<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/sf/topics/st_geometry">st_geometry</a></span>(polygons_sf))</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">polygons_sf &lt;-<span class="st"> </span>ncdfgeom<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ncdfgeom/topics/read_geometry">read_geometry</a></span>(example_file)</a>
+<a class="sourceLine" id="cb4-2" title="2"></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(sf<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/sf/topics/st_geometry">st_geometry</a></span>(polygons_sf))</a></code></pre></div>
 <p><img src="geometry_files/figure-html/read-1.png" width="576"></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">sf<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/sf/topics/st_write">write_sf</a></span>(polygons_sf, <span class="st">"polygons.gpkg"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">sf<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/sf/topics/st_write">write_sf</a></span>(polygons_sf, <span class="st">"polygons.gpkg"</span>)</a></code></pre></div>
 </div>
 <div id="geometry-types" class="section level2">
 <h2 class="hasAnchor">
