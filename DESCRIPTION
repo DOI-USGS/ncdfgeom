@@ -1,12 +1,12 @@
 Package: ncdfgeom
 Type: Package
-Title: 'NetCDF' Geometry and Timeseries
+Title: 'NetCDF' Geometry and Time Series
 Version: 1.0.0
 Date: 2019-06-05
 Authors@R: c(person("David", "Blodgett", role = c("aut", "cre"), 
                     email = "dblodgett@usgs.gov"),
              person("Luke", "Winslow", role = "ctb"))
-Description: Tools to create timeseries and geometry 'NetCDF' files.
+Description: Tools to create time series and geometry 'NetCDF' files.
 URL: https://code.usgs.gov/water/ncdfgeom
 BugReports: https://github.com/USGS-R/ncdfgeom/issues
 Imports: RNetCDF, ncmeta, sf, dplyr, methods

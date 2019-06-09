@@ -169,8 +169,10 @@ list of variables that should be related to the geometries.</p></td>
 
 <span class='no'>hucPolygons_nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdfgeom</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry'>write_geometry</a></span>(<span class='kw'>nc_file</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/tempfile'>tempfile</a></span>(),
                                            <span class='kw'>geom_data</span> <span class='kw'>=</span> <span class='no'>hucPolygons</span>)
-<span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>hucPolygons_nc</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf fileee7d62399989 {
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>({
+  <span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>hucPolygons_nc</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)
+}, <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; netcdf file2ee81bc8b0ef {
 #&gt; dimensions:
 #&gt; 	instance = 2 ;
 #&gt; 	char = 38 ;

@@ -93,7 +93,7 @@ Any columns of class date will be converted to character." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
+      <a href="../articles/geometry.html">Reading and Writing NetCDF-CF Geometry</a>
     </li>
     <li>
       <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
@@ -168,8 +168,10 @@ If adding to a file, it must already have the named instance dimension.</p></td>
 <span class='no'>example_file</span> <span class='kw'>&lt;-</span><span class='fu'>write_attribute_data</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/tempfile'>tempfile</a></span>(), <span class='no'>sample_data</span>,
                                     <span class='kw'>units</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"unknown"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>ncol</a></span>(<span class='no'>sample_data</span>)))
 
-<span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>example_file</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)</div><div class='output co'>#&gt; netcdf file82435852fa6 {
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>({
+  <span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>example_file</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)
+}, <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; netcdf file2ee82d269a3e {
 #&gt; dimensions:
 #&gt; 	instance = 100 ;
 #&gt; 	char = 12 ;

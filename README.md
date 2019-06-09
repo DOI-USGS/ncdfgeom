@@ -1,6 +1,6 @@
 NetCDF-CF Geometry and Timeseries Tools for R
 ===
-[![Build Status](https://travis-ci.org/USGS-R/ncdfgeom.svg)](https://travis-ci.org/USGS-R/ncdfgeom) [![Coverage Status](https://coveralls.io/repos/github/USGS-R/ncdfgeom/badge.svg?branch=master)](https://coveralls.io/github/USGS-R/ncdfgeom?branch=master)
+[![Build Status](https://travis-ci.org/USGS-R/ncdfgeom.svg)](https://travis-ci.org/USGS-R/ncdfgeom) [![Coverage Status](https://coveralls.io/repos/github/USGS-R/ncdfgeom/badge.svg?branch=master)](https://coveralls.io/github/USGS-R/ncdfgeom?branch=master) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfgeom)](https://cran.r-project.org/web/packages/ncdfgeom/index.html) [![CRAN](https://www.r-pkg.org/badges/version/ncdfgeom)](https://cran.r-project.org/web/packages/ncdfgeom/index.html)
 
 `ncdfgeom` reads and writes geometry data (points lines and polygons), attributes of geometries, and time series associated with the geometries in a standards-compliant way.
 
@@ -13,16 +13,16 @@ and consider [submitting issues and/or contributions!](https://github.com/USGS-R
 
 ## Installation
 
-For the latest version:
-```
-install.packages("devtools")
-devtools::install_github("USGS-R/ncdfgeom")
-```
-
-`ncdfgeom` will be released on CRAN in spring/summer 2019. When available on CRAN, installation will be available via:
+ncdfgeom is available via CRAN.
 
 ```
 install.packages("ncdfgeom")
+```
+
+For the latest development version:
+```
+install.packages("remotes")
+remotes::install_github("USGS-R/ncdfgeom")
 ```
 
 ## Contributing
