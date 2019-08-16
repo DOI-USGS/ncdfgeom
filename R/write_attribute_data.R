@@ -57,7 +57,7 @@ write_attribute_data <- function(nc_file, att_data, instance_dim_name = "instanc
 	types <- list(numeric="NC_DOUBLE", integer = "NC_INT", character="NC_CHAR")
 	
 	# Convert any dates to character. This could be improved later.
-	i <- sapply(att_data, is, class2 = "Date")
+	i <- sapply(att_data, is, class2 = "Date") | sapply(att_data, is, class2 = "POSIXt")
 	att_data[i] <- lapply(att_data[i], as.character)
 	
 	charDimLen<-0

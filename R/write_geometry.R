@@ -89,9 +89,9 @@ write_geometry = function(nc_file, geom_data, instance_dim_name = NULL, variable
 #'
 #' @importFrom RNetCDF open.nc close.nc create.nc var.put.nc att.put.nc
 #' @importFrom stats setNames
-#' @importFrom sf st_geometry_type st_crs st_coordinates
+#' @importFrom sf st_geometry_type st_crs st_coordinates st_zm
 #' @noRd
-write_geom_data <- function(geom_data, ...) 
+write_geom_data <- function(geom_data, ...)
   UseMethod("write_geom_data")
 
 #' @noRd
@@ -159,6 +159,11 @@ write_geom_data.sfc_LINESTRING <- function(geom_data, nc_file, instance_dim_name
 #' @name write_geom_data
 write_geom_data.sfc_MULTILINESTRING <- function(geom_data, nc_file, 
                                                 instance_dim_name, variables = c()) {
+  if(grepl("Z|M", class(st_geometry(geom_data)[[1]])[1])) {
+    warning("Found more than two dimensions in geometry. Removing Z and M content.")
+    geom_data <- st_zm(geom_data)
+  }
+  
   crs <- get_crs(geom_data)
   
   geom_data <- st_coordinates(geom_data)
@@ -186,7 +191,7 @@ write_geom_data.sfc_MULTILINESTRING <- function(geom_data, nc_file,
     
     g_data <- geom_data[geom_data[, 4] == geom, ]
 
-    for(g_part in 1:length(unique(g_data[, 3]))) {
+    for(g_part in unique(g_data[, 3])) {
       nc_part <- nc_part + 1
       
       coords <- g_data[g_data[, 3] == g_part, c(1,2)]
