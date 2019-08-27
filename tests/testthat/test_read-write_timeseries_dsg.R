@@ -2,6 +2,7 @@ context("orthogonal netcdf timeseries")
 
 test_that("Create basic DSG file", {
   
+  # NOTE: this code has been moved to helper files but was left here to not mess with it.
   nc_file<-tempfile()
   nc_summary<-'test summary'
   nc_date_create<-'2099-01-01'
