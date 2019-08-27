@@ -197,5 +197,8 @@ read_timeseries_dsg = function(nc_file){
 	                                                    name == "processing_level")$value
 	nc_list$global_attributes$nc_title <- filter(nc_atts, variable == "NC_GLOBAL" &
 	                                               name == "title")$value
+	
+	attr(nc_list, "class") <- "ncdfgeom"
+	
 	return(nc_list)
 }
