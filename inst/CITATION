@@ -1,0 +1,16 @@
+citHeader("To cite ncdfgeom in publications, please use:")
+
+bibentry(bibtype = "Manual",
+         author = personList(
+           as.person("David Blodgett"),
+           as.person("Luke Winslow")
+         ),
+         title = "ncdfgeom: 'NetCDF' Geometry and Time Series",
+         publisher = "U.S. Geological Survey",
+         address="Reston, VA",
+         version = "1.1.0",
+         institution = "U.S. Geological Survey",
+         year = 2019,
+         url = "https://code.usgs.gov/water/ncdfgeom",
+         textVersion = "Blodgett, D., 2019, ncdfgeom: 'NetCDF' Geometry and Time Series, https://code.usgs.gov/water/ncdfgeom"
+)

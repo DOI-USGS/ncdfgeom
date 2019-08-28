@@ -211,7 +211,7 @@ test_that("A whole shapefile can be written", {
 })
 
 test_that("big roundtrip", {
-
+  skip_on_cran()
   nc_file <- "data/climdiv_prcp.nc"
   
   expect_warning(
