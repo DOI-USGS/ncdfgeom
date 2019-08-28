@@ -2,6 +2,7 @@ context("orthogonal netcdf timeseries")
 
 test_that("Create basic DSG file", {
   
+  # NOTE: this code has been moved to helper files but was left here to not mess with it.
   nc_file<-tempfile()
   nc_summary<-'test summary'
   nc_date_create<-'2099-01-01'
@@ -222,6 +223,7 @@ test_that("Create basic DSG file", {
 	expect_equivalent(testlist$global_attributes$nc_proc_level,'just a test no processing')
 	expect_equivalent(testlist$global_attributes$nc_title,'test title')
 	expect_equivalent(testlist$data_frames[1][[1]],test_data$var_data) # Plan to have the dataframes work for 1 to many variables.
+	expect_s3_class(testlist, "ncdfgeom")
 	
   nc_file_borked <- tempfile()
   file.copy(nc_file, nc_file_borked, overwrite = TRUE)

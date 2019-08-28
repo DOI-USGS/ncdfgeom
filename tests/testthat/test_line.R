@@ -64,3 +64,17 @@ test_that("shapefile line data works", {
   }
 })
 
+test_that("NHDPlus Multilinestring", {
+  f <- system.file("extdata/nhdp_flowline_sample.gpkg", package = "ncdfgeom")
+  
+  test_dat <- sf::read_sf(f)
+  
+  test_nc <- expect_warning(write_geometry(tempfile(), test_dat), "Found more than two dimensions in geometry. Removing Z and M content.")
+  
+  test_dat_2 <- read_geometry(test_nc)
+  
+  expect_equal(class(test_dat_2$FDATE), "character") # coerced to character
+  expect_equal(class(sf::st_geometry(test_dat_2)[[1]])[1], "XY") 
+  
+})
+

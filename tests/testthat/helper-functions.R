@@ -97,5 +97,36 @@ get_sample_timeseries_data <- function() {
               lons = lons,
               lats = lats,
               alts = alts,
-              units = units))
+              units = units,
+              geom = yahara))
+}
+
+get_test_ncdf_object <- function(nc_file = tempfile()) {
+  nc_summary<-'test summary'
+  nc_date_create<-'2099-01-01'
+  nc_creator_name='test creator'
+  nc_creator_email='test@test.com'
+  nc_project='testthat ncdfgeom'
+  nc_proc_level='just a test no processing'
+  nc_title<-'test title'
+  global_attributes<-list(title = nc_title, summary = nc_summary, date_created=nc_date_create, 
+                          creator_name=nc_creator_name,creator_email=nc_creator_email,
+                          project=nc_project, processing_level=nc_proc_level)
+  
+  test_data <- get_sample_timeseries_data()
+  
+  testnc<-write_timeseries_dsg(nc_file, 
+                               names(test_data$var_data), 
+                               test_data$lats, test_data$lons, 
+                               as.character(test_data$time), 
+                               test_data$var, 
+                               test_data$alts, 
+                               data_unit=test_data$units,	
+                               data_prec='double',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes)
+  
+  test_nc <- write_geometry(nc_file, test_data$geom, variables = test_data$meta$name)
+  
+  list(ncdfgeom = read_timeseries_dsg(nc_file), sf = read_geometry(nc_file))
 }
