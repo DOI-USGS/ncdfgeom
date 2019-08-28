@@ -1,6 +1,6 @@
 NetCDF-CF Geometry and Timeseries Tools for R
 ===
-[![Build Status](https://travis-ci.org/USGS-R/ncdfgeom.svg)](https://travis-ci.org/USGS-R/ncdfgeom) [![Coverage Status](https://coveralls.io/repos/github/USGS-R/ncdfgeom/badge.svg?branch=master)](https://coveralls.io/github/USGS-R/ncdfgeom?branch=master) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfgeom)](https://cran.r-project.org/web/packages/ncdfgeom/index.html) [![CRAN](https://www.r-pkg.org/badges/version/ncdfgeom)](https://cran.r-project.org/web/packages/ncdfgeom/index.html)
+[![Build Status](https://travis-ci.org/USGS-R/ncdfgeom.svg)](https://travis-ci.org/USGS-R/ncdfgeom) [![Coverage Status](https://coveralls.io/repos/github/USGS-R/ncdfgeom/badge.svg?branch=master)](https://coveralls.io/github/USGS-R/ncdfgeom?branch=master) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfgeom)](https://cran.r-project.org/package=ncdfgeom) [![CRAN](https://www.r-pkg.org/badges/version/ncdfgeom)](https://cran.r-project.org/package=ncdfgeom)
 
 `ncdfgeom` reads and writes geometry data (points lines and polygons), attributes of geometries, and time series associated with the geometries in a standards-compliant way.
 
