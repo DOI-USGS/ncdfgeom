@@ -376,7 +376,7 @@ init_ncdf <- function(nc_file, x_vals, y_vals, node_dim_name) {
   if(file.exists(nc_file)) {
     nc <- open.nc(nc_file, write = TRUE)
   } else {
-    nc <- create.nc(nc_file, large = TRUE)
+    nc <- create.nc(nc_file, format = "classic4")
   }
   
   try(dim.def.nc(nc, node_dim_name, length(x_vals), unlim = FALSE), silent = TRUE)

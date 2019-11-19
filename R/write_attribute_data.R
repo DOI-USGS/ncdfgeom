@@ -38,9 +38,9 @@ write_attribute_data <- function(nc_file, att_data, instance_dim_name = "instanc
     nc <- open.nc(nc_file, write = TRUE)
   } else if(overwrite == TRUE) {
     unlink(nc_file)
-    nc <- create.nc(nc_file, large = TRUE)
+    nc <- create.nc(nc_file, format = "classic4")
   } else {
-    nc <- create.nc(nc_file, large = TRUE)
+    nc <- create.nc(nc_file, format = "classic4")
   }
   
 	n <- nrow(att_data)

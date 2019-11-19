@@ -129,7 +129,7 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		return(nc_file)
 		
 	} else {
-	  nc <- create.nc(nc_file, large = TRUE)
+	  nc <- create.nc(nc_file, format = "offset64")
 	  
 		dim.def.nc(nc, pkg.env$instance_dim_name, n, unlim = FALSE)
 		dim.def.nc(nc, pkg.env$time_dim_name, nt, unlim=FALSE)
