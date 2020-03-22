@@ -92,8 +92,9 @@ test_that("errors", {
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = pointData)
   nc <- nc_open(nc_file, write = TRUE)
   ncatt_put(nc, 0,"Conventions", "garbage")
-  expect_warning(ncdfgeom:::check_netcdf(nc_file), 'File does not advertise CF conventions, unexpected behavior may result.')
   nc_close(nc)
+  
+  expect_warning(ncdfgeom:::check_netcdf(nc_file), 'File does not advertise CF conventions, unexpected behavior may result.')
   
   nc <- open.nc(nc_file, write = TRUE)
   RNetCDF::att.put.nc(nc, "NC_GLOBAL", "Conventions", "NC_CHAR", "CF-1.8")
