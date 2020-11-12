@@ -212,7 +212,7 @@ test_that("A whole shapefile can be written", {
 
 test_that("big roundtrip", {
   skip_on_cran()
-  nc_file <- "data/climdiv_prcp.nc"
+  nc_file <- list.files(pattern = "climdiv_prcp.nc", full.names = TRUE, recursive = TRUE)
   
   expect_warning(
     prcp_data <- read_timeseries_dsg(nc_file),
