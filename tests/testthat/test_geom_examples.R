@@ -1,7 +1,7 @@
 context("geom_examples.md")
 
 test_that("create geom_examples.md", {
-  geom_examples <- "data/geom_examples.md"
+  geom_examples <- list.files(pattern = "geom_examples.md", full.names = TRUE, recursive = TRUE)
   
   fixtureData <- jsonlite::fromJSON(system.file('extdata/fixture_wkt.json', package = 'ncdfgeom'))
   # "multipoint", "MultiPoint (2D)", 
@@ -35,5 +35,5 @@ test_that("create geom_examples.md", {
   sink()
   testthat::skip_on_cran()
   expect_true(file.exists(geom_examples))
-  }, silent = TRUE)
+  }, silent = FALSE)
 })
