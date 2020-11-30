@@ -4,11 +4,22 @@
 \alias{write_timeseries_dsg}
 \title{Write time series to NetCDF-CF}
 \usage{
-write_timeseries_dsg(nc_file, instance_names, lats, lons, times, data,
-  alts = NA, data_unit = "", data_prec = "double",
+write_timeseries_dsg(
+  nc_file,
+  instance_names,
+  lats,
+  lons,
+  times,
+  data,
+  alts = NA,
+  data_unit = "",
+  data_prec = "double",
   data_metadata = list(name = "data", long_name = "unnamed data"),
-  time_units = "days since 1970-01-01 00:00:00", attributes = list(),
-  add_to_existing = FALSE, overwrite = FALSE)
+  time_units = "days since 1970-01-01 00:00:00",
+  attributes = list(),
+  add_to_existing = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created.}

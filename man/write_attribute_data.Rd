@@ -4,8 +4,13 @@
 \alias{write_attribute_data}
 \title{Write attribute data to NetCDF-CF}
 \usage{
-write_attribute_data(nc_file, att_data, instance_dim_name = "instance",
-  units = rep("unknown", ncol(att_data)), overwrite = FALSE)
+write_attribute_data(
+  nc_file,
+  att_data,
+  instance_dim_name = "instance",
+  units = rep("unknown", ncol(att_data)),
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created. 
@@ -35,7 +40,7 @@ example_file <-write_attribute_data(tempfile(), sample_data,
 
 try({
   ncdump <- system(paste("ncdump -h", example_file), intern = TRUE)
-  cat(ncdump ,sep = "\\n")
+  cat(ncdump ,sep = "\n")
 }, silent = TRUE)
 
 }

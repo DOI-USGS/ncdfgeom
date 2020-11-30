@@ -1,6 +1,7 @@
 #'@title Read NetCDF-CF timeSeries featuretype
 #'
 #'@param nc_file character file path to the nc file to be read.
+#'@param read_data logical whether to read metadata only or not.
 #'
 #'@return list containing the contents of the NetCDF file.
 #'
@@ -67,12 +68,12 @@ check_timeseries_atts <- function(nc_atts) {
   }
   
   # Check important global atts
-  check <- filter(nc_atts, variable == "NC_GLOBAL" & name == 'Conventions')$value
+  check <- filter(nc_atts, .data$variable == "NC_GLOBAL" & .data$name == 'Conventions')$value
   if(length(check) == 0 || !grepl('CF', check)) {
     warning('File does not advertise CF conventions, unexpected behavior may result.') 
   }
   
-  check <- filter(nc_atts, variable == "NC_GLOBAL" & name == "featureType")$value
+  check <- filter(nc_atts, .data$variable == "NC_GLOBAL" & .data$name == "featureType")$value
   if(length(check) == 0 || !grepl('timeSeries', check)) {
     warning('File does not advertise use of the CF timeseries featureType, unexpected behavior may result.') 
   }
@@ -210,10 +211,10 @@ get_nc_list <- function(nc, dsg, nc_meta, read_data) {
 
 get_timeseries_id <- function(nc_atts) {
   # Look for variable with the timeseries_id in it.
-  timeseries_id <- filter(nc_atts, name == "standard_name" &
-                            value == "station_id")$variable
-  timeseries_id <- filter(nc_atts, name == "cf_role" &
-                            value == pkg.env$timeseries_id_cf_role)$variable
+  timeseries_id <- filter(nc_atts, .data$name == "standard_name" &
+                            .data$value == "station_id")$variable
+  timeseries_id <- filter(nc_atts, .data$name == "cf_role" &
+                            .data$value == pkg.env$timeseries_id_cf_role)$variable
   
   if(length(timeseries_id) == 0) { 
     stop('A timeseries id variable was not found in the file.') 
@@ -235,6 +236,8 @@ get_coord_vars <- function(nc) {
                          nc_coord_vars$Z, nc_coord_vars$T))
   coord_vars[!is.na(coord_vars)]
 }
+
+.data <- NULL
 
 add_globals <- function(nc_list, nc_meta) {
   nc_list$global_attributes$nc_summary <- filter(nc_meta$attribute, .data$variable == "NC_GLOBAL" &
