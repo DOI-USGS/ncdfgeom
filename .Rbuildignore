@@ -1,9 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-.travis.yml
 demo.R
 _pkgdown.yml
 docs
 DISCLAIMER.md
 code.json
 appveyor.yml
+.github
