@@ -4,10 +4,12 @@
 \alias{read_timeseries_dsg}
 \title{Read NetCDF-CF timeSeries featuretype}
 \usage{
-read_timeseries_dsg(nc_file)
+read_timeseries_dsg(nc_file, read_data = TRUE)
 }
 \arguments{
 \item{nc_file}{character file path to the nc file to be read.}
+
+\item{read_data}{logical whether to read metadata only or not.}
 }
 \value{
 list containing the contents of the NetCDF file.

@@ -4,11 +4,25 @@
 \alias{write_timeseries_dsg}
 \title{Write time series to NetCDF-CF}
 \usage{
-write_timeseries_dsg(nc_file, instance_names, lats, lons, times, data,
-  alts = NA, data_unit = "", data_prec = "double",
+write_timeseries_dsg(
+  nc_file,
+  instance_names,
+  lats,
+  lons,
+  times,
+  data,
+  alts = NA,
+  data_unit = "",
+  data_prec = "double",
   data_metadata = list(name = "data", long_name = "unnamed data"),
-  time_units = "days since 1970-01-01 00:00:00", attributes = list(),
-  add_to_existing = FALSE, overwrite = FALSE)
+  time_units = "days since 1970-01-01 00:00:00",
+  coordvar_long_names = list(instance = "Station Names", time = "time of measurement",
+    lat = "latitude of the measurement", lon = "longitude of the measurement", alt =
+    "altitude of the measurement"),
+  attributes = list(),
+  add_to_existing = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created.}
@@ -45,6 +59,8 @@ See details for useful attributes.}
 variables will be added to the existing file. See details for more.}
 
 \item{overwrite}{boolean error if file exists.}
+
+\item{coordvar_long_name}{\code{list} values for long names on coordinate variables. Names should be `instance`, time`, `lat`, `lon`, and `alt.`}
 }
 \description{
 This function creates a timeseries discrete sampling geometry NetCDF file.

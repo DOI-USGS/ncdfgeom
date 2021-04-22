@@ -18,6 +18,7 @@
 #' @param attributes list An optional list of attributes that will be added at the global level. 
 #' See details for useful attributes.
 #' @param time_units \code{character} units string in udunits format to use for time. Defaults to 'days since 1970-01-01 00:00:00'
+#' @param coordvar_long_name \code{list} values for long names on coordinate variables. Names should be `instance`, time`, `lat`, `lon`, and `alt.`
 #' @param add_to_existing \code{boolean} If TRUE and the file already exists, 
 #' variables will be added to the existing file. See details for more.
 #' @param overwrite boolean error if file exists.
@@ -57,9 +58,16 @@
 #' @importFrom methods is
 #' 
 #' @export
-write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data, alts=NA, data_unit='',
-																data_prec='double',data_metadata=list(name='data',long_name='unnamed data'),
+write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, 
+                                data, alts=NA, data_unit='',
+																data_prec='double',
+																data_metadata=list(name='data',long_name='unnamed data'),
 																time_units = 'days since 1970-01-01 00:00:00',
+																coordvar_long_names = list(instance = 'Station Names',
+																                           time = 'time of measurement',
+																                           lat = 'latitude of the measurement',
+																                           lon = 'longitude of the measurement',
+																                           alt = 'altitude of the measurement'),
 																attributes=list(), add_to_existing=FALSE, overwrite = FALSE){
 	
   if(!overwrite & !add_to_existing & file.exists(nc_file)) stop("File already exists and overwrite is false.")
@@ -137,21 +145,21 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times, data
 		#Setup our spatial and time info
 		add_var(nc, pkg.env$dsg_timeseries_id, 
 		        c(pkg.env$instance_dim_name), 
-		        "NC_CHAR", long_name = "Station Names", 
+		        "NC_CHAR", long_name = coordvar_long_names$instance, 
 		        data = instance_names)
 		
 		add_var(nc, pkg.env$time_var_name, pkg.env$time_dim_name, "NC_DOUBLE", 
-		        time_units, -999, 'time of measurement')
+		        time_units, -999, coordvar_long_names$time)
 		
 		add_var(nc, pkg.env$lat_coord_var_name, pkg.env$instance_dim_name, "NC_DOUBLE", 
-		        'degrees_north', -999, 'latitude of the observation')
+		        'degrees_north', -999, coordvar_long_names$lat)
 		
 		add_var(nc, pkg.env$lon_coord_var_name, pkg.env$instance_dim_name, "NC_DOUBLE", 
-		        'degrees_east', -999, 'longitude of the observation')
+		        'degrees_east', -999, coordvar_long_names$lon)
 		
 		if(!is.na(alts[1])){
 		  add_var(nc, pkg.env$alt_coord_var_name, pkg.env$instance_dim_name, "NC_DOUBLE", 
-		          'm', -999, 'vertical distance above the surface')
+		          'm', -999, coordvar_long_names$alt)
 		}
 		
     add_var(nc, data_name, c(pkg.env$time_dim_name, pkg.env$instance_dim_name), 

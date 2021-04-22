@@ -4,8 +4,12 @@
 \alias{write_geometry}
 \title{Write geometries and attributes to NetCDF-CF}
 \usage{
-write_geometry(nc_file, geom_data, instance_dim_name = NULL,
-  variables = list())
+write_geometry(
+  nc_file,
+  geom_data,
+  instance_dim_name = NULL,
+  variables = list()
+)
 }
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created.}
@@ -35,7 +39,7 @@ hucPolygons_nc <- ncdfgeom::write_geometry(nc_file=tempfile(),
                                            geom_data = hucPolygons)
 try({
   ncdump <- system(paste("ncdump -h", hucPolygons_nc), intern = TRUE)
-  cat(ncdump ,sep = "\\n")
+  cat(ncdump ,sep = "\n")
 }, silent = TRUE)
 
 }
