@@ -8,21 +8,29 @@
 
 <title>Write geometries and attributes to NetCDF-CF — write_geometry • ncdfgeom</title>
 
+
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,12 +38,12 @@
 
 
 
-<meta property="og:title" content="Write geometries and attributes to NetCDF-CF — write_geometry" />
 
+<meta property="og:title" content="Write geometries and attributes to NetCDF-CF — write_geometry" />
 <meta property="og:description" content="Creates a file with point, line or polygon instance data ready for the 
 extended NetCDF-CF timeSeries featuretype format.
 Will also add attributes if provided data has them." />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -49,9 +57,10 @@ Will also add attributes if provided data has them." />
 <![endif]-->
 
 
+
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -65,7 +74,7 @@ Will also add attributes if provided data has them." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -73,7 +82,7 @@ Will also add attributes if provided data has them." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -98,10 +107,17 @@ Will also add attributes if provided data has them." />
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/USGS-R/ncdfgeom/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -109,27 +125,30 @@ Will also add attributes if provided data has them." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write geometries and attributes to NetCDF-CF</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/write_geometry.R'><code>R/write_geometry.R</code></a></small>
     <div class="hidden name"><code>write_geometry.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
     <p>Creates a file with point, line or polygon instance data ready for the 
 extended NetCDF-CF timeSeries featuretype format.</p>
 <p>Will also add attributes if provided data has them.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>write_geometry</span>(<span class='no'>nc_file</span>, <span class='no'>geom_data</span>, <span class='kw'>instance_dim_name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>variables</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>())</pre>
-    
+    <pre class="usage"><span class='fu'>write_geometry</span><span class='op'>(</span>
+  <span class='va'>nc_file</span>,
+  <span class='va'>geom_data</span>,
+  instance_dim_name <span class='op'>=</span> <span class='cn'>NULL</span>,
+  variables <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -155,24 +174,32 @@ use package default -- "instance" -- if not supplied.</p></td>
 list of variables that should be related to the geometries.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <ol>
+    
+<ol>
 <li><p><a href='http://cfconventions.org/cf-conventions/cf-conventions.html'>http://cfconventions.org/cf-conventions/cf-conventions.html</a></p></li>
 </ol>
-    
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='no'>hucPolygons</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>read_sf</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>'extdata'</span>,<span class='st'>'example_huc_eta.json'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'ncdfgeom'</span>))
+    <pre class="examples">write_geometry,Write geometries and attributes to NetCDF-CF,Write geometries and attributes to NetCDF-CF — write_geometry,Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/write_geometry.R'><code>R/write_geometry.R</code></a>,write_geometry.Rd,character(0),write_geometry,character(0),list(title = "Description", contents = "<p>Creates a file with point, line or polygon instance data ready for the \nextended NetCDF-CF timeSeries featuretype format.</p>\n<p>Will also add attributes if provided data has them.</p>"),list(description = "Creates a file with point, line or polygon instance data ready for the \nextended NetCDF-CF timeSeries featuretype format.\nWill also add attributes if provided data has them."),<span class='fu'>write_geometry</span><span class='op'>(</span>
+  <span class='va'>nc_file</span>,
+  <span class='va'>geom_data</span>,
+  instance_dim_name <span class='op'>=</span> <span class='cn'>NULL</span>,
+  variables <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span>,list(list(name = "nc_file", description = "<p><code>character</code> file path to the nc file to be created.</p>"), list(name = "geom_data", description = "<p>sf <code>data.frame</code> with POINT, LINESTRING, MULTILINESTRING, \nPOLYGON, or MULTIPOLYGON geometries. Note that three dimensional geometries \nare not supported. sp geometries will be coerced to sf with sf::as_Spatial.</p>"), list(name = "instance_dim_name", description = "<p><code>character</code> Not required if adding geometry to a \nNetCDF-CF Discrete Sampling Geometries timeSeries file. For a new file, will \nuse package default -- \"instance\" -- if not supplied.</p>"), 
+    list(name = "variables", description = "<p><code>character</code> If a an existing netCDF files is provided, this \nlist of variables that should be related to the geometries.</p>")),TRUE,<div class='input'>
+<span class='va'>hucPolygons</span> <span class='op'>&lt;-</span> <span class='fu'>sf</span><span class='fu'>::</span><span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_read.html'>read_sf</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata'</span>,<span class='st'>'example_huc_eta.json'</span>, package <span class='op'>=</span> <span class='st'>'ncdfgeom'</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='no'>hucPolygons_nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdfgeom</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry'>write_geometry</a></span>(<span class='kw'>nc_file</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/tempfile'>tempfile</a></span>(),
-                                           <span class='kw'>geom_data</span> <span class='kw'>=</span> <span class='no'>hucPolygons</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>({
-  <span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>hucPolygons_nc</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)
-}, <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; netcdf file2ee81bc8b0ef {
+<span class='va'>hucPolygons_nc</span> <span class='op'>&lt;-</span> <span class='fu'>ncdfgeom</span><span class='fu'>::</span><span class='fu'>write_geometry</span><span class='op'>(</span>nc_file<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span>, 
+                                           geom_data <span class='op'>=</span> <span class='va'>hucPolygons</span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='op'>{</span>
+  <span class='va'>ncdump</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>"ncdump -h"</span>, <span class='va'>hucPolygons_nc</span><span class='op'>)</span>, intern <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='va'>ncdump</span> ,sep <span class='op'>=</span> <span class='st'>"\n"</span><span class='op'>)</span>
+<span class='op'>}</span>, silent <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; netcdf file1051847c05f8e {
 #&gt; dimensions:
 #&gt; 	instance = 2 ;
 #&gt; 	char = 38 ;
@@ -180,37 +207,30 @@ list of variables that should be related to the geometries.</p></td>
 #&gt; variables:
 #&gt; 	char TNMID(instance, char) ;
 #&gt; 		TNMID:units = "unknown" ;
-#&gt; 		TNMID:missing_value = "" ;
 #&gt; 		TNMID:grid_mapping = "grid_mapping" ;
 #&gt; 		TNMID:geometry = "geometry_container" ;
 #&gt; 	char METASOURCE(instance, char) ;
 #&gt; 		METASOURCE:units = "unknown" ;
-#&gt; 		METASOURCE:missing_value = "" ;
 #&gt; 		METASOURCE:grid_mapping = "grid_mapping" ;
 #&gt; 		METASOURCE:geometry = "geometry_container" ;
 #&gt; 	char SOURCEDATA(instance, char) ;
 #&gt; 		SOURCEDATA:units = "unknown" ;
-#&gt; 		SOURCEDATA:missing_value = "" ;
 #&gt; 		SOURCEDATA:grid_mapping = "grid_mapping" ;
 #&gt; 		SOURCEDATA:geometry = "geometry_container" ;
 #&gt; 	char SOURCEORIG(instance, char) ;
 #&gt; 		SOURCEORIG:units = "unknown" ;
-#&gt; 		SOURCEORIG:missing_value = "" ;
 #&gt; 		SOURCEORIG:grid_mapping = "grid_mapping" ;
 #&gt; 		SOURCEORIG:geometry = "geometry_container" ;
 #&gt; 	char SOURCEFEAT(instance, char) ;
 #&gt; 		SOURCEFEAT:units = "unknown" ;
-#&gt; 		SOURCEFEAT:missing_value = "" ;
 #&gt; 		SOURCEFEAT:grid_mapping = "grid_mapping" ;
 #&gt; 		SOURCEFEAT:geometry = "geometry_container" ;
 #&gt; 	char LOADDATE(instance, char) ;
 #&gt; 		LOADDATE:units = "unknown" ;
-#&gt; 		LOADDATE:missing_value = "" ;
 #&gt; 		LOADDATE:grid_mapping = "grid_mapping" ;
 #&gt; 		LOADDATE:geometry = "geometry_container" ;
 #&gt; 	char GNIS_ID(instance, char) ;
 #&gt; 		GNIS_ID:units = "unknown" ;
-#&gt; 		GNIS_ID:missing_value = "" ;
 #&gt; 		GNIS_ID:grid_mapping = "grid_mapping" ;
 #&gt; 		GNIS_ID:geometry = "geometry_container" ;
 #&gt; 	double AREAACRES(instance) ;
@@ -225,32 +245,26 @@ list of variables that should be related to the geometries.</p></td>
 #&gt; 		AREASQKM:geometry = "geometry_container" ;
 #&gt; 	char STATES(instance, char) ;
 #&gt; 		STATES:units = "unknown" ;
-#&gt; 		STATES:missing_value = "" ;
 #&gt; 		STATES:grid_mapping = "grid_mapping" ;
 #&gt; 		STATES:geometry = "geometry_container" ;
 #&gt; 	char HUC12(instance, char) ;
 #&gt; 		HUC12:units = "unknown" ;
-#&gt; 		HUC12:missing_value = "" ;
 #&gt; 		HUC12:grid_mapping = "grid_mapping" ;
 #&gt; 		HUC12:geometry = "geometry_container" ;
 #&gt; 	char NAME(instance, char) ;
 #&gt; 		NAME:units = "unknown" ;
-#&gt; 		NAME:missing_value = "" ;
 #&gt; 		NAME:grid_mapping = "grid_mapping" ;
 #&gt; 		NAME:geometry = "geometry_container" ;
 #&gt; 	char HUTYPE(instance, char) ;
 #&gt; 		HUTYPE:units = "unknown" ;
-#&gt; 		HUTYPE:missing_value = "" ;
 #&gt; 		HUTYPE:grid_mapping = "grid_mapping" ;
 #&gt; 		HUTYPE:geometry = "geometry_container" ;
 #&gt; 	char HUMOD(instance, char) ;
 #&gt; 		HUMOD:units = "unknown" ;
-#&gt; 		HUMOD:missing_value = "" ;
 #&gt; 		HUMOD:grid_mapping = "grid_mapping" ;
 #&gt; 		HUMOD:geometry = "geometry_container" ;
 #&gt; 	char TOHUC(instance, char) ;
 #&gt; 		TOHUC:units = "unknown" ;
-#&gt; 		TOHUC:missing_value = "" ;
 #&gt; 		TOHUC:grid_mapping = "grid_mapping" ;
 #&gt; 		TOHUC:geometry = "geometry_container" ;
 #&gt; 	double NONCONTRIB(instance) ;
@@ -295,20 +309,16 @@ list of variables that should be related to the geometries.</p></td>
 #&gt; // global attributes:
 #&gt; 		:Conventions = "CF-1.8" ;
 #&gt; }</div><div class='input'>
-</div></pre>
+</div>,list(list(title = "References", contents = "\n<ol>\n<li><p><a href='http://cfconventions.org/cf-conventions/cf-conventions.html'>http://cfconventions.org/cf-conventions/cf-conventions.html</a></p></li>\n</ol>\n", slug = "references")),2021,list(name = "ncdfgeom", version = "1.1.1", authors = "David Blodgett"),list(destination = "dev", mode = "release", version_label = "default", version_tooltip = "Released version", in_dev = FALSE),list(root = "../", title = "ncdfgeom"),list(),list(type = "default", left = "<li>\n  <a href=\"../index.html\">\n    <span class=\"fas fa-home fa-lg\"></span>\n     \n  </a>\n</li>\n<li>\n  <a href=\"../articles/ncdfgeom.html\">Get started</a>\n</li>\n<li>\n  <a href=\"../reference/index.html\">Reference</a>\n</li>\n<li class=\"dropdown\">\n  <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">\n    Articles\n     \n    <span class=\"caret\"></span>\n  </a>\n  <ul class=\"dropdown-menu\" role=\"menu\">\n    <li>\n      <a href=\"../articles/geometry.html\">Reading and Writing NetCDF-CF Geometry</a>\n    </li>\n    <li>\n      <a href=\"../articles/timeseries.html\">Reading and Writing Timeseries</a>\n    </li>\n  </ul>\n</li>\n<li>\n  <a href=\"../news/index.html\">Changelog</a>\n</li>", 
+    right = "<li>\n  <a href=\"https://github.com/USGS-R/ncdfgeom/\">\n    <span class=\"fab fa-github fa-lg\"></span>\n     \n  </a>\n</li>"),list(.present = TRUE),list(version = "1.6.1"),FALSE</pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#references">References</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -316,13 +326,16 @@ list of variables that should be related to the geometries.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

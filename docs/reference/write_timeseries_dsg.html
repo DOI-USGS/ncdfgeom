@@ -8,21 +8,29 @@
 
 <title>Write time series to NetCDF-CF — write_timeseries_dsg • ncdfgeom</title>
 
+
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,13 +38,13 @@
 
 
 
-<meta property="og:title" content="Write time series to NetCDF-CF — write_timeseries_dsg" />
 
+<meta property="og:title" content="Write time series to NetCDF-CF — write_timeseries_dsg" />
 <meta property="og:description" content="This function creates a timeseries discrete sampling geometry NetCDF file.
 It uses the orthogonal array encoding to write one data.frame per
 function call. This encoding is best suited to data with the same number of
 timesteps per instance (e.g. geometry or station)." />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -50,9 +58,10 @@ timesteps per instance (e.g. geometry or station)." />
 <![endif]-->
 
 
+
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -66,7 +75,7 @@ timesteps per instance (e.g. geometry or station)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -74,7 +83,7 @@ timesteps per instance (e.g. geometry or station)." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -99,10 +108,17 @@ timesteps per instance (e.g. geometry or station)." />
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/USGS-R/ncdfgeom/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -110,31 +126,44 @@ timesteps per instance (e.g. geometry or station)." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write time series to NetCDF-CF</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/write_timeseries_dsg.R'><code>R/write_timeseries_dsg.R</code></a></small>
     <div class="hidden name"><code>write_timeseries_dsg.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
     <p>This function creates a timeseries discrete sampling geometry NetCDF file.
 It uses the orthogonal array encoding to write one <code>data.frame</code> per
 function call. This encoding is best suited to data with the same number of
 timesteps per instance (e.g. geometry or station).</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>write_timeseries_dsg</span>(<span class='no'>nc_file</span>, <span class='no'>instance_names</span>, <span class='no'>lats</span>, <span class='no'>lons</span>, <span class='no'>times</span>, <span class='no'>data</span>,
-  <span class='kw'>alts</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>data_unit</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>data_prec</span> <span class='kw'>=</span> <span class='st'>"double"</span>,
-  <span class='kw'>data_metadata</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"data"</span>, <span class='kw'>long_name</span> <span class='kw'>=</span> <span class='st'>"unnamed data"</span>),
-  <span class='kw'>time_units</span> <span class='kw'>=</span> <span class='st'>"days since 1970-01-01 00:00:00"</span>, <span class='kw'>attributes</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(),
-  <span class='kw'>add_to_existing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>write_timeseries_dsg</span><span class='op'>(</span>
+  <span class='va'>nc_file</span>,
+  <span class='va'>instance_names</span>,
+  <span class='va'>lats</span>,
+  <span class='va'>lons</span>,
+  <span class='va'>times</span>,
+  <span class='va'>data</span>,
+  alts <span class='op'>=</span> <span class='cn'>NA</span>,
+  data_unit <span class='op'>=</span> <span class='st'>""</span>,
+  data_prec <span class='op'>=</span> <span class='st'>"double"</span>,
+  data_metadata <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='st'>"data"</span>, long_name <span class='op'>=</span> <span class='st'>"unnamed data"</span><span class='op'>)</span>,
+  time_units <span class='op'>=</span> <span class='st'>"days since 1970-01-01 00:00:00"</span>,
+  coordvar_long_names <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>instance <span class='op'>=</span> <span class='st'>"Station Names"</span>, time <span class='op'>=</span> <span class='st'>"time of measurement"</span>,
+    lat <span class='op'>=</span> <span class='st'>"latitude of the measurement"</span>, lon <span class='op'>=</span> <span class='st'>"longitude of the measurement"</span>, alt <span class='op'>=</span>
+    <span class='st'>"altitude of the measurement"</span><span class='op'>)</span>,
+  attributes <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  add_to_existing <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -158,7 +187,7 @@ timesteps per instance (e.g. geometry or station).</p>
     <tr>
       <th>times</th>
       <td><p><code>POSIXct</code> vector of times. Must be of type <code>POSIXct</code> or an attempt to 
-convert it will be made using <code><a href='https://www.rdocumentation.org/packages/base/topics/as.POSIXlt'>as.POSIXct(times)</a></code>.</p></td>
+convert it will be made using <code><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct(times)</a></code>.</p></td>
     </tr>
     <tr>
       <th>data</th>
@@ -188,6 +217,10 @@ Valid options: 'short' 'integer' 'float' 'double' 'char'.</p></td>
       <td><p><code>character</code> units string in udunits format to use for time. Defaults to 'days since 1970-01-01 00:00:00'</p></td>
     </tr>
     <tr>
+      <th>coordvar_long_names</th>
+      <td><p><code>list</code> values for long names on coordinate variables. Names should be `instance`, time`, `lat`, `lon`, and `alt.`</p></td>
+    </tr>
+    <tr>
       <th>attributes</th>
       <td><p>list An optional list of attributes that will be added at the global level. 
 See details for useful attributes.</p></td>
@@ -202,7 +235,7 @@ variables will be added to the existing file. See details for more.</p></td>
       <td><p>boolean error if file exists.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Suggested Global Variables:
@@ -219,29 +252,24 @@ add_to_existing=FALSE (the default), it will overwrite an existing file
 with the same name. The expected usage is to call this function repeatedly 
 only changing the data, data_unit, data_prec and data_metadata inputs.</p>
 <p>See the timeseries vignette for more information.</p>
-    
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <ol>
-<li><p><a href='http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html'>http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html</a></p></li>
+    
+<ol>
+<li><p><a href='https://www.unidata.ucar.edu/software/netcdf-java/v4.6/reference/FeatureDatasets/CFpointImplement.html'>https://www.unidata.ucar.edu/software/netcdf-java/v4.6/reference/FeatureDatasets/CFpointImplement.html</a></p></li>
 <li><p><a href='http://cfconventions.org/cf-conventions/cf-conventions.html#_orthogonal_multidimensional_array_representation'>http://cfconventions.org/cf-conventions/cf-conventions.html#_orthogonal_multidimensional_array_representation</a></p></li>
 <li><p><a href='http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data'>http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data</a></p></li>
 </ol>
-    
+
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#references">References</a></li>
-          </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -249,13 +277,16 @@ only changing the data, data_unit, data_prec and data_metadata inputs.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

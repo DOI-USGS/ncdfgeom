@@ -24,7 +24,7 @@
 #'@references
 #' \enumerate{
 #'   \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
-#'   \item \url{http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html}
+#'   \item \url{https://www.unidata.ucar.edu/software/netcdf-java/v4.6/reference/FeatureDatasets/CFpointImplement.html}
 #'  }
 #'
 #'@importFrom RNetCDF open.nc close.nc var.def.nc var.put.nc att.put.nc

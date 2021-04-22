@@ -52,6 +52,8 @@ Valid options: 'short' 'integer' 'float' 'double' 'char'.}
 
 \item{time_units}{\code{character} units string in udunits format to use for time. Defaults to 'days since 1970-01-01 00:00:00'}
 
+\item{coordvar_long_names}{\code{list} values for long names on coordinate variables. Names should be `instance`, time`, `lat`, `lon`, and `alt.`}
+
 \item{attributes}{list An optional list of attributes that will be added at the global level. 
 See details for useful attributes.}
 
@@ -59,8 +61,6 @@ See details for useful attributes.}
 variables will be added to the existing file. See details for more.}
 
 \item{overwrite}{boolean error if file exists.}
-
-\item{coordvar_long_name}{\code{list} values for long names on coordinate variables. Names should be `instance`, time`, `lat`, `lon`, and `alt.`}
 }
 \description{
 This function creates a timeseries discrete sampling geometry NetCDF file.
@@ -88,7 +88,7 @@ See the timeseries vignette for more information.
 }
 \references{
 \enumerate{
-  \item \url{http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html}
+  \item \url{https://www.unidata.ucar.edu/software/netcdf-java/v4.6/reference/FeatureDatasets/CFpointImplement.html}
   \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html#_orthogonal_multidimensional_array_representation}
   \item \url{http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data}
 }

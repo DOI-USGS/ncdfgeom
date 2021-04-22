@@ -2,7 +2,7 @@
 title: "Reading and Writing NetCDF-CF Geometry"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Reading and Writing Geometry}
+  %\VignetteIndexEntry{Reading and Writing NetCDF-CF Geometry}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

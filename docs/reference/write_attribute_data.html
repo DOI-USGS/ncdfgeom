@@ -8,21 +8,29 @@
 
 <title>Write attribute data to NetCDF-CF — write_attribute_data • ncdfgeom</title>
 
+
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,14 +38,14 @@
 
 
 
-<meta property="og:title" content="Write attribute data to NetCDF-CF — write_attribute_data" />
 
+<meta property="og:title" content="Write attribute data to NetCDF-CF — write_attribute_data" />
 <meta property="og:description" content="Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 
 Use to create the start of a NetCDF-DSG file. One character length dimension is created
 long enough to contain the longest provided character string.
 This function does not implement any CF convention attributes or standard names.
 Any columns of class date will be converted to character." />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -51,9 +59,10 @@ Any columns of class date will be converted to character." />
 <![endif]-->
 
 
+
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -67,7 +76,7 @@ Any columns of class date will be converted to character." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -75,7 +84,7 @@ Any columns of class date will be converted to character." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -100,10 +109,17 @@ Any columns of class date will be converted to character." />
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/USGS-R/ncdfgeom/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -111,29 +127,33 @@ Any columns of class date will be converted to character." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write attribute data to NetCDF-CF</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/write_attribute_data.R'><code>R/write_attribute_data.R</code></a></small>
     <div class="hidden name"><code>write_attribute_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
     <p>Creates a NetCDF file with an instance dimension, and any attributes from a data frame. 
 Use to create the start of a NetCDF-DSG file. One character length dimension is created
 long enough to contain the longest provided character string.
 This function does not implement any CF convention attributes or standard names.
 Any columns of class date will be converted to character.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>write_attribute_data</span>(<span class='no'>nc_file</span>, <span class='no'>att_data</span>, <span class='kw'>instance_dim_name</span> <span class='kw'>=</span> <span class='st'>"instance"</span>,
-  <span class='kw'>units</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"unknown"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>ncol</a></span>(<span class='no'>att_data</span>)), <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>write_attribute_data</span><span class='op'>(</span>
+  <span class='va'>nc_file</span>,
+  <span class='va'>att_data</span>,
+  instance_dim_name <span class='op'>=</span> <span class='st'>"instance"</span>,
+  units <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='st'>"unknown"</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>att_data</span><span class='op'>)</span><span class='op'>)</span>,
+  overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -159,19 +179,27 @@ If adding to a file, it must already have the named instance dimension.</p></td>
       <td><p>boolean overwrite existing file? Will append if FALSE.</p></td>
     </tr>
     </table>
-    
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>sample_data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_geometry'>st_set_geometry</a></span>(<span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>read_sf</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>"shape/nc.shp"</span>,
-                                                           <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"sf"</span>)),
-                                   <span class='kw'>NULL</span>)
-<span class='no'>example_file</span> <span class='kw'>&lt;-</span><span class='fu'>write_attribute_data</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/tempfile'>tempfile</a></span>(), <span class='no'>sample_data</span>,
-                                    <span class='kw'>units</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/rep'>rep</a></span>(<span class='st'>"unknown"</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>ncol</a></span>(<span class='no'>sample_data</span>)))
+    <pre class="examples">write_attribute_data,Write attribute data to NetCDF-CF,Write attribute data to NetCDF-CF — write_attribute_data,Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/write_attribute_data.R'><code>R/write_attribute_data.R</code></a>,write_attribute_data.Rd,character(0),write_attribute_data,character(0),list(title = "Description", contents = "<p>Creates a NetCDF file with an instance dimension, and any attributes from a data frame. \nUse to create the start of a NetCDF-DSG file. One character length dimension is created\nlong enough to contain the longest provided character string.\nThis function does not implement any CF convention attributes or standard names.\nAny columns of class date will be converted to character.</p>"),list(description = "Creates a NetCDF file with an instance dimension, and any attributes from a data frame. \nUse to create the start of a NetCDF-DSG file. One character length dimension is created\nlong enough to contain the longest provided character string.\nThis function does not implement any CF convention attributes or standard names.\nAny columns of class date will be converted to character."),<span class='fu'>write_attribute_data</span><span class='op'>(</span>
+  <span class='va'>nc_file</span>,
+  <span class='va'>att_data</span>,
+  instance_dim_name <span class='op'>=</span> <span class='st'>"instance"</span>,
+  units <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='st'>"unknown"</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>att_data</span><span class='op'>)</span><span class='op'>)</span>,
+  overwrite <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span>,list(list(name = "nc_file", description = "<p><code>character</code> file path to the nc file to be created. \nIf adding to a file, it must already have the named instance dimension.</p>"), list(name = "att_data", description = "<p><code>data.frame</code> with instances as columns and attributes as rows.</p>"), list(name = "instance_dim_name", description = "<p><code>character</code> name for the instance dimension. Defaults to \"instance\"</p>"), list(name = "units", description = "<p><code>character</code> vector with units for each column of att_data. Defaults to \"unknown\" for all.</p>"), 
+    list(name = "overwrite", description = "<p>boolean overwrite existing file? Will append if FALSE.</p>")),TRUE,<div class='input'><span class='va'>sample_data</span> <span class='op'>&lt;-</span> <span class='fu'>sf</span><span class='fu'>::</span><span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_geometry.html'>st_set_geometry</a></span><span class='op'>(</span><span class='fu'>sf</span><span class='fu'>::</span><span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_read.html'>read_sf</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"shape/nc.shp"</span>, 
+                                                           package <span class='op'>=</span> <span class='st'>"sf"</span><span class='op'>)</span><span class='op'>)</span>, 
+                                   <span class='cn'>NULL</span><span class='op'>)</span>
+<span class='va'>example_file</span> <span class='op'>&lt;-</span><span class='fu'>write_attribute_data</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>sample_data</span>,
+                                    units <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='st'>"unknown"</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>sample_data</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/try'>try</a></span>({
-  <span class='no'>ncdump</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system'>system</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste</a></span>(<span class='st'>"ncdump -h"</span>, <span class='no'>example_file</span>), <span class='kw'>intern</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='no'>ncdump</span> ,<span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>"\n"</span>)
-}, <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; netcdf file2ee82d269a3e {
+<span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='op'>{</span>
+  <span class='va'>ncdump</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>"ncdump -h"</span>, <span class='va'>example_file</span><span class='op'>)</span>, intern <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='va'>ncdump</span> ,sep <span class='op'>=</span> <span class='st'>"\n"</span><span class='op'>)</span>
+<span class='op'>}</span>, silent <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; netcdf file1051875a058b1 {
 #&gt; dimensions:
 #&gt; 	instance = 100 ;
 #&gt; 	char = 12 ;
@@ -190,10 +218,8 @@ If adding to a file, it must already have the named instance dimension.</p></td>
 #&gt; 		CNTY_ID:missing_value = -9999.999 ;
 #&gt; 	char NAME(instance, char) ;
 #&gt; 		NAME:units = "unknown" ;
-#&gt; 		NAME:missing_value = "" ;
 #&gt; 	char FIPS(instance, char) ;
 #&gt; 		FIPS:units = "unknown" ;
-#&gt; 		FIPS:missing_value = "" ;
 #&gt; 	double FIPSNO(instance) ;
 #&gt; 		FIPSNO:units = "unknown" ;
 #&gt; 		FIPSNO:missing_value = -9999.999 ;
@@ -219,18 +245,16 @@ If adding to a file, it must already have the named instance dimension.</p></td>
 #&gt; 		NWBIR79:units = "unknown" ;
 #&gt; 		NWBIR79:missing_value = -9999.999 ;
 #&gt; }</div><div class='input'>
-</div></pre>
+</div>,list(),2021,list(name = "ncdfgeom", version = "1.1.1", authors = "David Blodgett"),list(destination = "dev", mode = "release", version_label = "default", version_tooltip = "Released version", in_dev = FALSE),list(root = "../", title = "ncdfgeom"),list(),list(type = "default", left = "<li>\n  <a href=\"../index.html\">\n    <span class=\"fas fa-home fa-lg\"></span>\n     \n  </a>\n</li>\n<li>\n  <a href=\"../articles/ncdfgeom.html\">Get started</a>\n</li>\n<li>\n  <a href=\"../reference/index.html\">Reference</a>\n</li>\n<li class=\"dropdown\">\n  <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">\n    Articles\n     \n    <span class=\"caret\"></span>\n  </a>\n  <ul class=\"dropdown-menu\" role=\"menu\">\n    <li>\n      <a href=\"../articles/geometry.html\">Reading and Writing NetCDF-CF Geometry</a>\n    </li>\n    <li>\n      <a href=\"../articles/timeseries.html\">Reading and Writing Timeseries</a>\n    </li>\n  </ul>\n</li>\n<li>\n  <a href=\"../news/index.html\">Changelog</a>\n</li>", 
+    right = "<li>\n  <a href=\"https://github.com/USGS-R/ncdfgeom/\">\n    <span class=\"fab fa-github fa-lg\"></span>\n     \n  </a>\n</li>"),list(.present = TRUE),list(version = "1.6.1"),FALSE</pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -238,13 +262,16 @@ If adding to a file, it must already have the named instance dimension.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

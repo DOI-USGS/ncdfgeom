@@ -42,5 +42,5 @@ response list.
 See the timeseries vignette for more information.
 }
 \references{
-http://www.unidata.ucar.edu/software/thredds/current/netcdf-java/reference/FeatureDatasets/CFpointImplement.html
+https://www.unidata.ucar.edu/software/netcdf-java/v4.6/reference/FeatureDatasets/CFpointImplement.html
 }

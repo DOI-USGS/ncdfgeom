@@ -2,7 +2,7 @@
 title: "NetCDF-CF Geometry and Timeseries Tools for R"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting Started}
+  %\VignetteIndexEntry{NetCDF-CF Geometry and Timeseries Tools for R}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

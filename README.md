@@ -6,7 +6,7 @@ NetCDF-CF Geometry and Timeseries Tools for R
 
 It implements the NetCDF-CF Spatial Geometries specification and the timeSeries feature type of the [Discrete Sampling Geometry](http://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries) NetCDF-CF specification. 
 
-**Visit the [`pkgdown` site](http://usgs-r.github.io/ncdfgeom/articles/ncdfgeom.html) for a complete overview of the package.**
+**Visit the [`pkgdown` site](https://usgs-r.github.io/ncdfgeom/articles/ncdfgeom.html) for a complete overview of the package.**
 
 Given that this package is fairly new and in active development, please test it out 
 and consider [submitting issues and/or contributions!](https://github.com/USGS-R/ncdfgeom/issues)
@@ -43,7 +43,7 @@ This package is considered a 'support' package. For more information, see:
 [https://owi.usgs.gov/R/packages.html#support](https://owi.usgs.gov/R/packages.html#support)
 
 ## Disclaimer
-This software is in the public domain because it contains materials that originally came from the U.S. Geological Survey, an agency of the United States Department of Interior. For more information, see the [official USGS copyright policy](http://www.usgs.gov/visual-id/credit_usgs.html#copyright/ "official USGS copyright policy")
+This software is in the public domain because it contains materials that originally came from the U.S. Geological Survey, an agency of the United States Department of Interior. For more information, see the [official USGS copyright policy](https://www.usgs.gov/visual-id/credit_usgs.html#copyright/ "official USGS copyright policy")
 
 Although this software program has been used by the U.S. Geological Survey (USGS), no warranty, expressed or implied, is made by the USGS or the U.S. Government as to the accuracy and functioning of the program and related program material nor shall the fact of distribution constitute any such warranty, and no responsibility is assumed by the USGS in connection therewith.
 

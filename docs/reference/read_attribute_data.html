@@ -8,21 +8,29 @@
 
 <title>Read attribute dataframe from NetCDF-DSG file — read_attribute_data • ncdfgeom</title>
 
+
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,12 +38,12 @@
 
 
 
-<meta property="og:title" content="Read attribute dataframe from NetCDF-DSG file — read_attribute_data" />
 
+<meta property="og:title" content="Read attribute dataframe from NetCDF-DSG file — read_attribute_data" />
 <meta property="og:description" content="Gets attribute data from a NetCDF-DSG file and returns it in a data.frame.
 This function is intended as a convenience to be used within workflows where
 the netCDF file is already open and well understood." />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -49,9 +57,10 @@ the netCDF file is already open and well understood." />
 <![endif]-->
 
 
+
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -65,7 +74,7 @@ the netCDF file is already open and well understood." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -73,7 +82,7 @@ the netCDF file is already open and well understood." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -91,17 +100,24 @@ the netCDF file is already open and well understood." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/geometry.html">Reading and Writing Geometry</a>
+      <a href="../articles/geometry.html">Reading and Writing NetCDF-CF Geometry</a>
     </li>
     <li>
       <a href="../articles/timeseries.html">Reading and Writing Timeseries</a>
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/USGS-R/ncdfgeom/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -109,26 +125,25 @@ the netCDF file is already open and well understood." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Read attribute dataframe from NetCDF-DSG file</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/read_attribute_data.R'><code>R/read_attribute_data.R</code></a></small>
     <div class="hidden name"><code>read_attribute_data.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
     <p>Gets attribute data from a NetCDF-DSG file and returns it in a <code>data.frame</code>.
 This function is intended as a convenience to be used within workflows where
 the netCDF file is already open and well understood.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>read_attribute_data</span>(<span class='no'>nc</span>, <span class='no'>instance_dim</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>read_attribute_data</span><span class='op'>(</span><span class='va'>nc</span>, <span class='va'>instance_dim</span><span class='op'>)</span></pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -141,13 +156,14 @@ the netCDF file is already open and well understood.</p>
       <td><p>The NetCDF instance/station dimension.</p></td>
     </tr>
     </table>
-    
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>hucPolygons</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>sf</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/sf/topics/st_read'>read_sf</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>'extdata'</span>,<span class='st'>'example_huc_eta.json'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'ncdfgeom'</span>))
-<span class='no'>hucPolygons_nc</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ncdfgeom</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/ncdfgeom/topics/write_geometry'>write_geometry</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/tempfile'>tempfile</a></span>(), <span class='no'>hucPolygons</span>)
+    <pre class="examples">read_attribute_data,Read attribute dataframe from NetCDF-DSG file,Read attribute dataframe from NetCDF-DSG file — read_attribute_data,Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/read_attribute_data.R'><code>R/read_attribute_data.R</code></a>,read_attribute_data.Rd,character(0),read_attribute_data,character(0),list(title = "Description", contents = "<p>Gets attribute data from a NetCDF-DSG file and returns it in a <code>data.frame</code>.\nThis function is intended as a convenience to be used within workflows where\nthe netCDF file is already open and well understood.</p>"),list(description = "Gets attribute data from a NetCDF-DSG file and returns it in a data.frame.\nThis function is intended as a convenience to be used within workflows where\nthe netCDF file is already open and well understood."),<span class='fu'>read_attribute_data</span><span class='op'>(</span><span class='va'>nc</span>, <span class='va'>instance_dim</span><span class='op'>)</span>,list(list(name = "nc", description = "<p>A NetCDF path or urlto be opened.</p>"), list(name = "instance_dim", description = "<p>The NetCDF instance/station dimension.</p>")),TRUE,<div class='input'><span class='va'>hucPolygons</span> <span class='op'>&lt;-</span> <span class='fu'>sf</span><span class='fu'>::</span><span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_read.html'>read_sf</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata'</span>,<span class='st'>'example_huc_eta.json'</span>, package <span class='op'>=</span> <span class='st'>'ncdfgeom'</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>hucPolygons_nc</span> <span class='op'>&lt;-</span> <span class='fu'>ncdfgeom</span><span class='fu'>::</span><span class='fu'><a href='write_geometry.html'>write_geometry</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>hucPolygons</span><span class='op'>)</span>
 
-<span class='fu'>read_attribute_data</span>(<span class='no'>hucPolygons_nc</span>, <span class='st'>"instance"</span>)</div><div class='output co'>#&gt;   id                                  TNMID
+<span class='fu'>read_attribute_data</span><span class='op'>(</span><span class='va'>hucPolygons_nc</span>, <span class='st'>"instance"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   id                                  TNMID
 #&gt; 1  1 {94745C74-B81F-42C7-9397-09DE87E038D4}
 #&gt; 2  2 {D756B24D-1959-4938-8930-FC3D417BB708}
 #&gt;                               METASOURCE SOURCEDATA SOURCEORIG SOURCEFEAT
@@ -162,18 +178,16 @@ the netCDF file is already open and well understood.</p>
 #&gt;   node_count
 #&gt; 1       1678
 #&gt; 2        950</div><div class='input'>
-</div></pre>
+</div>,list(),2021,list(name = "ncdfgeom", version = "1.1.1", authors = "David Blodgett"),list(destination = "dev", mode = "release", version_label = "default", version_tooltip = "Released version", in_dev = FALSE),list(root = "../", title = "ncdfgeom"),list(),list(type = "default", left = "<li>\n  <a href=\"../index.html\">\n    <span class=\"fas fa-home fa-lg\"></span>\n     \n  </a>\n</li>\n<li>\n  <a href=\"../articles/ncdfgeom.html\">Get started</a>\n</li>\n<li>\n  <a href=\"../reference/index.html\">Reference</a>\n</li>\n<li class=\"dropdown\">\n  <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">\n    Articles\n     \n    <span class=\"caret\"></span>\n  </a>\n  <ul class=\"dropdown-menu\" role=\"menu\">\n    <li>\n      <a href=\"../articles/geometry.html\">Reading and Writing NetCDF-CF Geometry</a>\n    </li>\n    <li>\n      <a href=\"../articles/timeseries.html\">Reading and Writing Timeseries</a>\n    </li>\n  </ul>\n</li>\n<li>\n  <a href=\"../news/index.html\">Changelog</a>\n</li>", 
+    right = "<li>\n  <a href=\"https://github.com/USGS-R/ncdfgeom/\">\n    <span class=\"fab fa-github fa-lg\"></span>\n     \n  </a>\n</li>"),list(.present = TRUE),list(version = "1.6.1"),FALSE</pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -181,13 +195,16 @@ the netCDF file is already open and well understood.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
