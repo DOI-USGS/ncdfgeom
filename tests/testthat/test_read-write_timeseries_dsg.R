@@ -17,6 +17,12 @@ test_that("Create basic DSG file", {
   
   test_data <- get_sample_timeseries_data()
   
+  coord_var_long_names <- list(instance = "test1",
+                               time = "test2",
+                               lat = "test3",
+                               lon = "test4",
+                               alt = "test5")
+  
   testnc<-write_timeseries_dsg(nc_file, 
                                names(test_data$var_data), 
                                test_data$lats, test_data$lons, 
@@ -26,7 +32,8 @@ test_that("Create basic DSG file", {
                                data_unit=test_data$units,	
                                data_prec='double',
                                data_metadata=test_data$meta,
-                               attributes=global_attributes)
+                               attributes=global_attributes, 
+                               coordvar_long_names = coord_var_long_names)
   
   expect_error(
     testnc<-write_timeseries_dsg(nc_file, 
@@ -144,6 +151,11 @@ test_that("Create basic DSG file", {
   expect_equivalent(ncatt_get(testnc,varid=pkg.env$time_var_name, "standard_name")$value, pkg.env$time_var_standard_name)
   expect_equivalent(ncatt_get(testnc,varid=pkg.env$lat_coord_var_name,"standard_name")$value,pkg.env$lat_coord_var_standard_name)
   expect_equivalent(ncatt_get(testnc,varid=pkg.env$lon_coord_var_name,"standard_name")$value,pkg.env$lon_coord_var_standard_name)
+  expect_equivalent(ncatt_get(testnc, varid=pkg.env$dsg_timeseries_id,"long_name")$value, coord_var_long_names$instance)
+  expect_equivalent(ncatt_get(testnc, varid=pkg.env$time_var_name,"long_name")$value, coord_var_long_names$time)
+  expect_equivalent(ncatt_get(testnc, varid=pkg.env$lat_coord_var_name,"long_name")$value, coord_var_long_names$lat)
+  expect_equivalent(ncatt_get(testnc, varid=pkg.env$lon_coord_var_name,"long_name")$value, coord_var_long_names$lon)
+  expect_equivalent(ncatt_get(testnc, varid=pkg.env$alt_coord_var_name,"long_name")$value, coord_var_long_names$alt)
   expect_equivalent(ncatt_get(testnc,varid=test_data$all_data$variable[1],'long_name')$value,test_data$long_name)
   expect_equivalent(ncvar_get(testnc,varid=pkg.env$dsg_timeseries_id)[1],"1")
   expect_equivalent(ncvar_get(testnc,varid="BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1")[,1],test_data$all_data$`1`)
