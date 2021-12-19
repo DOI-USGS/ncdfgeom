@@ -188,6 +188,15 @@ parse_geom <- function(nc_props, nc) {
     }
   }
   
-  return(st_sf(geom = st_sfc(f_list, crs = st_crs(prj)), check_ring_dir = FALSE, df, 
-               stringsAsFactors = FALSE, agr = "constant", sfc_last = TRUE))
+  if(!poly) cast_to <- "LINESTRING"
+  if(!poly & multi_geometry) cast_to <- "MULTILINESTRING"
+  if(poly) cast_to <- "POLYGON"
+  if(poly & multi_geometry) cast_to <- "MULTIPOLYGON"
+  
+  
+  
+  return(st_sf(geom = sf::st_cast(st_sfc(f_list, crs = st_crs(prj)), cast_to),
+               check_ring_dir = poly, df,
+               agr = "constant", 
+               sfc_last = TRUE))
 }
