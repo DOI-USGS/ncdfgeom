@@ -123,7 +123,7 @@ get_dsg_meta <- function(nc, nc_meta = NULL) {
     axes_search <- filter(axes_search, sum(c(dsg$dim_tsid, dsg$dim_time) %in% .data$dimension) == 2 &
                             !.data$variable %in% c(dsg$coord_vars, dsg$timeseries_id))
     
-    dsg$data_vars <- data.frame(variable = unique(axes_search$variable), stringsAsFactors = FALSE)
+    dsg$data_vars <- data.frame(variable = unique(axes_search$variable))
     
     if(nrow(dsg$data_vars) == 0) stop("No data variables could be identified")
   }

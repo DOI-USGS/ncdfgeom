@@ -3,7 +3,7 @@
 #' @param nc_file \code{character} file path to the nc file to be created.
 #' @param geom_data sf \code{data.frame} with POINT, LINESTRING, MULTILINESTRING, 
 #' POLYGON, or MULTIPOLYGON geometries. Note that three dimensional geometries 
-#' are not supported. sp geometries will be coerced to sf with sf::as_Spatial.
+#' are not supported.
 #' @param instance_dim_name \code{character} Not required if adding geometry to a 
 #' NetCDF-CF Discrete Sampling Geometries timeSeries file. For a new file, will 
 #' use package default -- "instance" -- if not supplied.
@@ -36,8 +36,6 @@
 #' }, silent = TRUE)
 #' 
 write_geometry = function(nc_file, geom_data, instance_dim_name = NULL, variables = list()) {
-
-	geom_data <- check_geom_data(geom_data)
 
   type <- get_type(geom_data)
     

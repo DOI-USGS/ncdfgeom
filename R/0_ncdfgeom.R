@@ -47,14 +47,6 @@ pkg.env$timeseries_id_cf_role <- "timeseries_id"
 
 pkg.env$nc_types <- list(double = "NC_DOUBLE", float = "NC_FLOAT", numeric="NC_DOUBLE", short = "NC_SHORT", integer = "NC_INT", char="NC_CHAR", character="NC_CHAR")
 
-#' @importFrom sf st_as_sf
-check_geom_data <- function(geom_data) {
-	if (!any(c("sf", "sfc") %in% class(geom_data))) {
-		geom_data <- sf::st_as_sf(geom_data)
-	}
-	return(geom_data)
-}
-
 add_var <- function(nc, name, dim, type, units = NA, missing = NA, long_name = NA, char_dim_len = NULL, data = NULL) {
   
   if(type == "NC_CHAR") {

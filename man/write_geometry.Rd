@@ -16,7 +16,7 @@ write_geometry(
 
 \item{geom_data}{sf \code{data.frame} with POINT, LINESTRING, MULTILINESTRING, 
 POLYGON, or MULTIPOLYGON geometries. Note that three dimensional geometries 
-are not supported. sp geometries will be coerced to sf with sf::as_Spatial.}
+are not supported.}
 
 \item{instance_dim_name}{\code{character} Not required if adding geometry to a 
 NetCDF-CF Discrete Sampling Geometries timeSeries file. For a new file, will 
