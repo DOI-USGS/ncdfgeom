@@ -16,6 +16,8 @@ write_timeseries_dsg(
   data_prec = "double",
   data_metadata = list(name = "data", long_name = "unnamed data"),
   time_units = "days since 1970-01-01 00:00:00",
+  instance_dim_name,
+  dsg_timeseries_id,
   coordvar_long_names = list(instance = "Station Names", time = "time of measurement",
     lat = "latitude of the measurement", lon = "longitude of the measurement", alt =
     "altitude of the measurement"),
@@ -27,37 +29,41 @@ write_timeseries_dsg(
 \arguments{
 \item{nc_file}{\code{character} file path to the nc file to be created.}
 
-\item{instance_names}{\code{character} or \code{numeric} vector of names for each instance 
+\item{instance_names}{\code{character} or \code{numeric} vector of names for each instance
 (e.g. station or geometry) to be added to the file.}
 
 \item{lats}{\code{numeric} vector of latitudes}
 
 \item{lons}{\code{numeric} vector of longitudes}
 
-\item{times}{\code{POSIXct} vector of times. Must be of type \code{POSIXct} or an attempt to 
+\item{times}{\code{POSIXct} vector of times. Must be of type \code{POSIXct} or an attempt to
 convert it will be made using \code{as.POSIXct(times)}.}
 
-\item{data}{\code{data.frame} with each column corresponding to an instance. Rows correspond to 
+\item{data}{\code{data.frame} with each column corresponding to an instance. Rows correspond to
 time steps. nrow must be the same length as times. Column names must match instance names.}
 
 \item{alts}{\code{numeric} vector of altitudes (m above sea level) (Optional)}
 
-\item{data_unit}{\code{character} vector of data units. Length must be the same as number 
+\item{data_unit}{\code{character} vector of data units. Length must be the same as number
 of columns in \code{data} parameter.}
 
-\item{data_prec}{\code{character} precision of observation data in NetCDF file. 
+\item{data_prec}{\code{character} precision of observation data in NetCDF file.
 Valid options: 'short' 'integer' 'float' 'double' 'char'.}
 
 \item{data_metadata}{\code{list} A named list of strings: list(name='ShortVarName', long_name='A Long Name')}
 
 \item{time_units}{\code{character} units string in udunits format to use for time. Defaults to 'days since 1970-01-01 00:00:00'}
 
+\item{instance_dim_name}{the \code{character} name to use for the instance used in `instance_names`}
+
+\item{dsg_timeseries_id}{the \code{character} name to use for the instance used in the timeseries id}
+
 \item{coordvar_long_names}{\code{list} values for long names on coordinate variables. Names should be `instance`, time`, `lat`, `lon`, and `alt.`}
 
-\item{attributes}{list An optional list of attributes that will be added at the global level. 
+\item{attributes}{list An optional list of attributes that will be added at the global level.
 See details for useful attributes.}
 
-\item{add_to_existing}{\code{boolean} If TRUE and the file already exists, 
+\item{add_to_existing}{\code{boolean} If TRUE and the file already exists,
 variables will be added to the existing file. See details for more.}
 
 \item{overwrite}{boolean error if file exists.}
@@ -70,18 +76,18 @@ timesteps per instance (e.g. geometry or station).
 }
 \details{
 Suggested Global Variables:
-c(title = "title", 
-abstract = "history", 
-provider site = "institution", 
-provider name ="source", 
+c(title = "title",
+abstract = "history",
+provider site = "institution",
+provider name ="source",
 description = "description")
 
 Note regarding add_to_existing:
-add_to_existing = TRUE should only be used to add variables to an existing 
-NetCDF discrete sampling geometry file. All other inputs should be the 
-same as are already in the file. If the functions is called with 
-add_to_existing=FALSE (the default), it will overwrite an existing file 
-with the same name. The expected usage is to call this function repeatedly 
+add_to_existing = TRUE should only be used to add variables to an existing
+NetCDF discrete sampling geometry file. All other inputs should be the
+same as are already in the file. If the functions is called with
+add_to_existing=FALSE (the default), it will overwrite an existing file
+with the same name. The expected usage is to call this function repeatedly
 only changing the data, data_unit, data_prec and data_metadata inputs.
 
 See the timeseries vignette for more information.
