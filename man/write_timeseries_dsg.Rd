@@ -66,7 +66,7 @@ See details for useful attributes.}
 \item{add_to_existing}{\code{boolean} If TRUE and the file already exists,
 variables will be added to the existing file. See details for more.}
 
-\item{overwrite}{boolean error if file exists.}
+\item{overwrite}{boolean unless set to true, error if file exists.}
 }
 \description{
 This function creates a timeseries discrete sampling geometry NetCDF file.

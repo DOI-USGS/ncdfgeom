@@ -23,7 +23,7 @@
 #' @param coordvar_long_names \code{list} values for long names on coordinate variables. Names should be `instance`, time`, `lat`, `lon`, and `alt.`
 #' @param add_to_existing \code{boolean} If TRUE and the file already exists,
 #' variables will be added to the existing file. See details for more.
-#' @param overwrite boolean error if file exists.
+#' @param overwrite boolean unless set to true, error if file exists.
 #'
 #' @description
 #' This function creates a timeseries discrete sampling geometry NetCDF file.
