@@ -1,7 +1,7 @@
 Package: ncdfgeom
 Type: Package
 Title: 'NetCDF' Geometry and Time Series
-Version: 1.1.1
+Version: 1.1.2
 Date: 2021-04-22
 Authors@R: c(person("David", "Blodgett", role = c("aut", "cre"), 
                     email = "dblodgett@usgs.gov"),
