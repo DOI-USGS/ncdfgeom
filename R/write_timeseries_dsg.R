@@ -65,22 +65,14 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times,
 																data_prec='double',
 																data_metadata=list(name='data',long_name='unnamed data'),
 																time_units = 'days since 1970-01-01 00:00:00',
-																instance_dim_name,
-																dsg_timeseries_id,
+																instance_dim_name = "instance",
+																dsg_timeseries_id = "instance_name",
 																coordvar_long_names = list(instance = 'Station Names',
 																                           time = 'time of measurement',
 																                           lat = 'latitude of the measurement',
 																                           lon = 'longitude of the measurement',
 																                           alt = 'altitude of the measurement'),
 																attributes=list(), add_to_existing=FALSE, overwrite = FALSE){
-
-  if (missing(instance_dim_name)){
-    instance_dim_name <- pkg.env$instance_dim_name
-  }
-
-  if (missing(dsg_timeseries_id)){
-    dsg_timeseries_id <- pkg.env$dsg_timeseries_id
-  }
 
   if(!overwrite & !add_to_existing & file.exists(nc_file)) stop("File already exists and overwrite is false.")
   if(overwrite & !add_to_existing) unlink(file.exists(nc_file))
