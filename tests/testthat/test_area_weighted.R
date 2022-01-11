@@ -41,9 +41,7 @@ test_that("area_intersection", {
                c(3, 2, 0.24), info = "b3 is 24% covered by a2")
   expect_equal(as.numeric(b_a[4, ]),
                c(3, 3, 0.4), info = "b3 is 40% covered by a3")
-  expect_equal(data.frame(b_a[5, ]),
-               data.frame(tibble::tibble(idb = 4,
-                                 ida = as.numeric(NA),
-                                 w = as.numeric(NA))),
+  expect_equal(as.numeric(b_a[5, ]),
+               c(4, NA, NA),
                info = "b4 is not covered")
 })
