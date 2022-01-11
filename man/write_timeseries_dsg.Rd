@@ -16,8 +16,8 @@ write_timeseries_dsg(
   data_prec = "double",
   data_metadata = list(name = "data", long_name = "unnamed data"),
   time_units = "days since 1970-01-01 00:00:00",
-  instance_dim_name,
-  dsg_timeseries_id,
+  instance_dim_name = "instance",
+  dsg_timeseries_id = "instance_name",
   coordvar_long_names = list(instance = "Station Names", time = "time of measurement",
     lat = "latitude of the measurement", lon = "longitude of the measurement", alt =
     "altitude of the measurement"),
