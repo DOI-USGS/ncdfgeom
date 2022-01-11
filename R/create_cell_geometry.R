@@ -20,7 +20,7 @@
 #' @importFrom stars st_as_stars st_dimensions
 #' @export
 #' @examples
-#' nc <- RNetCDF::open.nc(system.file("extdata/metdata.nc", package = "intersectr"))
+#' nc <- RNetCDF::open.nc(system.file("extdata/metdata.nc", package = "ncdfgeom"))
 #' ncmeta::nc_vars(nc)
 #' variable_name <- "precipitation_amount"
 #' cv <- ncmeta::nc_coord_var(nc, variable_name)
