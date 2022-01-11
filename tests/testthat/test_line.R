@@ -12,7 +12,7 @@ test_that("linedata works", {
                     "line")
 
   returnLineData<-read_geometry(nc_file)
-  compareSL(lineData, returnLineData)
+  check_geom(lineData, returnLineData)
 })
 
 test_that("multiLine data works", {
@@ -30,7 +30,7 @@ test_that("multiLine data works", {
                num_coords)
 
   returnLineData<-read_geometry(nc_file)
-  compareSL(lineData, returnLineData)
+  check_geom(lineData, returnLineData)
 })
 
 test_that("multiline data frame works", {
@@ -42,7 +42,7 @@ test_that("multiline data frame works", {
   nc<-nc_open(nc_file)
   
   returnLineData<-read_geometry(nc_file)
-  compareSL(lineData, returnLineData)
+  check_geom(lineData, returnLineData)
 })
 
 test_that("shapefile line data works", {
@@ -51,7 +51,7 @@ test_that("shapefile line data works", {
                       geom_data = lineData)
   nc<-nc_open(nc_file)
   returnLineData<-read_geometry(nc_file)
-  compareSL(lineData, returnLineData)
+  check_geom(lineData, returnLineData)
   sf::st_geometry(lineData) <- NULL
   sf::st_geometry(returnLineData) <- NULL
   for(name in names(lineData)) {

@@ -38,7 +38,7 @@ test_that("data for basic polygon", {
   expect_false(ncatt_get(nc, pkg.env$geom_container_var_name, "part_type")$hasatt)
 
   returnPolyData<-read_geometry(nc_file)
-  compareSP(polygonData, returnPolyData)
+  check_geom(polygonData, returnPolyData)
 })
 
 test_that("polygon with a hole.", {
@@ -65,7 +65,7 @@ test_that("polygon with a hole.", {
                c(pkg.env$multi_val,pkg.env$hole_val))
 
   returnPolyData<-read_geometry(nc_file)
-  compareSP(polygonData, returnPolyData)
+  check_geom(polygonData, returnPolyData)
 })
 
 test_that("multipolygon.", {
@@ -82,7 +82,7 @@ test_that("multipolygon.", {
                		nrow(st_geometry(polygonData)[[1]][[2]][[1]])))
 
   returnPolyData<-read_geometry(nc_file)
-  compareSP(polygonData, returnPolyData)
+  check_geom(polygonData, returnPolyData)
 })
 
 test_that("multipolygon with a hole.", {
@@ -114,7 +114,7 @@ test_that("multipolygon with a hole.", {
                ncvar_get(nc,pkg.env$part_type_var_name))
 
   returnPolyData<-read_geometry(nc_file)
-  compareSP(polygonData, returnPolyData)
+  check_geom(polygonData, returnPolyData)
 })
 
 test_that("multipolygons with holes.", {
@@ -137,11 +137,11 @@ test_that("multipolygons with holes.", {
                ncvar_get(nc,pkg.env$part_type_var_name))
 
   returnPolyData<-read_geometry(nc_file)
-  compareSP(polygonData, returnPolyData)
+  check_geom(polygonData, returnPolyData)
 })
 
 test_that("A whole shapefile can be written", {
-  polygonData <- read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp")
+  polygonData <- read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp", check_ring_dir = TRUE)
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
   
@@ -178,17 +178,11 @@ test_that("A whole shapefile can be written", {
   part_type <- ncvar_get(nc, pkg.env$part_type_var_name)
   expect_equal(nrow(polygonData), length(node_count))
   
-  polygonData_sp <- sf::as_Spatial(polygonData)
-  p <- 1
   for(i in 1:length(node_count)) {
-    nCount <- 0
-    for(j in 1:length(polygonData_sp@polygons[[i]]@Polygons)) {
-      if(polygonData_sp@polygons[[i]]@Polygons[[j]]@hole) expect_equal(part_type[p], pkg.env$hole_val)
-      expect_equal(length(polygonData_sp@polygons[[i]]@Polygons[[j]]@coords[,1]), part_node_count[p])
-      nCount <- nCount + part_node_count[p]
-      p <- p + 1
-    }
-    expect_equal(nCount, node_count[i])
+
+    expect_equal(nrow(sf::st_coordinates(sf::st_geometry(polygonData)[[i]])), 
+                 node_count[i])
+    
   }
   
   checkAllPoly(polygonData, ncvar_get(nc,pkg.env$node_count_var_name),
@@ -196,7 +190,7 @@ test_that("A whole shapefile can be written", {
                ncvar_get(nc,pkg.env$part_type_var_name))
   
   returnPolyData<-read_geometry(nc_file)
-  compareSP(polygonData, returnPolyData)
+  check_geom(polygonData, returnPolyData)
   
   for(name in names(sf::st_set_geometry(polygonData, NULL))) {
     expect_equal(as.character(sf::st_set_geometry(polygonData[name], NULL)), 
@@ -227,7 +221,7 @@ test_that("big roundtrip", {
   climdiv_poly <- read_geometry(nc_file)
   
   expect_s3_class(climdiv_poly, "sf")
-  expect_s3_class(climdiv_poly$geom, "sfc_GEOMETRY")
+  expect_s3_class(climdiv_poly$geom, "sfc_MULTIPOLYGON")
 
   out_nc <- write_timeseries_dsg(nc_file = tempfile(), 
                                  instance_names = names(prcp_data$data_frames[[1]]), 
@@ -240,6 +234,9 @@ test_that("big roundtrip", {
                                  data_metadata = prcp_data$varmeta[[1]], 
                                  attributes = prcp_data$global_attributes[[1]], 
                                  overwrite = TRUE)
+  
+  sf::st_geometry(climdiv_poly)[[1]] <- sf::st_cast(sf::st_geometry(climdiv_poly)[[1]], "POLYGON")
+  climdiv_poly <- sf::st_cast(climdiv_poly, "GEOMETRY")
   
   expect_error(write_geometry(out_nc, climdiv_poly, variables = "climdiv_prcp_inches"),
                "Found multiple geometry types, only one is supported.")

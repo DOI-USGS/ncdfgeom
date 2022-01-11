@@ -1,53 +1,72 @@
 library(RNetCDF)
 library(ncdf4)
 library(sf)
-library(sp)
 
-compareSP <- function(polygonData, returnPolyData) {
-	suppressWarnings(polygonData <- sf::as_Spatial(polygonData))
-	suppressWarnings(returnPolyData <- sf::as_Spatial(returnPolyData))	
-  expect_equal(length(polygonData@polygons[[1]]@Polygons), length(returnPolyData@polygons[[1]]@Polygons))
-  for(i in 1:length(length(polygonData@polygons[[1]]@Polygons))) {
-    expect_equal(as.numeric(returnPolyData@polygons[[1]]@Polygons[[i]]@coords),
-                 as.numeric(polygonData@polygons[[1]]@Polygons[[i]]@coords))
-    expect_equal(as.numeric(returnPolyData@polygons[[1]]@Polygons[[i]]@ringDir),
-                 as.numeric(polygonData@polygons[[1]]@Polygons[[i]]@ringDir))
-    # expect_equal(polygonData@polygons[[1]]@Polygons[[i]], returnPolyData@polygons[[1]]@Polygons[[i]]) # checks attributes, not sure it's work testing them.
-  }
-  expect_equal(polygonData@polygons[[1]]@area, returnPolyData@polygons[[1]]@area)
-  # expect_equal(polygonData@polygons[[1]]@plotOrder, returnPolyData@polygons[[1]]@plotOrder) # Don't want to worry about plot order right now.
-  expect_equal(polygonData@polygons[[1]]@labpt, returnPolyData@polygons[[1]]@labpt)
-  # expect_equal(polygonData@polygons[[1]]@ID, returnPolyData@polygons[[1]]@ID) # maptools 0 indexes others 1 index. Not roundtripping this yet.
+check_geom <- function(data, returndata) {
+  
+  expect_equal(nrow(data), nrow(returndata))
+  
+  expect_equal(sf::st_coordinates(returndata),
+               sf::st_coordinates(data))
+  
 }
 
-compareSL <- function(lineData, returnLineData) {
-	suppressWarnings(lineData <- sf::as_Spatial(lineData))
-	suppressWarnings(returnLineData <- sf::as_Spatial(returnLineData))
-  expect_equal(length(lineData@lines[[1]]@Lines), length(returnLineData@lines[[1]]@Lines))
-  for(i in 1:length(length(lineData@lines[[1]]@Lines))) {
-    expect_equal(as.numeric(returnLineData@lines[[1]]@Lines[[i]]@coords),
-                 as.numeric(lineData@lines[[1]]@Lines[[i]]@coords))
-    # expect_equal(lineData@lines[[1]]@Lines[[i]], returnLineData@lines[[1]]@Lines[[i]]) # checks attributes, not sure it's work testing them.
-  }
-  # expect_equal(lineData@lines[[1]]@ID, returnLineData@lines[[1]]@ID) # maptools 0 indexes others 1 index. Not roundtripping this yet.
+is_hole <- function(x) {
+  one <- seq(1, nrow(x))
+  two <- c(nrow(x), seq(1, (nrow(x) - 1)))
+  
+  sum((x[two, 1] - x[one, 1]) * (x[two, 2] + x[one, 2])) < 1
 }
 
 checkAllPoly <- function(polygonData, node_count, part_node_count = NULL, part_type = NULL) {
-	suppressWarnings(polygonData <- sf::as_Spatial(polygonData))
+  
+  geo <- sf::st_geometry(polygonData)
+  
   i<-1 # counter for parts
-  for(g in 1:length(polygonData@polygons)) {
+  for(g in 1:length(geo)) {
+    
     j<-0 # counter for coords in a geom
-    for(p in 1:length(polygonData@polygons[[g]]@Polygons)) {
-        if(polygonData@polygons[[g]]@Polygons[[p]]@hole) {
+    
+    for(p in 1:length(geo[[g]])) { # geometries
+      
+      if(is.list(geo[[g]][[p]]) & length(geo[[g]][[p]]) > 0) {
+        
+        for(mp in 1:length(geo[[g]][[p]])) {
+          
+          if(is_hole(geo[[g]][[p]][[mp]])) {
+            expect_equal(part_type[i], pkg.env$hole_val)
+          } else {
+            expect_equal(part_type[i], pkg.env$multi_val) 
+          }
+          
+          pCount <- nrow(geo[[g]][[p]][[mp]])
+          
+          expect_equal(part_node_count[i],
+                       pCount)
+          i <- i + 1
+          j <- j + pCount
+        }
+      } else {
+        
+        if(is_hole(geo[[g]][[p]])) {
           expect_equal(part_type[i], pkg.env$hole_val)
-        } else {expect_equal(part_type[i], pkg.env$multi_val) }
-      pCount <- length(polygonData@polygons[[g]]@Polygons[[p]]@coords[,1])
-      expect_equal(part_node_count[i],
-                   pCount)
-      i <- i + 1
-      j <- j + pCount
+        } else {
+          expect_equal(part_type[i], pkg.env$multi_val)
+        }
+        
+        pCount <- nrow(geo[[g]][[p]])
+        
+        expect_equal(part_node_count[i],
+                     pCount)
+        
+        i <- i + 1
+        j <- j + pCount
+        
+      }
+      
     }
-    expect_equal(node_count[g],j)
+    
+    expect_equal(nrow(st_coordinates(geo[[g]])), j)
   }
 }
 
