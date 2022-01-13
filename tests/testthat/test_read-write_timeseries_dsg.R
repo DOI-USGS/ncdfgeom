@@ -3,7 +3,7 @@ context("orthogonal netcdf timeseries")
 test_that("Create basic DSG file", {
   
   # NOTE: this code has been moved to helper files but was left here to not mess with it.
-  nc_file<-tempfile()
+  nc_file<-tempfile(fileext = ".nc")
   nc_summary<-'test summary'
   nc_date_create<-'2099-01-01'
   nc_creator_name='test creator'
@@ -22,6 +22,50 @@ test_that("Create basic DSG file", {
                                lat = "test3",
                                lon = "test4",
                                alt = "test5")
+
+  testnc<-write_timeseries_dsg(nc_file, 
+                               as.integer(names(test_data$var_data)), 
+                               test_data$lats, test_data$lons, 
+                               as.character(test_data$time), 
+                               test_data$var, 
+                               test_data$alts, 
+                               data_unit=test_data$units,	
+                               data_prec='double',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes, 
+                               coordvar_long_names = coord_var_long_names)
+  
+  unlink(nc_file)
+  
+  
+  testnc<-write_timeseries_dsg(nc_file, 
+                               as.numeric(names(test_data$var_data)), 
+                               test_data$lats, test_data$lons, 
+                               as.character(test_data$time), 
+                               test_data$var, 
+                               test_data$alts, 
+                               data_unit=test_data$units,	
+                               data_prec='double',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes, 
+                               coordvar_long_names = coord_var_long_names)
+  
+  unlink(nc_file)
+  
+  expect_error(
+  testnc<-write_timeseries_dsg(nc_file, 
+                               as.factor(names(test_data$var_data)), 
+                               test_data$lats, test_data$lons, 
+                               as.character(test_data$time), 
+                               test_data$var, 
+                               test_data$alts, 
+                               data_unit=test_data$units,	
+                               data_prec='double',
+                               data_metadata=test_data$meta,
+                               attributes=global_attributes, 
+                               coordvar_long_names = coord_var_long_names))
+  
+  unlink(nc_file)
   
   testnc<-write_timeseries_dsg(nc_file, 
                                names(test_data$var_data), 
