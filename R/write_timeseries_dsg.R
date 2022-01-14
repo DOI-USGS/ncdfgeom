@@ -23,7 +23,7 @@
 #' @param coordvar_long_names \code{list} values for long names on coordinate variables. Names should be `instance`, time`, `lat`, `lon`, and `alt.`
 #' @param add_to_existing \code{boolean} If TRUE and the file already exists,
 #' variables will be added to the existing file. See details for more.
-#' @param overwrite boolean error if file exists.
+#' @param overwrite boolean unless set to true, error if file exists.
 #'
 #' @description
 #' This function creates a timeseries discrete sampling geometry NetCDF file.
@@ -146,10 +146,21 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times,
 		dim.def.nc(nc, instance_dim_name, n, unlim = FALSE)
 		dim.def.nc(nc, pkg.env$time_dim_name, nt, unlim=FALSE)
 
+		if(is.integer(instance_names)) {
+		  tid_type <- "NC_INT"
+		} else if(is.character(instance_names)) {
+		  tid_type <- "NC_CHAR"
+		} else if(is.numeric(instance_names)) {
+		  tid_type <- "NC_DOUBLE"
+		} else {
+		  close.nc(nc)
+		  stop("instance names are of an unsupported type.")
+		}
+		
 		#Setup our spatial and time info
 		add_var(nc, dsg_timeseries_id,
 		        c(instance_dim_name),
-		        "NC_CHAR", long_name = coordvar_long_names$instance,
+		        tid_type, long_name = coordvar_long_names$instance,
 		        data = instance_names)
 
 		add_var(nc, pkg.env$time_var_name, pkg.env$time_dim_name, "NC_DOUBLE",
