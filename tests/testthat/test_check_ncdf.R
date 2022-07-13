@@ -77,7 +77,7 @@ test_that("a crs gets found correctly", {
               semi_major_axis = 6378137.0,
               inverse_flattening = 298.257223563,
               longitude_of_prime_meridian = 0)
-  expect_equal(checkVals$crs, crs)
+  expect_equal(checkVals$crs, crs[names(checkVals$crs)])
   unlink("test.nc")
 })
 
