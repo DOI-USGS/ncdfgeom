@@ -29,7 +29,7 @@ weighted means are being generated for the target, y.
 
 This function is a lightwieght wrapper around the functions
 \link[areal]{aw_intersect} \link[areal]{aw_total} and \link[areal]{aw_weight}
-from the \href{https://github.com/slu-openGIS/areal}{areal package}.
+from the \href{https://chris-prener.github.io/areal/}{areal package}.
 }
 \examples{
 b1 = sf::st_polygon(list(rbind(c(-1,-1), c(1,-1),
