@@ -7,7 +7,7 @@
 #'
 #' This function is a lightwieght wrapper around the functions
 #' \link[areal]{aw_intersect} \link[areal]{aw_total} and \link[areal]{aw_weight}
-#' from the \href{https://github.com/slu-openGIS/areal}{areal package}.
+#' from the \href{https://chris-prener.github.io/areal/}{areal package}.
 #'
 #' @param x sf data.frame source features including one geometry column and one identifier column
 #' @param y sf data.frame target features including one geometry column and one identifier column

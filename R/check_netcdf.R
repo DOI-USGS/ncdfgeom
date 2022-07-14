@@ -1,8 +1,5 @@
 #'@title Check NetCDF-DSG File
-#'
-#'
 #'@param nc A NetCDF path or URL to be opened.
-#'
 #'@description
 #'Introspects a netCDF file and tries to interpret it as a NetCDF-DSG file. Returns a named
 #'\code{list} containing \code{instance_id} \code{instance_dim} \code{node_count}

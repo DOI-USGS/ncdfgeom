@@ -1,5 +1,4 @@
 #' @title Write geometries and attributes to NetCDF-CF
-#'
 #' @param nc_file \code{character} file path to the nc file to be created.
 #' @param geom_data sf \code{data.frame} with POINT, LINESTRING, MULTILINESTRING, 
 #' POLYGON, or MULTIPOLYGON geometries. Note that three dimensional geometries 
@@ -67,8 +66,6 @@ write_geometry = function(nc_file, geom_data, instance_dim_name = NULL, variable
 }
 
 #'@title Put geometry data in a NetCDF-CF File
-#'
-#'
 #'@param nc_file A string file path to the nc file to be created. It must already have
 #'an instance dimension.
 #'@param geom_data An object of class \code{SpatialLines}, \code{SpatialPolygons}
