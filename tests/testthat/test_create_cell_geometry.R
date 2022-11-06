@@ -68,6 +68,8 @@ test_that("crossing the date line works", {
 })
 
 test_that("crossing date line more", {
+  skip_on_cran()
+  
   geom <- matrix(c(-179, -170, 170, 179.9, -179,
                    51, 63, 63, 52, 51),
                  ncol = 2) %>%
