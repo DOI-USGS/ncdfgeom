@@ -8,3 +8,6 @@ code.json
 appveyor.yml
 .github
 .gitlab-ci.yml
+Dockerfile
+^CRAN-SUBMISSION$
+cran-comments.md
