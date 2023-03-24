@@ -113,7 +113,7 @@ the netCDF file is already open and well understood." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/USGS-R/ncdfgeom/">
+  <a href="https://github.com/DOI-USGS/ncdfgeom/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -132,7 +132,7 @@ the netCDF file is already open and well understood." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Read attribute dataframe from NetCDF-DSG file</h1>
-    <small class="dont-index">Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/read_attribute_data.R'><code>R/read_attribute_data.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/DOI-USGS/ncdfgeom/blob/master/R/read_attribute_data.R'><code>R/read_attribute_data.R</code></a></small>
     <div class="hidden name"><code>read_attribute_data.Rd</code></div>
     </div>
 
@@ -159,7 +159,7 @@ the netCDF file is already open and well understood.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples">read_attribute_data,Read attribute dataframe from NetCDF-DSG file,Read attribute dataframe from NetCDF-DSG file — read_attribute_data,Source: <a href='https://github.com/USGS-R/ncdfgeom/blob/master/R/read_attribute_data.R'><code>R/read_attribute_data.R</code></a>,read_attribute_data.Rd,character(0),read_attribute_data,character(0),list(title = "Description", contents = "<p>Gets attribute data from a NetCDF-DSG file and returns it in a <code>data.frame</code>.\nThis function is intended as a convenience to be used within workflows where\nthe netCDF file is already open and well understood.</p>"),list(description = "Gets attribute data from a NetCDF-DSG file and returns it in a data.frame.\nThis function is intended as a convenience to be used within workflows where\nthe netCDF file is already open and well understood."),<span class='fu'>read_attribute_data</span><span class='op'>(</span><span class='va'>nc</span>, <span class='va'>instance_dim</span><span class='op'>)</span>,list(list(name = "nc", description = "<p>A NetCDF path or urlto be opened.</p>"), list(name = "instance_dim", description = "<p>The NetCDF instance/station dimension.</p>")),TRUE,<div class='input'><span class='va'>hucPolygons</span> <span class='op'>&lt;-</span> <span class='fu'>sf</span><span class='fu'>::</span><span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_read.html'>read_sf</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata'</span>,<span class='st'>'example_huc_eta.json'</span>, package <span class='op'>=</span> <span class='st'>'ncdfgeom'</span><span class='op'>)</span><span class='op'>)</span>
+    <pre class="examples">read_attribute_data,Read attribute dataframe from NetCDF-DSG file,Read attribute dataframe from NetCDF-DSG file — read_attribute_data,Source: <a href='https://github.com/DOI-USGS/ncdfgeom/blob/master/R/read_attribute_data.R'><code>R/read_attribute_data.R</code></a>,read_attribute_data.Rd,character(0),read_attribute_data,character(0),list(title = "Description", contents = "<p>Gets attribute data from a NetCDF-DSG file and returns it in a <code>data.frame</code>.\nThis function is intended as a convenience to be used within workflows where\nthe netCDF file is already open and well understood.</p>"),list(description = "Gets attribute data from a NetCDF-DSG file and returns it in a data.frame.\nThis function is intended as a convenience to be used within workflows where\nthe netCDF file is already open and well understood."),<span class='fu'>read_attribute_data</span><span class='op'>(</span><span class='va'>nc</span>, <span class='va'>instance_dim</span><span class='op'>)</span>,list(list(name = "nc", description = "<p>A NetCDF path or urlto be opened.</p>"), list(name = "instance_dim", description = "<p>The NetCDF instance/station dimension.</p>")),TRUE,<div class='input'><span class='va'>hucPolygons</span> <span class='op'>&lt;-</span> <span class='fu'>sf</span><span class='fu'>::</span><span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_read.html'>read_sf</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>'extdata'</span>,<span class='st'>'example_huc_eta.json'</span>, package <span class='op'>=</span> <span class='st'>'ncdfgeom'</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>hucPolygons_nc</span> <span class='op'>&lt;-</span> <span class='fu'>ncdfgeom</span><span class='fu'>::</span><span class='fu'><a href='write_geometry.html'>write_geometry</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='va'>hucPolygons</span><span class='op'>)</span>
 
 <span class='fu'>read_attribute_data</span><span class='op'>(</span><span class='va'>hucPolygons_nc</span>, <span class='st'>"instance"</span><span class='op'>)</span>
@@ -179,7 +179,7 @@ the netCDF file is already open and well understood.</p>
 #&gt; 1       1678
 #&gt; 2        950</div><div class='input'>
 </div>,list(),2021,list(name = "ncdfgeom", version = "1.1.1", authors = "David Blodgett"),list(destination = "dev", mode = "release", version_label = "default", version_tooltip = "Released version", in_dev = FALSE),list(root = "../", title = "ncdfgeom"),list(),list(type = "default", left = "<li>\n  <a href=\"../index.html\">\n    <span class=\"fas fa-home fa-lg\"></span>\n     \n  </a>\n</li>\n<li>\n  <a href=\"../articles/ncdfgeom.html\">Get started</a>\n</li>\n<li>\n  <a href=\"../reference/index.html\">Reference</a>\n</li>\n<li class=\"dropdown\">\n  <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">\n    Articles\n     \n    <span class=\"caret\"></span>\n  </a>\n  <ul class=\"dropdown-menu\" role=\"menu\">\n    <li>\n      <a href=\"../articles/geometry.html\">Reading and Writing NetCDF-CF Geometry</a>\n    </li>\n    <li>\n      <a href=\"../articles/timeseries.html\">Reading and Writing Timeseries</a>\n    </li>\n  </ul>\n</li>\n<li>\n  <a href=\"../news/index.html\">Changelog</a>\n</li>", 
-    right = "<li>\n  <a href=\"https://github.com/USGS-R/ncdfgeom/\">\n    <span class=\"fab fa-github fa-lg\"></span>\n     \n  </a>\n</li>"),list(.present = TRUE),list(version = "1.6.1"),FALSE</pre>
+    right = "<li>\n  <a href=\"https://github.com/DOI-USGS/ncdfgeom/\">\n    <span class=\"fab fa-github fa-lg\"></span>\n     \n  </a>\n</li>"),list(.present = TRUE),list(version = "1.6.1"),FALSE</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

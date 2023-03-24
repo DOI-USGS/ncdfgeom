@@ -31,7 +31,7 @@ For timeseries, two formats are supported:
 1. a wide format `data.frame` with timesteps in rows and geometry "instances" in columns with required attributes of geometry "instances" provided separately. This format lends its self to data where the same timestamps are used for every row and data exists for all geometry instances for all time steps -- it is sometimes referred to as the orthogonal array, or "space-wide", encoding.
 1. a long format `data.frame` where each row contains all the geometry "instance" metadata, a time stamp, and the variables to be stored for that time step. This format lends it self to data where each geometry instance has unique timesteps and/or data is not available for each geometry instance at the same timesteps (sparse arrays).
 
-Additional read / write functions to include additional DSG feature types will be implemented in the future and contributions are welcomed. `ncdfgeom` is a work in progress. Please review the ["issues"](https://github.com/USGS-R/ncdfgeom/issues) list to submit issues and/or see what changes are planned.
+Additional read / write functions to include additional DSG feature types will be implemented in the future and contributions are welcomed. `ncdfgeom` is a work in progress. Please review the ["issues"](https://github.com/DOI-USGS/ncdfgeom/issues) list to submit issues and/or see what changes are planned.
 
 ## Installation
 
@@ -39,7 +39,7 @@ At the time of writing, installation is only available via `remotes` or building
 
 ```
 install.packages("remotes")
-remotes::install_github("USGS-R/ncdfgeom")
+remotes::install_github("DOI-USGS/ncdfgeom")
 ```
 
 When on CRAN, the package will be installed with the typical install.packages method.
@@ -67,7 +67,7 @@ The data required for this demo has been cached in the `ncdfgeom` package and is
 ### `prcp_data`
 ```{r data_shape_2}
 prcp_data <- readRDS(system.file("extdata/climdiv-pcpndv.rds", package = "ncdfgeom"))
-print(prcp_data, n_extra = 0)
+print(prcp_data, max_extra_cols = 0)
 plot(prcp_data$date, prcp_data$`0101`, col = "red", 
      xlab = "date", ylab = "monthly precip (inches)", main = "Sample Timeseries for 0101-'Northern Valley'")
 lines(prcp_data$date, prcp_data$`0101`)

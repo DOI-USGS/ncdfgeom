@@ -1,7 +1,7 @@
 
 .onAttach <- function(libname, pkgname) {
 	packageStartupMessage("****Support Package****
-This package is a USGS-R Support package. 
+This package is a DOI-USGS Support package. 
 see: https://owi.usgs.gov/R/packages.html#support")
 }
 

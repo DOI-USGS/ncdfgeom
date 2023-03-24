@@ -70,7 +70,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/USGS-R/ncdfgeom/">
+  <a href="https://github.com/DOI-USGS/ncdfgeom/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -91,7 +91,7 @@
       <h1 data-toc-skip>NetCDF-CF Geometry and Timeseries Tools for R</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USGS-R/ncdfgeom/blob/master/vignettes/ncdfgeom.Rmd"><code>vignettes/ncdfgeom.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/DOI-USGS/ncdfgeom/blob/master/vignettes/ncdfgeom.Rmd"><code>vignettes/ncdfgeom.Rmd</code></a></small>
       <div class="hidden name"><code>ncdfgeom.Rmd</code></div>
 
     </div>
@@ -116,14 +116,14 @@
 <li>a wide format <code>data.frame</code> with timesteps in rows and geometry “instances” in columns with required attributes of geometry “instances” provided separately. This format lends its self to data where the same timestamps are used for every row and data exists for all geometry instances for all time steps – it is sometimes referred to as the orthogonal array, or “space-wide”, encoding.</li>
 <li>a long format <code>data.frame</code> where each row contains all the geometry “instance” metadata, a time stamp, and the variables to be stored for that time step. This format lends it self to data where each geometry instance has unique timesteps and/or data is not available for each geometry instance at the same timesteps (sparse arrays).</li>
 </ol>
-<p>Additional read / write functions to include additional DSG feature types will be implemented in the future and contributions are welcomed. <code>ncdfgeom</code> is a work in progress. Please review the <a href="https://github.com/USGS-R/ncdfgeom/issues">“issues”</a> list to submit issues and/or see what changes are planned.</p>
+<p>Additional read / write functions to include additional DSG feature types will be implemented in the future and contributions are welcomed. <code>ncdfgeom</code> is a work in progress. Please review the <a href="https://github.com/DOI-USGS/ncdfgeom/issues">“issues”</a> list to submit issues and/or see what changes are planned.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>At the time of writing, installation is only available via <code>remotes</code> or building the package directly as one would for development purposes.</p>
 <pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("remotes")
-remotes::install_github("USGS-R/ncdfgeom")</a></code></pre>
+remotes::install_github("DOI-USGS/ncdfgeom")</a></code></pre>
 <p>When on CRAN, the package will be installed with the typical install.packages method.</p>
 <pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("ncdfgeom")</a></code></pre>
 <p>For this demo, we’ll use <code>sf</code>, <code>dplyr</code>, and <code>ncdfgeom</code>.</p>

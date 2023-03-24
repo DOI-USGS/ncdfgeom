@@ -4,5 +4,5 @@
 * local windows
 
 ## Comment
-* sf bug has been fixed.
-* addresses failing M1 mac test: builder here https://mac.r-project.org/macbuilder/results/1667741785-c6949eb7ff801ac7/
+* change urls to new repository.
+* removed use of deprecated pillars print argument.

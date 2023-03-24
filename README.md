@@ -1,15 +1,18 @@
 NetCDF-CF Geometry and Timeseries Tools for R
 ===
-![R-CMD-check](https://github.com/usgs-r/ncdfgeom/workflows/R-CMD-check/badge.svg) [![codecov](https://codecov.io/gh/usgs-r/ncdfgeom/branch/master/graph/badge.svg?token=5c1L38yK5q)](https://app.codecov.io/gh/usgs-r/ncdfgeom) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfgeom)](https://cran.r-project.org/package=ncdfgeom) [![CRAN](https://www.r-pkg.org/badges/version/ncdfgeom)](https://cran.r-project.org/package=ncdfgeom)
+<!---
+![R-CMD-check](https://github.com/doi-usgs/ncdfgeom/workflows/R-CMD-check/badge.svg) [![codecov](https://codecov.io/gh/doi-usgs/ncdfgeom/branch/master/graph/badge.svg?token=5c1L38yK5q)](https://app.codecov.io/gh/doi-usgs/ncdfgeom) 
+--->
+[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfgeom)](https://cran.r-project.org/package=ncdfgeom) [![CRAN](https://www.r-pkg.org/badges/version/ncdfgeom)](https://cran.r-project.org/package=ncdfgeom)
 
 `ncdfgeom` reads and writes geometry data (points lines and polygons), attributes of geometries, and time series associated with the geometries in a standards-compliant way.
 
 It implements the NetCDF-CF Spatial Geometries specification and the timeSeries feature type of the [Discrete Sampling Geometry](http://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries) NetCDF-CF specification. 
 
-**Visit the [`pkgdown` site](https://usgs-r.github.io/ncdfgeom/articles/ncdfgeom.html) for a complete overview of the package.**
+**Visit the [`pkgdown` site](https://doi-usgs.github.io/ncdfgeom/articles/ncdfgeom.html) for a complete overview of the package.**
 
 Given that this package is fairly new and in active development, please test it out 
-and consider [submitting issues and/or contributions!](https://github.com/USGS-R/ncdfgeom/issues)
+and consider [submitting issues and/or contributions!](https://github.com/DOI-USGS/ncdfgeom/issues)
 
 ## Installation
 
@@ -22,7 +25,7 @@ install.packages("ncdfgeom")
 For the latest development version:
 ```
 install.packages("remotes")
-remotes::install_github("USGS-R/ncdfgeom")
+remotes::install_github("DOI-USGS/ncdfgeom")
 ```
 
 ## Contributing
