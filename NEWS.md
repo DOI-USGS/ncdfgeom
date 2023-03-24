@@ -1,3 +1,7 @@
+1.1.5
+==========
+* update URLs for new repository.
+
 ncdfgeom 1.1.1
 ==========
 * Updates to read and write timeseries DSG. Should be backwards compatible.
