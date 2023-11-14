@@ -200,9 +200,9 @@ variables:
 		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:part_node_count = "part_node_count" ;
 		geometry_container:interior_ring = "interior_ring" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
+		geometry_container:part_node_count = "part_node_count" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
 	int part_node_count(part) ;
@@ -256,9 +256,9 @@ variables:
 		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:part_node_count = "part_node_count" ;
 		geometry_container:interior_ring = "interior_ring" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
+		geometry_container:part_node_count = "part_node_count" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
 	int part_node_count(part) ;
@@ -312,9 +312,9 @@ variables:
 		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:part_node_count = "part_node_count" ;
 		geometry_container:interior_ring = "interior_ring" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
+		geometry_container:part_node_count = "part_node_count" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
 	int part_node_count(part) ;
@@ -368,9 +368,9 @@ variables:
 		geometry_container:node_coordinates = "x_nodes y_nodes" ;
 		geometry_container:geometry_type = "polygon" ;
 		geometry_container:node_count = "node_count" ;
-		geometry_container:part_node_count = "part_node_count" ;
 		geometry_container:interior_ring = "interior_ring" ;
 		geometry_container:grid_mapping = "grid_mapping" ;
+		geometry_container:part_node_count = "part_node_count" ;
 	int node_count(instance) ;
 		node_count:long_name = "count of coordinates in each instance geometry" ;
 	int part_node_count(part) ;

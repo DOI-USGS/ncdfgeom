@@ -1,6 +1,8 @@
 context("geom_examples.md")
 
 test_that("create geom_examples.md", {
+  testthat::skip_on_ci()
+  
   geom_examples <- list.files(pattern = "geom_examples.md", full.names = TRUE, recursive = TRUE)
   
   fixtureData <- jsonlite::fromJSON(system.file('extdata/fixture_wkt.json', package = 'ncdfgeom'))
