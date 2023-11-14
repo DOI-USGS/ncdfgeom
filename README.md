@@ -38,13 +38,6 @@ First, thanks for considering a contribution! I hope to make this package a comm
 1. Please follow the typical github fork - pull-request workflow.
 1. Make sure you use roxygen and run Check before contributing. More on this front as the package matures.
 
-## Package Status
-
-[![status](https://img.shields.io/badge/USGS-Support-yellow.svg)](https://owi.usgs.gov/R/packages.html#support)
-
-This package is considered a 'support' package. For more information, see:
-[https://owi.usgs.gov/R/packages.html#support](https://owi.usgs.gov/R/packages.html#support)
-
 ## Disclaimer
 This software is in the public domain because it contains materials that originally came from the U.S. Geological Survey, an agency of the United States Department of Interior. For more information, see the [official USGS copyright policy](https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits#copyright/ "official USGS copyright policy")
 

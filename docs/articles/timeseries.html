@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.5</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/ncdfgeom.html">Get started</a>
 </li>
@@ -50,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -70,7 +66,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/DOI-USGS/ncdfgeom/">
+  <a href="https://github.com/DOI-USGS/ncdfgeom/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -85,13 +81,13 @@
 
       
 
-      </header><script src="timeseries_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Reading and Writing Timeseries</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/DOI-USGS/ncdfgeom/blob/master/vignettes/timeseries.Rmd"><code>vignettes/timeseries.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/DOI-USGS/ncdfgeom/blob/HEAD/vignettes/timeseries.Rmd" class="external-link"><code>vignettes/timeseries.Rmd</code></a></small>
       <div class="hidden name"><code>timeseries.Rmd</code></div>
 
     </div>
@@ -100,158 +96,178 @@
     
 <p>First, we’ll load up some time series data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">attribute_file</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata/yahara_alb_attributes.csv'</span>, package <span class="op">=</span> <span class="st">"ncdfgeom"</span><span class="op">)</span>
-
-<span class="va">attributes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="va">attribute_file</span>, colClasses<span class="op">=</span><span class="st">'character'</span><span class="op">)</span>
-<span class="va">lats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">attributes</span><span class="op">$</span><span class="va">YCOORD</span><span class="op">)</span>
-<span class="va">lons</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">attributes</span><span class="op">$</span><span class="va">XCOORD</span><span class="op">)</span>
-<span class="va">alts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">lats</span><span class="op">)</span><span class="op">)</span> <span class="co"># Making up altitude for the sake of demonstration.</span></code></pre></div>
-<p>We now have vectors of latitudes, longitudes, altitudes for each of our time series.</p>
+<code class="sourceCode R"><span><span class="va">attribute_file</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata/yahara_alb_attributes.csv'</span>, package <span class="op">=</span> <span class="st">"ncdfgeom"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">attributes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">attribute_file</span>, colClasses<span class="op">=</span><span class="st">'character'</span><span class="op">)</span></span>
+<span><span class="va">lats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">attributes</span><span class="op">$</span><span class="va">YCOORD</span><span class="op">)</span></span>
+<span><span class="va">lons</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">attributes</span><span class="op">$</span><span class="va">XCOORD</span><span class="op">)</span></span>
+<span><span class="va">alts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">lats</span><span class="op">)</span><span class="op">)</span> <span class="co"># Making up altitude for the sake of demonstration.</span></span></code></pre></div>
+<p>We now have vectors of latitudes, longitudes, altitudes for each of
+our time series.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">timeseries_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata/yahara_alb_gdp_file.csv'</span>, package <span class="op">=</span> <span class="st">"ncdfgeom"</span><span class="op">)</span>
-
-<span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu">geoknife</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/geoknife/man/parseTimeseries.html">parseTimeseries</a></span><span class="op">(</span><span class="va">timeseries_file</span>, delim<span class="op">=</span><span class="st">','</span>, with.units<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="va">timeseries_data</span> <span class="op">&lt;-</span> <span class="va">raw_data</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">)</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span><span class="op">]</span>
-
-<span class="va">time</span> <span class="op">&lt;-</span> <span class="va">raw_data</span><span class="op">$</span><span class="va">DateTime</span>
-
-<span class="va">long_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">$</span><span class="va">variable</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">'area weighted'</span>, <span class="va">raw_data</span><span class="op">$</span><span class="va">statistic</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">'in'</span>, 
-                   <span class="va">raw_data</span><span class="op">$</span><span class="va">units</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, sep<span class="op">=</span><span class="st">' '</span><span class="op">)</span>
-
-<span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>name<span class="op">=</span><span class="va">raw_data</span><span class="op">$</span><span class="va">variable</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, long_name<span class="op">=</span><span class="va">long_name</span><span class="op">)</span></code></pre></div>
-<p>Now we have the <code>timeseries_data</code> data.frame of timeseries data, the <code>time</code> vector of timesteps, and a bit of metadata for the timeseries variable that we will write into the NetCDF file.</p>
+<code class="sourceCode R"><span><span class="va">timeseries_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata/yahara_alb_gdp_file.csv'</span>, package <span class="op">=</span> <span class="st">"ncdfgeom"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu">geoknife</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/geoknife/man/parseTimeseries.html" class="external-link">parseTimeseries</a></span><span class="op">(</span><span class="va">timeseries_file</span>, delim<span class="op">=</span><span class="st">','</span>, with.units<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">timeseries_data</span> <span class="op">&lt;-</span> <span class="va">raw_data</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">)</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">time</span> <span class="op">&lt;-</span> <span class="va">raw_data</span><span class="op">$</span><span class="va">DateTime</span></span>
+<span></span>
+<span><span class="va">long_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">$</span><span class="va">variable</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">'area weighted'</span>, <span class="va">raw_data</span><span class="op">$</span><span class="va">statistic</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">'in'</span>, </span>
+<span>                   <span class="va">raw_data</span><span class="op">$</span><span class="va">units</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, sep<span class="op">=</span><span class="st">' '</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name<span class="op">=</span><span class="va">raw_data</span><span class="op">$</span><span class="va">variable</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, long_name<span class="op">=</span><span class="va">long_name</span><span class="op">)</span></span></code></pre></div>
+<p>Now we have the <code>timeseries_data</code> data.frame of timeseries
+data, the <code>time</code> vector of timesteps, and a bit of metadata
+for the timeseries variable that we will write into the NetCDF file.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">nc_summary</span><span class="op">&lt;-</span><span class="st">'example summary'</span>
-<span class="va">nc_date_create</span><span class="op">&lt;-</span><span class="st">'2099-01-01'</span>
-<span class="va">nc_creator_name</span><span class="op">=</span><span class="st">'example creator'</span>
-<span class="va">nc_creator_email</span><span class="op">=</span><span class="st">'example@test.com'</span>
-<span class="va">nc_project</span><span class="op">=</span><span class="st">'example ncdfgeom'</span>
-<span class="va">nc_proc_level</span><span class="op">=</span><span class="st">'just an example no processing'</span>
-<span class="va">nc_title</span><span class="op">&lt;-</span><span class="st">'example title'</span>
-
-<span class="va">global_attributes</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>title <span class="op">=</span> <span class="va">nc_title</span>, 
-                        summary <span class="op">=</span> <span class="va">nc_summary</span>, 
-                        date_created <span class="op">=</span> <span class="va">nc_date_create</span>, 
-                        creator_name <span class="op">=</span> <span class="va">nc_creator_name</span>,
-                        creator_email <span class="op">=</span> <span class="va">nc_creator_email</span>, 
-                        project <span class="op">=</span> <span class="va">nc_project</span>,
-                        processing_level <span class="op">=</span> <span class="va">nc_proc_level</span><span class="op">)</span>
-
-<span class="fu">ncdfgeom</span><span class="fu">::</span><span class="fu"><a href="../reference/write_timeseries_dsg.html">write_timeseries_dsg</a></span><span class="op">(</span>nc_file <span class="op">=</span> <span class="st">"demo_nc.nc"</span>, 
-                               instance_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">timeseries_data</span><span class="op">)</span>,
-                               lats <span class="op">=</span> <span class="va">lats</span>, 
-                               lons <span class="op">=</span> <span class="va">lons</span>, 
-                               alts <span class="op">=</span> <span class="va">alts</span>,
-                               times <span class="op">=</span> <span class="va">time</span>, 
-                               data <span class="op">=</span> <span class="va">timeseries_data</span>,
-                               data_unit <span class="op">=</span> <span class="va">raw_data</span><span class="op">$</span><span class="va">units</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
-                               data_prec <span class="op">=</span> <span class="st">'double'</span>,
-                               data_metadata <span class="op">=</span> <span class="va">meta</span>,
-                               attributes <span class="op">=</span> <span class="va">global_attributes</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">nc_file</span></code></pre></div>
-<p>Now we have a NetCDF file with reference spatial information for each time series, and a single timeseries variable.</p>
+<code class="sourceCode R"><span><span class="va">nc_summary</span><span class="op">&lt;-</span><span class="st">'example summary'</span></span>
+<span><span class="va">nc_date_create</span><span class="op">&lt;-</span><span class="st">'2099-01-01'</span></span>
+<span><span class="va">nc_creator_name</span><span class="op">=</span><span class="st">'example creator'</span></span>
+<span><span class="va">nc_creator_email</span><span class="op">=</span><span class="st">'example@test.com'</span></span>
+<span><span class="va">nc_project</span><span class="op">=</span><span class="st">'example ncdfgeom'</span></span>
+<span><span class="va">nc_proc_level</span><span class="op">=</span><span class="st">'just an example no processing'</span></span>
+<span><span class="va">nc_title</span><span class="op">&lt;-</span><span class="st">'example title'</span></span>
+<span></span>
+<span><span class="va">global_attributes</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>title <span class="op">=</span> <span class="va">nc_title</span>, </span>
+<span>                        summary <span class="op">=</span> <span class="va">nc_summary</span>, </span>
+<span>                        date_created <span class="op">=</span> <span class="va">nc_date_create</span>, </span>
+<span>                        creator_name <span class="op">=</span> <span class="va">nc_creator_name</span>,</span>
+<span>                        creator_email <span class="op">=</span> <span class="va">nc_creator_email</span>, </span>
+<span>                        project <span class="op">=</span> <span class="va">nc_project</span>,</span>
+<span>                        processing_level <span class="op">=</span> <span class="va">nc_proc_level</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ncdfgeom</span><span class="fu">::</span><span class="fu"><a href="../reference/write_timeseries_dsg.html">write_timeseries_dsg</a></span><span class="op">(</span>nc_file <span class="op">=</span> <span class="st">"demo_nc.nc"</span>, </span>
+<span>                               instance_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">timeseries_data</span><span class="op">)</span>,</span>
+<span>                               lats <span class="op">=</span> <span class="va">lats</span>, </span>
+<span>                               lons <span class="op">=</span> <span class="va">lons</span>, </span>
+<span>                               alts <span class="op">=</span> <span class="va">alts</span>,</span>
+<span>                               times <span class="op">=</span> <span class="va">time</span>, </span>
+<span>                               data <span class="op">=</span> <span class="va">timeseries_data</span>,</span>
+<span>                               data_unit <span class="op">=</span> <span class="va">raw_data</span><span class="op">$</span><span class="va">units</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>                               data_prec <span class="op">=</span> <span class="st">'double'</span>,</span>
+<span>                               data_metadata <span class="op">=</span> <span class="va">meta</span>,</span>
+<span>                               attributes <span class="op">=</span> <span class="va">global_attributes</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">nc_file</span></span></code></pre></div>
+<p>Now we have a NetCDF file with reference spatial information for each
+time series, and a single timeseries variable.</p>
 <p>The file has three dimensions.</p>
 <ol style="list-style-type: decimal">
-<li>A dimension called “instance” that is the same length as the number of timeseries written,</li>
-<li>one called “time” that is the length of the number of time series, and</li>
-<li>one called “name_strlen” that is the length of the longest timeseries ID (which is stored as a string).</li>
+<li>A dimension called “instance” that is the same length as the number
+of timeseries written,</li>
+<li>one called “time” that is the length of the number of time series,
+and</li>
+<li>one called “name_strlen” that is the length of the longest
+timeseries ID (which is stored as a string).</li>
 </ol>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">ncmeta</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncmeta/man/nc_dims.html">nc_dims</a></span><span class="op">(</span><span class="va">nc_file</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 3 x 4</span>
-<span class="co">#&gt;      id name               length unlim</span>
-<span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;lgl&gt;</span>
-<span class="co">#&gt; 1     0 instance               71 FALSE</span>
-<span class="co">#&gt; 2     1 time                  730 FALSE</span>
-<span class="co">#&gt; 3     2 instance_name_char      2 FALSE</span></code></pre></div>
-<p>The file has variables for latitude, longitude, altitude, timeseries IDs, and a data variable.</p>
+<code class="sourceCode R"><span><span class="fu">ncmeta</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncmeta/man/nc_dims.html" class="external-link">nc_dims</a></span><span class="op">(</span><span class="va">nc_file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 4</span></span></span>
+<span><span class="co">#&gt;      id name               length unlim</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0 instance               71 FALSE</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     1 time                  730 FALSE</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2 instance_name_char      2 FALSE</span></span></code></pre></div>
+<p>The file has variables for latitude, longitude, altitude, timeseries
+IDs, and a data variable.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">ncmeta</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncmeta/man/nc_vars.html">nc_vars</a></span><span class="op">(</span><span class="va">nc_file</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 5</span>
-<span class="co">#&gt;      id name                                        type      ndims natts</span>
-<span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;                                       &lt;chr&gt;     &lt;int&gt; &lt;int&gt;</span>
-<span class="co">#&gt; 1     0 instance_name                               NC_CHAR       2     2</span>
-<span class="co">#&gt; 2     1 time                                        NC_DOUBLE     1     4</span>
-<span class="co">#&gt; 3     2 lat                                         NC_DOUBLE     1     4</span>
-<span class="co">#&gt; 4     3 lon                                         NC_DOUBLE     1     4</span>
-<span class="co">#&gt; 5     4 alt                                         NC_DOUBLE     1     4</span>
-<span class="co">#&gt; 6     5 BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1 NC_DOUBLE     2     4</span></code></pre></div>
-<p>The primary dimensions in the file are of length, number of time steps and number of time series.</p>
+<code class="sourceCode R"><span><span class="fu">ncmeta</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncmeta/man/nc_vars.html" class="external-link">nc_vars</a></span><span class="op">(</span><span class="va">nc_file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span></span>
+<span><span class="co">#&gt;      id name                                        type      ndims natts</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0 instance_name                               NC_CHAR       2     2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     1 time                                        NC_DOUBLE     1     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2 lat                                         NC_DOUBLE     1     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     3 lon                                         NC_DOUBLE     1     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     4 alt                                         NC_DOUBLE     1     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>     5 BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1 NC_DOUBLE     2     4</span></span></code></pre></div>
+<p>The primary dimensions in the file are of length, number of time
+steps and number of time series.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">ncmeta</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncmeta/man/nc_dims.html">nc_dims</a></span><span class="op">(</span><span class="va">nc_file</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 3 x 4</span>
-<span class="co">#&gt;      id name               length unlim</span>
-<span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;lgl&gt;</span>
-<span class="co">#&gt; 1     0 instance               71 FALSE</span>
-<span class="co">#&gt; 2     1 time                  730 FALSE</span>
-<span class="co">#&gt; 3     2 instance_name_char      2 FALSE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">ncmeta</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncmeta/man/nc_dims.html" class="external-link">nc_dims</a></span><span class="op">(</span><span class="va">nc_file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 4</span></span></span>
+<span><span class="co">#&gt;      id name               length unlim</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0 instance               71 FALSE</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     1 time                  730 FALSE</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2 instance_name_char      2 FALSE</span></span></code></pre></div>
 <p>The header of the resulting NetCDF file looks like:</p>
-<pre><code>#&gt; netcdf demo_nc {
-#&gt; dimensions:
-#&gt;  instance = 71 ;
-#&gt;  time = 730 ;
-#&gt;  instance_name_char = 2 ;
-#&gt; variables:
-#&gt;  char instance_name(instance, instance_name_char) ;
-#&gt;      instance_name:long_name = "Station Names" ;
-#&gt;      instance_name:cf_role = "timeseries_id" ;
-#&gt;  double time(time) ;
-#&gt;      time:units = "days since 1970-01-01 00:00:00" ;
-#&gt;      time:missing_value = -999. ;
-#&gt;      time:long_name = "time of measurement" ;
-#&gt;      time:standard_name = "time" ;
-#&gt;  double lat(instance) ;
-#&gt;      lat:units = "degrees_north" ;
-#&gt;      lat:missing_value = -999. ;
-#&gt;      lat:long_name = "latitude of the measurement" ;
-#&gt;      lat:standard_name = "latitude" ;
-#&gt;  double lon(instance) ;
-#&gt;      lon:units = "degrees_east" ;
-#&gt;      lon:missing_value = -999. ;
-#&gt;      lon:long_name = "longitude of the measurement" ;
-#&gt;      lon:standard_name = "longitude" ;
-#&gt;  double alt(instance) ;
-#&gt;      alt:units = "m" ;
-#&gt;      alt:missing_value = -999. ;
-#&gt;      alt:long_name = "altitude of the measurement" ;
-#&gt;      alt:standard_name = "height" ;
-#&gt;  double BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1(instance, time) ;
-#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:units = "mm/d" ;
-#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:missing_value = -2147483648. ;
-#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:long_name = "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1 area weighted MEAN in mm/d" ;
-#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:coordinates = "time lat lon alt" ;
-#&gt; 
-#&gt; // global attributes:
-#&gt;      :Conventions = "CF-1.8" ;
-#&gt;      :featureType = "timeSeries" ;
-#&gt;      :cdm_data_type = "Station" ;
-#&gt;      :standard_name_vocabulary = "CF-1.8" ;
-#&gt;      :title = "example title" ;
-#&gt;      :summary = "example summary" ;
-#&gt;      :date_created = "2099-01-01" ;
-#&gt;      :creator_name = "example creator" ;
-#&gt;      :creator_email = "example@test.com" ;
-#&gt;      :project = "example ncdfgeom" ;
-#&gt;      :processing_level = "just an example no processing" ;
-#&gt; }</code></pre>
-<p>This file can be read back into R with the function <code>read_timeseries_dsg</code>. The response is a list of variables as shown below.</p>
+<pre><code><span><span class="co">#&gt; netcdf demo_nc {</span></span>
+<span><span class="co">#&gt; dimensions:</span></span>
+<span><span class="co">#&gt;  instance = 71 ;</span></span>
+<span><span class="co">#&gt;  time = 730 ;</span></span>
+<span><span class="co">#&gt;  instance_name_char = 2 ;</span></span>
+<span><span class="co">#&gt; variables:</span></span>
+<span><span class="co">#&gt;  char instance_name(instance, instance_name_char) ;</span></span>
+<span><span class="co">#&gt;      instance_name:long_name = "Station Names" ;</span></span>
+<span><span class="co">#&gt;      instance_name:cf_role = "timeseries_id" ;</span></span>
+<span><span class="co">#&gt;  double time(time) ;</span></span>
+<span><span class="co">#&gt;      time:units = "days since 1970-01-01 00:00:00" ;</span></span>
+<span><span class="co">#&gt;      time:missing_value = -999. ;</span></span>
+<span><span class="co">#&gt;      time:long_name = "time of measurement" ;</span></span>
+<span><span class="co">#&gt;      time:standard_name = "time" ;</span></span>
+<span><span class="co">#&gt;  double lat(instance) ;</span></span>
+<span><span class="co">#&gt;      lat:units = "degrees_north" ;</span></span>
+<span><span class="co">#&gt;      lat:missing_value = -999. ;</span></span>
+<span><span class="co">#&gt;      lat:long_name = "latitude of the measurement" ;</span></span>
+<span><span class="co">#&gt;      lat:standard_name = "latitude" ;</span></span>
+<span><span class="co">#&gt;  double lon(instance) ;</span></span>
+<span><span class="co">#&gt;      lon:units = "degrees_east" ;</span></span>
+<span><span class="co">#&gt;      lon:missing_value = -999. ;</span></span>
+<span><span class="co">#&gt;      lon:long_name = "longitude of the measurement" ;</span></span>
+<span><span class="co">#&gt;      lon:standard_name = "longitude" ;</span></span>
+<span><span class="co">#&gt;  double alt(instance) ;</span></span>
+<span><span class="co">#&gt;      alt:units = "m" ;</span></span>
+<span><span class="co">#&gt;      alt:missing_value = -999. ;</span></span>
+<span><span class="co">#&gt;      alt:long_name = "altitude of the measurement" ;</span></span>
+<span><span class="co">#&gt;      alt:standard_name = "height" ;</span></span>
+<span><span class="co">#&gt;  double BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1(instance, time) ;</span></span>
+<span><span class="co">#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:units = "mm/d" ;</span></span>
+<span><span class="co">#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:missing_value = -2147483648. ;</span></span>
+<span><span class="co">#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:long_name = "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1 area weighted MEAN in mm/d" ;</span></span>
+<span><span class="co">#&gt;      BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1:coordinates = "time lat lon alt" ;</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; // global attributes:</span></span>
+<span><span class="co">#&gt;      :Conventions = "CF-1.8" ;</span></span>
+<span><span class="co">#&gt;      :featureType = "timeSeries" ;</span></span>
+<span><span class="co">#&gt;      :cdm_data_type = "Station" ;</span></span>
+<span><span class="co">#&gt;      :standard_name_vocabulary = "CF-1.8" ;</span></span>
+<span><span class="co">#&gt;      :title = "example title" ;</span></span>
+<span><span class="co">#&gt;      :summary = "example summary" ;</span></span>
+<span><span class="co">#&gt;      :date_created = "2099-01-01" ;</span></span>
+<span><span class="co">#&gt;      :creator_name = "example creator" ;</span></span>
+<span><span class="co">#&gt;      :creator_email = "example@test.com" ;</span></span>
+<span><span class="co">#&gt;      :project = "example ncdfgeom" ;</span></span>
+<span><span class="co">#&gt;      :processing_level = "just an example no processing" ;</span></span>
+<span><span class="co">#&gt; }</span></span></code></pre>
+<p>This file can be read back into R with the function
+<code>read_timeseries_dsg</code>. The response is a list of variables as
+shown below.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">timeseries_dataset</span> <span class="op">&lt;-</span> <span class="fu">ncdfgeom</span><span class="fu">::</span><span class="fu"><a href="../reference/read_timeseries_dsg.html">read_timeseries_dsg</a></span><span class="op">(</span><span class="va">nc_file</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">timeseries_dataset</span><span class="op">)</span>
-<span class="co">#&gt; [1] "time"              "lats"              "lons"             </span>
-<span class="co">#&gt; [4] "alts"              "varmeta"           "data_unit"        </span>
-<span class="co">#&gt; [7] "data_prec"         "data_frames"       "global_attributes"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">timeseries_dataset</span> <span class="op">&lt;-</span> <span class="fu">ncdfgeom</span><span class="fu">::</span><span class="fu"><a href="../reference/read_timeseries_dsg.html">read_timeseries_dsg</a></span><span class="op">(</span><span class="va">nc_file</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">timeseries_dataset</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "time"              "lats"              "lons"             </span></span>
+<span><span class="co">#&gt; [4] "alts"              "varmeta"           "data_unit"        </span></span>
+<span><span class="co">#&gt; [7] "data_prec"         "data_frames"       "global_attributes"</span></span></code></pre></div>
 <ol style="list-style-type: decimal">
 <li>
-<code>time</code>, <code>lats</code>, <code>lons</code>, and <code>alts</code> are vectors that apply to the whole dataset.</li>
+<code>time</code>, <code>lats</code>, <code>lons</code>, and
+<code>alts</code> are vectors that apply to the whole dataset.</li>
 <li>
-<code>varmeta</code> has one entry per timeseries variable read from the NetCDF file and contains the <code>name</code> and <code>long_name</code> attribute of each variable.</li>
+<code>varmeta</code> has one entry per timeseries variable read from
+the NetCDF file and contains the <code>name</code> and
+<code>long_name</code> attribute of each variable.</li>
 <li>
-<code>data_unit</code> and <code>data_prec</code> contain units and precision metadata for each variable.</li>
+<code>data_unit</code> and <code>data_prec</code> contain units and
+precision metadata for each variable.</li>
 <li>
-<code>data_frames</code> is a list containing one <code>data.frame</code> for each variable read from the NetCDF file.</li>
+<code>data_frames</code> is a list containing one
+<code>data.frame</code> for each variable read from the NetCDF
+file.</li>
 <li>
-<code>global_attributes</code> contains standard global attributes found in the file. All of the variables that have one element per timeseries variable, are named the same as the NetCDF variable names so they can be accessed by name as shown below.</li>
+<code>global_attributes</code> contains standard global attributes
+found in the file. All of the variables that have one element per
+timeseries variable, are named the same as the NetCDF variable names so
+they can be accessed by name as shown below.</li>
 </ol>
 </div>
 
@@ -264,11 +280,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by David Blodgett.</p>
+  <p></p>
+<p>Developed by David Blodgett.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -276,6 +294,8 @@
 
   
 
+
+  
 
   </body>
 </html>
