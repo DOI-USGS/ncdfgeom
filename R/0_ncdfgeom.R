@@ -1,10 +1,3 @@
-
-.onAttach <- function(libname, pkgname) {
-	packageStartupMessage("****Support Package****
-This package is a USGS-R Support package. 
-see: https://owi.usgs.gov/R/packages.html#support")
-}
-
 pkg.env <- new.env()
 pkg.env$multi_val <- 0
 pkg.env$hole_val <- 1

@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.5</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/ncdfgeom.html">Get started</a>
 </li>
@@ -50,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -70,7 +66,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/USGS-R/ncdfgeom/">
+  <a href="https://github.com/DOI-USGS/ncdfgeom/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -85,395 +81,443 @@
 
       
 
-      </header><script src="ncdfgeom_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>NetCDF-CF Geometry and Timeseries Tools for R</h1>
+      <h1 data-toc-skip>NetCDF-CF Geometry and Timeseries Tools for
+R</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USGS-R/ncdfgeom/blob/master/vignettes/ncdfgeom.Rmd"><code>vignettes/ncdfgeom.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/DOI-USGS/ncdfgeom/blob/HEAD/vignettes/ncdfgeom.Rmd" class="external-link"><code>vignettes/ncdfgeom.Rmd</code></a></small>
       <div class="hidden name"><code>ncdfgeom.Rmd</code></div>
 
     </div>
 
     
     
-<div id="introduction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h2>
-<p><code>ncdfgeom</code> is intended to write spatial geometries, their attributes, and timeseries data (that would typically be stored in two or more files) into a single file. The package provides functions to read and write NetCDF-CF Discrete Sampling Geometries point and timeseries feature types as well as NetCDF-CF spatial geometries. These utilities are meant to be general, but were designed to support working with typical geospatial feature data with linked attributes and time series in NetCDF. Supported data types include:</p>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p><code>ncdfgeom</code> is intended to write spatial geometries, their
+attributes, and timeseries data (that would typically be stored in two
+or more files) into a single file. The package provides functions to
+read and write NetCDF-CF Discrete Sampling Geometries point and
+timeseries feature types as well as NetCDF-CF spatial geometries. These
+utilities are meant to be general, but were designed to support working
+with typical geospatial feature data with linked attributes and time
+series in NetCDF. Supported data types include:</p>
 <ul>
-<li>Variables from R <code>data.frame</code> tables with one row per geometry are read from or written to NetCDF variables.</li>
+<li>Variables from R <code>data.frame</code> tables with one row per
+geometry are read from or written to NetCDF variables.</li>
 <li>
-<code>data.frame</code> tables with a time series per column are read from or written as NetCDF-CF DSG timeSeries FeatureType data.</li>
+<code>data.frame</code> tables with a time series per column are
+read from or written as NetCDF-CF DSG timeSeries FeatureType data.</li>
 <li>
-<code>data.frame</code> table variables with a single-time-step observation for a given point location in each row are written to a NetCDF-CF DSG Point FeatureType.</li>
+<code>data.frame</code> table variables with a single-time-step
+observation for a given point location in each row are written to a
+NetCDF-CF DSG Point FeatureType.</li>
 <li>
-<code>sp</code> and <code>sf</code> spatial point, line, and polygon types can be read from or written to NetCDF-CF geometry variables introduced in CF-1.8</li>
+<code>sp</code> and <code>sf</code> spatial point, line, and polygon
+types can be read from or written to NetCDF-CF geometry variables
+introduced in CF-1.8</li>
 </ul>
 <p>For timeseries, two formats are supported:</p>
 <ol style="list-style-type: decimal">
-<li>a wide format <code>data.frame</code> with timesteps in rows and geometry “instances” in columns with required attributes of geometry “instances” provided separately. This format lends its self to data where the same timestamps are used for every row and data exists for all geometry instances for all time steps – it is sometimes referred to as the orthogonal array, or “space-wide”, encoding.</li>
-<li>a long format <code>data.frame</code> where each row contains all the geometry “instance” metadata, a time stamp, and the variables to be stored for that time step. This format lends it self to data where each geometry instance has unique timesteps and/or data is not available for each geometry instance at the same timesteps (sparse arrays).</li>
+<li>a wide format <code>data.frame</code> with timesteps in rows and
+geometry “instances” in columns with required attributes of geometry
+“instances” provided separately. This format lends its self to data
+where the same timestamps are used for every row and data exists for all
+geometry instances for all time steps – it is sometimes referred to as
+the orthogonal array, or “space-wide”, encoding.</li>
+<li>a long format <code>data.frame</code> where each row contains all
+the geometry “instance” metadata, a time stamp, and the variables to be
+stored for that time step. This format lends it self to data where each
+geometry instance has unique timesteps and/or data is not available for
+each geometry instance at the same timesteps (sparse arrays).</li>
 </ol>
-<p>Additional read / write functions to include additional DSG feature types will be implemented in the future and contributions are welcomed. <code>ncdfgeom</code> is a work in progress. Please review the <a href="https://github.com/USGS-R/ncdfgeom/issues">“issues”</a> list to submit issues and/or see what changes are planned.</p>
+<p>Additional read / write functions to include additional DSG feature
+types will be implemented in the future and contributions are welcomed.
+<code>ncdfgeom</code> is a work in progress. Please review the <a href="https://github.com/DOI-USGS/ncdfgeom/issues" class="external-link">“issues”</a> list to
+submit issues and/or see what changes are planned.</p>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>At the time of writing, installation is only available via <code>remotes</code> or building the package directly as one would for development purposes.</p>
-<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("remotes")
-remotes::install_github("USGS-R/ncdfgeom")</a></code></pre>
-<p>When on CRAN, the package will be installed with the typical install.packages method.</p>
-<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("ncdfgeom")</a></code></pre>
-<p>For this demo, we’ll use <code>sf</code>, <code>dplyr</code>, and <code>ncdfgeom</code>.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>At the time of writing, installation is only available via
+<code>remotes</code> or building the package directly as one would for
+development purposes.</p>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"DOI-USGS/ncdfgeom"</span><span class="op">)</span></span></code></pre>
+<p>When on CRAN, the package will be installed with the typical
+install.packages method.</p>
+<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ncdfgeom"</span><span class="op">)</span></span></code></pre>
+<p>For this demo, we’ll use <code>sf</code>, <code>dplyr</code>, and
+<code>ncdfgeom</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://code.usgs.gov/water/ncdfgeom">ncdfgeom</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://code.usgs.gov/water/ncdfgeom" class="external-link">ncdfgeom</a></span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="sample-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#sample-data" class="anchor"></a>Sample Data</h2>
-<p>We will start with two dataframes: <strong><code>prcp_data</code> and <code>climdiv_poly</code></strong> containing precipitation estimate timeseries and polygon geometries that describe the boundaries of climate divisions respectively. The precipitation data has one time series for each geometry.</p>
-<p>Code to download and prep these data is shown at the bottom. More info about the data can be found at: <a href="https://doi.org/10.7289/V5M32STR">doi:10.7289/V5M32STR</a></p>
-<p>The data required for this demo has been cached in the <code>ncdfgeom</code> package and is available as shown below.</p>
-<div id="prcp_data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#prcp_data" class="anchor"></a><code>prcp_data</code>
+<div class="section level2">
+<h2 id="sample-data">Sample Data<a class="anchor" aria-label="anchor" href="#sample-data"></a>
+</h2>
+<p>We will start with two dataframes: <strong><code>prcp_data</code> and
+<code>climdiv_poly</code></strong> containing precipitation estimate
+timeseries and polygon geometries that describe the boundaries of
+climate divisions respectively. The precipitation data has one time
+series for each geometry.</p>
+<p>Code to download and prep these data is shown at the bottom. More
+info about the data can be found at: <a href="https://doi.org/10.7289/V5M32STR" class="external-link">doi:10.7289/V5M32STR</a></p>
+<p>The data required for this demo has been cached in the
+<code>ncdfgeom</code> package and is available as shown below.</p>
+<div class="section level3">
+<h3 id="prcp_data">
+<code>prcp_data</code><a class="anchor" aria-label="anchor" href="#prcp_data"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">prcp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/climdiv-pcpndv.rds"</span>, package <span class="op">=</span> <span class="st">"ncdfgeom"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">prcp_data</span>, n_extra <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 1,491 x 345</span>
-<span class="co">#&gt;    date       `0101` `0102` `0103` `0104` `0105` `0106` `0107` `0108` `0201`</span>
-<span class="co">#&gt;    &lt;date&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 1895-01-01   7.37   8.11   7.77   7.72   7.42   7.39   7.46   6.61   2.8 </span>
-<span class="co">#&gt;  2 1895-02-01   1.41   2.37   2.27   2.72   2.94   2.85   2.97   3.65   0.8 </span>
-<span class="co">#&gt;  3 1895-03-01   7.17   7.5    7.16   7.48   8.29   7.92   7.88   6.66   0.52</span>
-<span class="co">#&gt;  4 1895-04-01   2.72   3.17   3.07   3.29   4.65   3.4    3.85   4.72   0.06</span>
-<span class="co">#&gt;  5 1895-05-01   3.06   4.23   2.78   4.61   4.99   3.84   3.73   3.7    0.47</span>
-<span class="co">#&gt;  6 1895-06-01   4.04   4.68   5.07   4.02   4.09   5.89   6.93  11.9    0.06</span>
-<span class="co">#&gt;  7 1895-07-01   4.58   4.83   4.09   4.29   4.03   3.74   4.59   7.76   0.27</span>
-<span class="co">#&gt;  8 1895-08-01   4      5.16   3.81   5.26   4.82   4.26   6.13   7.97   0.93</span>
-<span class="co">#&gt;  9 1895-09-01   3.41   2.25   1.64   1.52   0.67   0.98   1.25   2.46   0.12</span>
-<span class="co">#&gt; 10 1895-10-01   2.28   2.29   2.38   2.03   1.93   2.03   2.14   3.21   0.33</span>
-<span class="co">#&gt; # ... with 1,481 more rows</span>
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">date</span>, <span class="va">prcp_data</span><span class="op">$</span><span class="va">`0101`</span>, col <span class="op">=</span> <span class="st">"red"</span>, 
-     xlab <span class="op">=</span> <span class="st">"date"</span>, ylab <span class="op">=</span> <span class="st">"monthly precip (inches)"</span>, main <span class="op">=</span> <span class="st">"Sample Timeseries for 0101-'Northern Valley'"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">date</span>, <span class="va">prcp_data</span><span class="op">$</span><span class="va">`0101`</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">prcp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/climdiv-pcpndv.rds"</span>, package <span class="op">=</span> <span class="st">"ncdfgeom"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">prcp_data</span>, max_extra_cols <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,491 × 345</span></span></span>
+<span><span class="co">#&gt;    date       `0101` `0102` `0103` `0104` `0105` `0106` `0107` `0108` `0201`</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 1895-01-01   7.37   8.11   7.77   7.72   7.42   7.39   7.46   6.61   2.8 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 1895-02-01   1.41   2.37   2.27   2.72   2.94   2.85   2.97   3.65   0.8 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 1895-03-01   7.17   7.5    7.16   7.48   8.29   7.92   7.88   6.66   0.52</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 1895-04-01   2.72   3.17   3.07   3.29   4.65   3.4    3.85   4.72   0.06</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 1895-05-01   3.06   4.23   2.78   4.61   4.99   3.84   3.73   3.7    0.47</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 1895-06-01   4.04   4.68   5.07   4.02   4.09   5.89   6.93  11.9    0.06</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 1895-07-01   4.58   4.83   4.09   4.29   4.03   3.74   4.59   7.76   0.27</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 1895-08-01   4      5.16   3.81   5.26   4.82   4.26   6.13   7.97   0.93</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 1895-09-01   3.41   2.25   1.64   1.52   0.67   0.98   1.25   2.46   0.12</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 1895-10-01   2.28   2.29   2.38   2.03   1.93   2.03   2.14   3.21   0.33</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,481 more rows</span></span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">date</span>, <span class="va">prcp_data</span><span class="op">$</span><span class="va">`0101`</span>, col <span class="op">=</span> <span class="st">"red"</span>, </span>
+<span>     xlab <span class="op">=</span> <span class="st">"date"</span>, ylab <span class="op">=</span> <span class="st">"monthly precip (inches)"</span>, main <span class="op">=</span> <span class="st">"Sample Timeseries for 0101-'Northern Valley'"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">date</span>, <span class="va">prcp_data</span><span class="op">$</span><span class="va">`0101`</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ncdfgeom_files/figure-html/data_shape_2-1.png" width="576"></p>
 </div>
-<div id="climdiv_poly" class="section level3">
-<h3 class="hasAnchor">
-<a href="#climdiv_poly" class="anchor"></a><code>climdiv_poly</code>
+<div class="section level3">
+<h3 id="climdiv_poly">
+<code>climdiv_poly</code><a class="anchor" aria-label="anchor" href="#climdiv_poly"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">read_sf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata/climdiv.gpkg"</span>, package <span class="op">=</span> <span class="st">"ncdfgeom"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">climdiv_poly</span><span class="op">)</span>
-<span class="co">#&gt; Simple feature collection with 344 features and 2 fields</span>
-<span class="co">#&gt; Geometry type: MULTIPOLYGON</span>
-<span class="co">#&gt; Dimension:     XY</span>
-<span class="co">#&gt; Bounding box:  xmin: -124.7332 ymin: 24.54537 xmax: -66.9501 ymax: 49.38027</span>
-<span class="co">#&gt; Geodetic CRS:  GRS 1980(IUGG, 1980)</span>
-<span class="co">#&gt; # A tibble: 344 x 3</span>
-<span class="co">#&gt;    CLIMDIV CLIMDIV_NAME                                                     geom</span>
-<span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;                                              &lt;MULTIPOLYGON [°]&gt;</span>
-<span class="co">#&gt;  1 0101    NORTHERN VALLEY   (((-88.05783 35.00647, -86.31127 34.9911, -86.2557~</span>
-<span class="co">#&gt;  2 0102    APPALACHIAN MOUN~ (((-86.25819 34.99064, -85.60517 34.98468, -85.513~</span>
-<span class="co">#&gt;  3 0103    UPPER PLAINS      (((-88.0181 34.31526, -87.10991 34.2993, -87.11199~</span>
-<span class="co">#&gt;  4 0104    EASTERN VALLEY    (((-85.51167 34.51693, -85.39884 33.96413, -85.495~</span>
-<span class="co">#&gt;  5 0105    PIEDMONT PLATEAU  (((-85.40764 33.96421, -85.18459 32.86152, -85.154~</span>
-<span class="co">#&gt;  6 0106    PRAIRIE           (((-87.97935 32.30709, -88.42145 32.30868, -88.340~</span>
-<span class="co">#&gt;  7 0107    COASTAL PLAIN     (((-85.00105 32.51048, -84.99635 32.45474, -84.963~</span>
-<span class="co">#&gt;  8 0108    GULF              (((-87.7888 31.29879, -87.71435 31.30213, -87.6612~</span>
-<span class="co">#&gt;  9 0201    NORTHWEST         (((-114.7559 36.08584, -114.6309 36.14248, -114.61~</span>
-<span class="co">#&gt; 10 0202    NORTHEAST         (((-110.5007 37.00426, -109.0452 36.99909, -109.04~</span>
-<span class="co">#&gt; # ... with 334 more rows</span>
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="va">climdiv_poly</span><span class="op">)</span>, main <span class="op">=</span> <span class="st">"Climate Divisions with 0101-'Northern Valley' Highlighted"</span><span class="op">)</span>
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">climdiv_poly</span>, <span class="va">CLIMDIV</span> <span class="op">==</span> <span class="st">"0101"</span><span class="op">)</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/climdiv.gpkg"</span>, package <span class="op">=</span> <span class="st">"ncdfgeom"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">climdiv_poly</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Simple feature collection with 344 features and 2 fields</span></span>
+<span><span class="co">#&gt; Geometry type: MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: -124.7332 ymin: 24.54537 xmax: -66.9501 ymax: 49.38027</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  GRS 1980(IUGG, 1980)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 344 × 3</span></span></span>
+<span><span class="co">#&gt;    CLIMDIV CLIMDIV_NAME                                                     geom</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                              <span style="color: #949494; font-style: italic;">&lt;MULTIPOLYGON [°]&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 0101    NORTHERN VALLEY      (((-88.05783 35.00647, -86.31127 34.9911, -86.2…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 0102    APPALACHIAN MOUNTAIN (((-86.25819 34.99064, -85.60517 34.98468, -85.…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 0103    UPPER PLAINS         (((-88.0181 34.31526, -87.10991 34.2993, -87.11…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 0104    EASTERN VALLEY       (((-85.51167 34.51693, -85.39884 33.96413, -85.…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 0105    PIEDMONT PLATEAU     (((-85.40764 33.96421, -85.18459 32.86152, -85.…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 0106    PRAIRIE              (((-87.97935 32.30709, -88.42145 32.30868, -88.…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 0107    COASTAL PLAIN        (((-85.00105 32.51048, -84.99635 32.45474, -84.…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 0108    GULF                 (((-87.7888 31.29879, -87.71435 31.30213, -87.6…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 0201    NORTHWEST            (((-114.7559 36.08584, -114.6309 36.14248, -114…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 0202    NORTHEAST            (((-110.5007 37.00426, -109.0452 36.99909, -109…</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 334 more rows</span></span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">climdiv_poly</span><span class="op">)</span>, main <span class="op">=</span> <span class="st">"Climate Divisions with 0101-'Northern Valley' Highlighted"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">climdiv_poly</span>, <span class="va">CLIMDIV</span> <span class="op">==</span> <span class="st">"0101"</span><span class="op">)</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"red"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ncdfgeom_files/figure-html/data_shape-1.png" width="576"></p>
-<p>As shown above, we have two <code>data.frame</code>s. One has 344 columns and the other 344 rows. These 344 climate divisions will be our “instance” dimension when we write to NetCDF.</p>
+<p>As shown above, we have two <code>data.frame</code>s. One has 344
+columns and the other 344 rows. These 344 climate divisions will be our
+“instance” dimension when we write to NetCDF.</p>
 </div>
 </div>
-<div id="write-timeseries-and-geometry-to-netcdf" class="section level2">
-<h2 class="hasAnchor">
-<a href="#write-timeseries-and-geometry-to-netcdf" class="anchor"></a>Write Timeseries and Geometry to NetCDF</h2>
-<p>The NetCDF discrete sampling geometries timeseries standard requires point lat/lon coordinate locations for timeseries data. In the code below, we calculate these values and write the timeseries data to a netcdf file.</p>
+<div class="section level2">
+<h2 id="write-timeseries-and-geometry-to-netcdf">Write Timeseries and Geometry to NetCDF<a class="anchor" aria-label="anchor" href="#write-timeseries-and-geometry-to-netcdf"></a>
+</h2>
+<p>The NetCDF discrete sampling geometries timeseries standard requires
+point lat/lon coordinate locations for timeseries data. In the code
+below, we calculate these values and write the timeseries data to a
+netcdf file.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">climdiv_centroids</span> <span class="op">&lt;-</span> <span class="va">climdiv_poly</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="fl">5070</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co"># Albers Equal Area</span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_agr.html">st_set_agr</a></span><span class="op">(</span><span class="st">"constant"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">st_centroid</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="fl">4269</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co">#NAD83 Lat/Lon</span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html">st_coordinates</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="va">nc_file</span> <span class="op">&lt;-</span> <span class="st">"climdiv_prcp.nc"</span>
-
-<span class="va">prcp_dates</span> <span class="op">&lt;-</span> <span class="va">prcp_data</span><span class="op">$</span><span class="va">date</span>
-<span class="va">prcp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">prcp_data</span>, <span class="op">-</span><span class="va">date</span><span class="op">)</span>
-<span class="va">prcp_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"climdiv_prcp_inches"</span>, 
-                  long_name <span class="op">=</span> <span class="st">"Estimated Monthly Precipitation (Inches)"</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/write_timeseries_dsg.html">write_timeseries_dsg</a></span><span class="op">(</span>nc_file <span class="op">=</span> <span class="va">nc_file</span>, 
-                     instance_names <span class="op">=</span> <span class="va">climdiv_poly</span><span class="op">$</span><span class="va">CLIMDIV</span>, 
-                     lats <span class="op">=</span> <span class="va">climdiv_centroids</span><span class="op">$</span><span class="va">Y</span>, 
-                     lons <span class="op">=</span> <span class="va">climdiv_centroids</span><span class="op">$</span><span class="va">X</span>, 
-                     times <span class="op">=</span> <span class="va">prcp_dates</span>, 
-                     data <span class="op">=</span> <span class="va">prcp_data</span>, 
-                     data_unit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"inches"</span>, <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, 
-                     data_prec <span class="op">=</span> <span class="st">"float"</span>, 
-                     data_metadata <span class="op">=</span> <span class="va">prcp_meta</span>, 
-                     attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Demonstation of ncdfgeom"</span><span class="op">)</span>, 
-                     add_to_existing <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; [1] "climdiv_prcp.nc"</span>
-
-<span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html">st_sf</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_cast.html">st_cast</a></span><span class="op">(</span><span class="va">climdiv_poly</span>, <span class="st">"MULTIPOLYGON"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/write_geometry.html">write_geometry</a></span><span class="op">(</span>nc_file <span class="op">=</span> <span class="st">"climdiv_prcp.nc"</span>, 
-               geom_data <span class="op">=</span> <span class="va">climdiv_poly</span>,
-               variables <span class="op">=</span> <span class="st">"climdiv_prcp_inches"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "climdiv_prcp.nc"</span></code></pre></div>
-<p>Now we have a file with a structure as shown in the <code>ncdump</code> output below.</p>
+<code class="sourceCode R"><span><span class="va">climdiv_centroids</span> <span class="op">&lt;-</span> <span class="va">climdiv_poly</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">5070</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co"># Albers Equal Area</span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_agr.html" class="external-link">st_set_agr</a></span><span class="op">(</span><span class="st">"constant"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">st_centroid</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">4269</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co">#NAD83 Lat/Lon</span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_coordinates.html" class="external-link">st_coordinates</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nc_file</span> <span class="op">&lt;-</span> <span class="st">"climdiv_prcp.nc"</span></span>
+<span></span>
+<span><span class="va">prcp_dates</span> <span class="op">&lt;-</span> <span class="va">prcp_data</span><span class="op">$</span><span class="va">date</span></span>
+<span><span class="va">prcp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">prcp_data</span>, <span class="op">-</span><span class="va">date</span><span class="op">)</span></span>
+<span><span class="va">prcp_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"climdiv_prcp_inches"</span>, </span>
+<span>                  long_name <span class="op">=</span> <span class="st">"Estimated Monthly Precipitation (Inches)"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/write_timeseries_dsg.html">write_timeseries_dsg</a></span><span class="op">(</span>nc_file <span class="op">=</span> <span class="va">nc_file</span>, </span>
+<span>                     instance_names <span class="op">=</span> <span class="va">climdiv_poly</span><span class="op">$</span><span class="va">CLIMDIV</span>, </span>
+<span>                     lats <span class="op">=</span> <span class="va">climdiv_centroids</span><span class="op">$</span><span class="va">Y</span>, </span>
+<span>                     lons <span class="op">=</span> <span class="va">climdiv_centroids</span><span class="op">$</span><span class="va">X</span>, </span>
+<span>                     times <span class="op">=</span> <span class="va">prcp_dates</span>, </span>
+<span>                     data <span class="op">=</span> <span class="va">prcp_data</span>, </span>
+<span>                     data_unit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"inches"</span>, <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>                     data_prec <span class="op">=</span> <span class="st">"float"</span>, </span>
+<span>                     data_metadata <span class="op">=</span> <span class="va">prcp_meta</span>, </span>
+<span>                     attributes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Demonstation of ncdfgeom"</span><span class="op">)</span>, </span>
+<span>                     add_to_existing <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "climdiv_prcp.nc"</span></span>
+<span></span>
+<span><span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_cast.html" class="external-link">st_cast</a></span><span class="op">(</span><span class="va">climdiv_poly</span>, <span class="st">"MULTIPOLYGON"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/write_geometry.html">write_geometry</a></span><span class="op">(</span>nc_file <span class="op">=</span> <span class="st">"climdiv_prcp.nc"</span>, </span>
+<span>               geom_data <span class="op">=</span> <span class="va">climdiv_poly</span>,</span>
+<span>               variables <span class="op">=</span> <span class="st">"climdiv_prcp_inches"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "climdiv_prcp.nc"</span></span></code></pre></div>
+<p>Now we have a file with a structure as shown in the
+<code>ncdump</code> output below.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/try.html">try</a></span><span class="op">(</span><span class="op">{</span><span class="va">ncdump</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.html">system</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"ncdump -h"</span>, <span class="va">nc_file</span><span class="op">)</span>, intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="va">ncdump</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span><span class="op">}</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; netcdf climdiv_prcp {</span>
-<span class="co">#&gt; dimensions:</span>
-<span class="co">#&gt;  instance = 344 ;</span>
-<span class="co">#&gt;  time = 1491 ;</span>
-<span class="co">#&gt;  instance_name_char = 4 ;</span>
-<span class="co">#&gt;  char = 30 ;</span>
-<span class="co">#&gt;  node = 26886 ;</span>
-<span class="co">#&gt;  part = 676 ;</span>
-<span class="co">#&gt; variables:</span>
-<span class="co">#&gt;  char instance_name(instance, instance_name_char) ;</span>
-<span class="co">#&gt;      instance_name:long_name = "Station Names" ;</span>
-<span class="co">#&gt;      instance_name:cf_role = "timeseries_id" ;</span>
-<span class="co">#&gt;  double time(time) ;</span>
-<span class="co">#&gt;      time:units = "days since 1970-01-01 00:00:00" ;</span>
-<span class="co">#&gt;      time:missing_value = -999. ;</span>
-<span class="co">#&gt;      time:long_name = "time of measurement" ;</span>
-<span class="co">#&gt;      time:standard_name = "time" ;</span>
-<span class="co">#&gt;  double lat(instance) ;</span>
-<span class="co">#&gt;      lat:units = "degrees_north" ;</span>
-<span class="co">#&gt;      lat:missing_value = -999. ;</span>
-<span class="co">#&gt;      lat:long_name = "latitude of the measurement" ;</span>
-<span class="co">#&gt;      lat:standard_name = "latitude" ;</span>
-<span class="co">#&gt;  double lon(instance) ;</span>
-<span class="co">#&gt;      lon:units = "degrees_east" ;</span>
-<span class="co">#&gt;      lon:missing_value = -999. ;</span>
-<span class="co">#&gt;      lon:long_name = "longitude of the measurement" ;</span>
-<span class="co">#&gt;      lon:standard_name = "longitude" ;</span>
-<span class="co">#&gt;  float climdiv_prcp_inches(instance, time) ;</span>
-<span class="co">#&gt;      climdiv_prcp_inches:units = "inches" ;</span>
-<span class="co">#&gt;      climdiv_prcp_inches:missing_value = -2.147484e+09f ;</span>
-<span class="co">#&gt;      climdiv_prcp_inches:long_name = "Estimated Monthly Precipitation (Inches)" ;</span>
-<span class="co">#&gt;      climdiv_prcp_inches:coordinates = "time lat lon" ;</span>
-<span class="co">#&gt;      climdiv_prcp_inches:grid_mapping = "grid_mapping" ;</span>
-<span class="co">#&gt;      climdiv_prcp_inches:geometry = "geometry_container" ;</span>
-<span class="co">#&gt;  char CLIMDIV(instance, char) ;</span>
-<span class="co">#&gt;      CLIMDIV:units = "unknown" ;</span>
-<span class="co">#&gt;      CLIMDIV:grid_mapping = "grid_mapping" ;</span>
-<span class="co">#&gt;      CLIMDIV:geometry = "geometry_container" ;</span>
-<span class="co">#&gt;  char CLIMDIV_NAME(instance, char) ;</span>
-<span class="co">#&gt;      CLIMDIV_NAME:units = "unknown" ;</span>
-<span class="co">#&gt;      CLIMDIV_NAME:grid_mapping = "grid_mapping" ;</span>
-<span class="co">#&gt;      CLIMDIV_NAME:geometry = "geometry_container" ;</span>
-<span class="co">#&gt;  double x_nodes(node) ;</span>
-<span class="co">#&gt;      x_nodes:units = "degrees_east" ;</span>
-<span class="co">#&gt;      x_nodes:axis = "X" ;</span>
-<span class="co">#&gt;  double y_nodes(node) ;</span>
-<span class="co">#&gt;      y_nodes:units = "degrees_north" ;</span>
-<span class="co">#&gt;      y_nodes:axis = "Y" ;</span>
-<span class="co">#&gt;  int geometry_container ;</span>
-<span class="co">#&gt;      geometry_container:node_coordinates = "x_nodes y_nodes" ;</span>
-<span class="co">#&gt;      geometry_container:geometry_type = "polygon" ;</span>
-<span class="co">#&gt;      geometry_container:node_count = "node_count" ;</span>
-<span class="co">#&gt;      geometry_container:part_node_count = "part_node_count" ;</span>
-<span class="co">#&gt;      geometry_container:interior_ring = "interior_ring" ;</span>
-<span class="co">#&gt;      geometry_container:grid_mapping = "grid_mapping" ;</span>
-<span class="co">#&gt;  int node_count(instance) ;</span>
-<span class="co">#&gt;      node_count:long_name = "count of coordinates in each instance geometry" ;</span>
-<span class="co">#&gt;  int part_node_count(part) ;</span>
-<span class="co">#&gt;      part_node_count:long_name = "count of nodes in each geometry part" ;</span>
-<span class="co">#&gt;  int interior_ring(part) ;</span>
-<span class="co">#&gt;      interior_ring:long_name = "type of each geometry part" ;</span>
-<span class="co">#&gt;  int grid_mapping ;</span>
-<span class="co">#&gt;      grid_mapping:grid_mapping_name = "latitude_longitude" ;</span>
-<span class="co">#&gt;      grid_mapping:semi_major_axis = 6378137. ;</span>
-<span class="co">#&gt;      grid_mapping:inverse_flattening = 298.257223563 ;</span>
-<span class="co">#&gt;      grid_mapping:longitude_of_prime_meridian = 0. ;</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; // global attributes:</span>
-<span class="co">#&gt;      :Conventions = "CF-1.8" ;</span>
-<span class="co">#&gt;      :featureType = "timeSeries" ;</span>
-<span class="co">#&gt;      :cdm_data_type = "Station" ;</span>
-<span class="co">#&gt;      :standard_name_vocabulary = "CF-1.8" ;</span>
-<span class="co">#&gt;      :title = "Demonstation of ncdfgeom" ;</span>
-<span class="co">#&gt; }</span></code></pre></div>
-<p>For more information about the polygon and timeseries data structures used here, see the <a href="http://cfconventions.org/cf-conventions/cf-conventions.html">NetCDF-CF standard.</a></p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="op">{</span><span class="va">ncdump</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"ncdump -h"</span>, <span class="va">nc_file</span><span class="op">)</span>, intern <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">ncdump</span>, sep <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span><span class="op">}</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; netcdf climdiv_prcp {</span></span>
+<span><span class="co">#&gt; dimensions:</span></span>
+<span><span class="co">#&gt;  instance = 344 ;</span></span>
+<span><span class="co">#&gt;  time = 1491 ;</span></span>
+<span><span class="co">#&gt;  instance_name_char = 4 ;</span></span>
+<span><span class="co">#&gt;  char = 30 ;</span></span>
+<span><span class="co">#&gt;  node = 26886 ;</span></span>
+<span><span class="co">#&gt;  part = 676 ;</span></span>
+<span><span class="co">#&gt; variables:</span></span>
+<span><span class="co">#&gt;  char instance_name(instance, instance_name_char) ;</span></span>
+<span><span class="co">#&gt;      instance_name:long_name = "Station Names" ;</span></span>
+<span><span class="co">#&gt;      instance_name:cf_role = "timeseries_id" ;</span></span>
+<span><span class="co">#&gt;  double time(time) ;</span></span>
+<span><span class="co">#&gt;      time:units = "days since 1970-01-01 00:00:00" ;</span></span>
+<span><span class="co">#&gt;      time:missing_value = -999. ;</span></span>
+<span><span class="co">#&gt;      time:long_name = "time of measurement" ;</span></span>
+<span><span class="co">#&gt;      time:standard_name = "time" ;</span></span>
+<span><span class="co">#&gt;  double lat(instance) ;</span></span>
+<span><span class="co">#&gt;      lat:units = "degrees_north" ;</span></span>
+<span><span class="co">#&gt;      lat:missing_value = -999. ;</span></span>
+<span><span class="co">#&gt;      lat:long_name = "latitude of the measurement" ;</span></span>
+<span><span class="co">#&gt;      lat:standard_name = "latitude" ;</span></span>
+<span><span class="co">#&gt;  double lon(instance) ;</span></span>
+<span><span class="co">#&gt;      lon:units = "degrees_east" ;</span></span>
+<span><span class="co">#&gt;      lon:missing_value = -999. ;</span></span>
+<span><span class="co">#&gt;      lon:long_name = "longitude of the measurement" ;</span></span>
+<span><span class="co">#&gt;      lon:standard_name = "longitude" ;</span></span>
+<span><span class="co">#&gt;  float climdiv_prcp_inches(instance, time) ;</span></span>
+<span><span class="co">#&gt;      climdiv_prcp_inches:units = "inches" ;</span></span>
+<span><span class="co">#&gt;      climdiv_prcp_inches:missing_value = -2.147484e+09f ;</span></span>
+<span><span class="co">#&gt;      climdiv_prcp_inches:long_name = "Estimated Monthly Precipitation (Inches)" ;</span></span>
+<span><span class="co">#&gt;      climdiv_prcp_inches:coordinates = "time lat lon" ;</span></span>
+<span><span class="co">#&gt;      climdiv_prcp_inches:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      climdiv_prcp_inches:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  char CLIMDIV(instance, char) ;</span></span>
+<span><span class="co">#&gt;      CLIMDIV:units = "unknown" ;</span></span>
+<span><span class="co">#&gt;      CLIMDIV:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      CLIMDIV:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  char CLIMDIV_NAME(instance, char) ;</span></span>
+<span><span class="co">#&gt;      CLIMDIV_NAME:units = "unknown" ;</span></span>
+<span><span class="co">#&gt;      CLIMDIV_NAME:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      CLIMDIV_NAME:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  double x_nodes(node) ;</span></span>
+<span><span class="co">#&gt;      x_nodes:units = "degrees_east" ;</span></span>
+<span><span class="co">#&gt;      x_nodes:axis = "X" ;</span></span>
+<span><span class="co">#&gt;  double y_nodes(node) ;</span></span>
+<span><span class="co">#&gt;      y_nodes:units = "degrees_north" ;</span></span>
+<span><span class="co">#&gt;      y_nodes:axis = "Y" ;</span></span>
+<span><span class="co">#&gt;  int geometry_container ;</span></span>
+<span><span class="co">#&gt;      geometry_container:node_coordinates = "x_nodes y_nodes" ;</span></span>
+<span><span class="co">#&gt;      geometry_container:geometry_type = "polygon" ;</span></span>
+<span><span class="co">#&gt;      geometry_container:node_count = "node_count" ;</span></span>
+<span><span class="co">#&gt;      geometry_container:part_node_count = "part_node_count" ;</span></span>
+<span><span class="co">#&gt;      geometry_container:interior_ring = "interior_ring" ;</span></span>
+<span><span class="co">#&gt;      geometry_container:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;  int node_count(instance) ;</span></span>
+<span><span class="co">#&gt;      node_count:long_name = "count of coordinates in each instance geometry" ;</span></span>
+<span><span class="co">#&gt;  int part_node_count(part) ;</span></span>
+<span><span class="co">#&gt;      part_node_count:long_name = "count of nodes in each geometry part" ;</span></span>
+<span><span class="co">#&gt;  int interior_ring(part) ;</span></span>
+<span><span class="co">#&gt;      interior_ring:long_name = "type of each geometry part" ;</span></span>
+<span><span class="co">#&gt;  int grid_mapping ;</span></span>
+<span><span class="co">#&gt;      grid_mapping:grid_mapping_name = "latitude_longitude" ;</span></span>
+<span><span class="co">#&gt;      grid_mapping:semi_major_axis = 6378137. ;</span></span>
+<span><span class="co">#&gt;      grid_mapping:inverse_flattening = 298.257223563 ;</span></span>
+<span><span class="co">#&gt;      grid_mapping:longitude_of_prime_meridian = 0. ;</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; // global attributes:</span></span>
+<span><span class="co">#&gt;      :Conventions = "CF-1.8" ;</span></span>
+<span><span class="co">#&gt;      :featureType = "timeSeries" ;</span></span>
+<span><span class="co">#&gt;      :cdm_data_type = "Station" ;</span></span>
+<span><span class="co">#&gt;      :standard_name_vocabulary = "CF-1.8" ;</span></span>
+<span><span class="co">#&gt;      :title = "Demonstation of ncdfgeom" ;</span></span>
+<span><span class="co">#&gt; }</span></span></code></pre></div>
+<p>For more information about the polygon and timeseries data structures
+used here, see the <a href="http://cfconventions.org/cf-conventions/cf-conventions.html" class="external-link">NetCDF-CF
+standard.</a></p>
 </div>
-<div id="read-timeseries-and-geometry-from-netcdf" class="section level2">
-<h2 class="hasAnchor">
-<a href="#read-timeseries-and-geometry-from-netcdf" class="anchor"></a>Read Timeseries and Geometry from NetCDF</h2>
-<p>Now that we have all our data in a single file, we can read it back in.</p>
+<div class="section level2">
+<h2 id="read-timeseries-and-geometry-from-netcdf">Read Timeseries and Geometry from NetCDF<a class="anchor" aria-label="anchor" href="#read-timeseries-and-geometry-from-netcdf"></a>
+</h2>
+<p>Now that we have all our data in a single file, we can read it back
+in.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># First read the timeseries.</span>
-<span class="va">prcp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_timeseries_dsg.html">read_timeseries_dsg</a></span><span class="op">(</span><span class="st">"climdiv_prcp.nc"</span><span class="op">)</span>
-<span class="co">#&gt; Warning in get_nc_list(nc, dsg, nc_meta, read_data): no altitude coordinate</span>
-<span class="co">#&gt; found</span>
-
-<span class="co"># Now read the geometry.</span>
-<span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_geometry.html">read_geometry</a></span><span class="op">(</span><span class="st">"climdiv_prcp.nc"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># First read the timeseries.</span></span>
+<span><span class="va">prcp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_timeseries_dsg.html">read_timeseries_dsg</a></span><span class="op">(</span><span class="st">"climdiv_prcp.nc"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in get_nc_list(nc, dsg, nc_meta, read_data): no altitude coordinate</span></span>
+<span><span class="co">#&gt; found</span></span>
+<span></span>
+<span><span class="co"># Now read the geometry.</span></span>
+<span><span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_geometry.html">read_geometry</a></span><span class="op">(</span><span class="st">"climdiv_prcp.nc"</span><span class="op">)</span></span></code></pre></div>
 <p>Here’s what the data we read in looks like:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">)</span>
-<span class="co">#&gt; [1] "time"              "lats"              "lons"             </span>
-<span class="co">#&gt; [4] "alts"              "varmeta"           "data_unit"        </span>
-<span class="co">#&gt; [7] "data_prec"         "data_frames"       "global_attributes"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">time</span><span class="op">)</span>
-<span class="co">#&gt; [1] "POSIXct" "POSIXt"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">varmeta</span><span class="op">$</span><span class="va">climdiv_prcp_inches</span><span class="op">)</span>
-<span class="co">#&gt; [1] "name"      "long_name"</span>
-<span class="va">prcp_data</span><span class="op">$</span><span class="va">data_unit</span>
-<span class="co">#&gt; climdiv_prcp_inches </span>
-<span class="co">#&gt;            "inches"</span>
-<span class="va">prcp_data</span><span class="op">$</span><span class="va">data_prec</span>
-<span class="co">#&gt; climdiv_prcp_inches </span>
-<span class="co">#&gt;          "NC_FLOAT"</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">data_frames</span><span class="op">$</span><span class="va">climdiv_prcp_inches</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;  chr [1:344] "0101" "0102" "0103" "0104" "0105" "0106" "0107" "0108" "0201" ...</span>
-<span class="va">prcp_data</span><span class="op">$</span><span class="va">global_attributes</span>
-<span class="co">#&gt; $nc_summary</span>
-<span class="co">#&gt; named list()</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $nc_date_created</span>
-<span class="co">#&gt; named list()</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $nc_creator_name</span>
-<span class="co">#&gt; named list()</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $nc_creator_email</span>
-<span class="co">#&gt; named list()</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $nc_project</span>
-<span class="co">#&gt; named list()</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $nc_proc_level</span>
-<span class="co">#&gt; named list()</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $nc_title</span>
-<span class="co">#&gt; $nc_title$title</span>
-<span class="co">#&gt; [1] "Demonstation of ncdfgeom"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">climdiv_poly</span><span class="op">)</span>
-<span class="co">#&gt; [1] "CLIMDIV"      "CLIMDIV_NAME" "geom"</span></code></pre></div>
-<p>To better understand what is actually in this file, let’s visualize the data we just read. Below we join a sum of the precipitation timeseries to the climate division polygons and plot them up.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "time"              "lats"              "lons"             </span></span>
+<span><span class="co">#&gt; [4] "alts"              "varmeta"           "data_unit"        </span></span>
+<span><span class="co">#&gt; [7] "data_prec"         "data_frames"       "global_attributes"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">time</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "POSIXct" "POSIXt"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">varmeta</span><span class="op">$</span><span class="va">climdiv_prcp_inches</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "name"      "long_name"</span></span>
+<span><span class="va">prcp_data</span><span class="op">$</span><span class="va">data_unit</span></span>
+<span><span class="co">#&gt; climdiv_prcp_inches </span></span>
+<span><span class="co">#&gt;            "inches"</span></span>
+<span><span class="va">prcp_data</span><span class="op">$</span><span class="va">data_prec</span></span>
+<span><span class="co">#&gt; climdiv_prcp_inches </span></span>
+<span><span class="co">#&gt;          "NC_FLOAT"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">data_frames</span><span class="op">$</span><span class="va">climdiv_prcp_inches</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  chr [1:344] "0101" "0102" "0103" "0104" "0105" "0106" "0107" "0108" "0201" ...</span></span>
+<span><span class="va">prcp_data</span><span class="op">$</span><span class="va">global_attributes</span></span>
+<span><span class="co">#&gt; $nc_summary</span></span>
+<span><span class="co">#&gt; named list()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $nc_date_created</span></span>
+<span><span class="co">#&gt; named list()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $nc_creator_name</span></span>
+<span><span class="co">#&gt; named list()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $nc_creator_email</span></span>
+<span><span class="co">#&gt; named list()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $nc_project</span></span>
+<span><span class="co">#&gt; named list()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $nc_proc_level</span></span>
+<span><span class="co">#&gt; named list()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $nc_title</span></span>
+<span><span class="co">#&gt; $nc_title$title</span></span>
+<span><span class="co">#&gt; [1] "Demonstation of ncdfgeom"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">climdiv_poly</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "CLIMDIV"      "CLIMDIV_NAME" "geom"</span></span></code></pre></div>
+<p>To better understand what is actually in this file, let’s visualize
+the data we just read. Below we join a sum of the precipitation
+timeseries to the climate division polygons and plot them up.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="va">climdiv_poly</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="fl">3857</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co"># web mercator</span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">st_simplify</a></span><span class="op">(</span>dTolerance <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span>
-
-<span class="va">title</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"\n Sum of: "</span>, <span class="va">prcp_data</span><span class="op">$</span><span class="va">varmeta</span><span class="op">$</span><span class="va">climdiv_prcp_inches</span><span class="op">$</span><span class="va">long_name</span>, <span class="st">"\n"</span>, 
-                <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">time</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, 
-                         <span class="st">"%Y-%m"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span>, <span class="st">" - "</span>, 
-                <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">time</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">time</span><span class="op">)</span><span class="op">]</span>, 
-                         <span class="st">"%Y-%m"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">prcp_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">data_frames</span><span class="op">$</span><span class="va">climdiv_prcp_inches</span>, 
-                  <span class="fl">2</span>, <span class="va">sum</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="va">prcp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>CLIMDIV <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">prcp_sum</span><span class="op">)</span>, 
-                   prcp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">prcp_sum</span><span class="op">)</span>, 
-                   stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">right_join</a></span><span class="op">(</span><span class="va">climdiv_poly</span>, by <span class="op">=</span> <span class="st">"CLIMDIV"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">prcp</span><span class="op">[</span><span class="st">"prcp"</span><span class="op">]</span>, lwd <span class="op">=</span> <span class="fl">0.1</span>, pal <span class="op">=</span> <span class="va">p_colors</span>, 
-     breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">14000</span>, <span class="fl">1000</span><span class="op">)</span>,
-     main <span class="op">=</span> <span class="va">title</span>,
-     key.pos <span class="op">=</span> <span class="fl">3</span>, key.length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html">lcm</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="va">climdiv_poly</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="fl">3857</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co"># web mercator</span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">st_simplify</a></span><span class="op">(</span>dTolerance <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">title</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"\n Sum of: "</span>, <span class="va">prcp_data</span><span class="op">$</span><span class="va">varmeta</span><span class="op">$</span><span class="va">climdiv_prcp_inches</span><span class="op">$</span><span class="va">long_name</span>, <span class="st">"\n"</span>, </span>
+<span>                <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">time</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, </span>
+<span>                         <span class="st">"%Y-%m"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span>, <span class="st">" - "</span>, </span>
+<span>                <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">time</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">time</span><span class="op">)</span><span class="op">]</span>, </span>
+<span>                         <span class="st">"%Y-%m"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">prcp_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">$</span><span class="va">data_frames</span><span class="op">$</span><span class="va">climdiv_prcp_inches</span>, </span>
+<span>                  <span class="fl">2</span>, <span class="va">sum</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">prcp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>CLIMDIV <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">prcp_sum</span><span class="op">)</span>, </span>
+<span>                   prcp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">prcp_sum</span><span class="op">)</span>, </span>
+<span>                   stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">right_join</a></span><span class="op">(</span><span class="va">climdiv_poly</span>, by <span class="op">=</span> <span class="st">"CLIMDIV"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">prcp</span><span class="op">[</span><span class="st">"prcp"</span><span class="op">]</span>, lwd <span class="op">=</span> <span class="fl">0.1</span>, pal <span class="op">=</span> <span class="va">p_colors</span>, </span>
+<span>     breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">14000</span>, <span class="fl">1000</span><span class="op">)</span>,</span>
+<span>     main <span class="op">=</span> <span class="va">title</span>,</span>
+<span>     key.pos <span class="op">=</span> <span class="fl">3</span>, key.length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ncdfgeom_files/figure-html/plot-1.png" width="768"></p>
-<p>This is the code used to download and prep the precipitation and spatial data. Provided for reproducibility and is not run here.</p>
+<p>This is the code used to download and prep the precipitation and
+spatial data. Provided for reproducibility and is not run here.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt</span>
-<span class="va">prcp_url</span> <span class="op">&lt;-</span> <span class="st">"ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190408"</span>
-
-<span class="va">prcp_file</span> <span class="op">&lt;-</span> <span class="st">"prcp.txt"</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">prcp_url</span>, destfile <span class="op">=</span> <span class="va">prcp_file</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="va">division_url</span> <span class="op">&lt;-</span> <span class="st">"ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/CONUS_CLIMATE_DIVISIONS.shp.zip"</span>
-<span class="va">division_file</span> <span class="op">&lt;-</span> <span class="st">"CONUS_CLIMATE_DIVISIONS.shp.zip"</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">division_url</span>, destfile <span class="op">=</span> <span class="va">division_file</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/unzip.html">unzip</a></span><span class="op">(</span><span class="st">"CONUS_CLIMATE_DIVISIONS.shp.zip"</span><span class="op">)</span>
-
-<span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">read_sf</a></span><span class="op">(</span><span class="st">"GIS.OFFICIAL_CLIM_DIVISIONS.shp"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="st">"CLIMDIV"</span>, CLIMDIV_NAME <span class="op">=</span> <span class="st">"NAME"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>CLIMDIV <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html">nchar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">CLIMDIV</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">3</span>, 
-                          <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"0"</span>,<span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">CLIMDIV</span><span class="op">)</span><span class="op">)</span>,
-                          <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">CLIMDIV</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">st_simplify</a></span><span class="op">(</span>dTolerance <span class="op">=</span> <span class="fl">0.0125</span><span class="op">)</span>
-
-<span class="va">month_strings</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"jan"</span>, <span class="st">"feb"</span>, <span class="st">"mar"</span>, <span class="st">"apr"</span>, <span class="st">"may"</span>, <span class="st">"jun"</span>, 
-                   <span class="st">"jul"</span>, <span class="st">"aug"</span>, <span class="st">"sep"</span>, <span class="st">"oct"</span>, <span class="st">"nov"</span>, <span class="st">"dec"</span><span class="op">)</span>
-
-<span class="va">prcp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.table</a></span><span class="op">(</span><span class="va">prcp_file</span>, header <span class="op">=</span> <span class="cn">FALSE</span>, 
-                        colClasses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"character"</span>, 
-                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"numeric"</span>, <span class="fl">12</span><span class="op">)</span><span class="op">)</span>,
-                        col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"meta"</span>, <span class="va">month_strings</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Here we gather the data into a long format and prep it for ncdfgeom.</span>
-<span class="va">prcp_data</span> <span class="op">&lt;-</span> <span class="va">prcp_data</span> <span class="op">%&gt;%</span>
-  <span class="fu">gather</span><span class="op">(</span>key <span class="op">=</span> <span class="st">"month"</span>, value <span class="op">=</span> <span class="st">"precip_inches"</span>, <span class="op">-</span><span class="va">meta</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>climdiv <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span><span class="va">meta</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span><span class="va">meta</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,
-         year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span><span class="va">meta</span>, <span class="fl">7</span>, <span class="fl">10</span><span class="op">)</span>,
-         precip_inches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">precip_inches</span> <span class="op">&lt;</span> <span class="fl">0</span>, <span class="cn">NA</span>, <span class="va">precip_inches</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"01"</span>, <span class="st">"-"</span>, <span class="va">month</span>, <span class="st">"-"</span>, <span class="va">year</span><span class="op">)</span>, 
-                        format <span class="op">=</span> <span class="st">"%d-%b-%Y"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">meta</span>, <span class="op">-</span><span class="va">month</span>, <span class="op">-</span><span class="va">year</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">climdiv</span> <span class="op">%in%</span> <span class="va">climdiv_poly</span><span class="op">$</span><span class="va">CLIMDIV</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">spread</span><span class="op">(</span>key <span class="op">=</span> <span class="st">"climdiv"</span>, value <span class="op">=</span> <span class="st">"precip_inches"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">`0101`</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co"># Now make sure things are in the same order.</span>
-<span class="va">climdiv_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
-<span class="va">climdiv_row_order</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">climdiv_names</span>, <span class="va">climdiv_poly</span><span class="op">$</span><span class="va">CLIMDIV</span><span class="op">)</span>
-<span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="va">climdiv_poly</span><span class="op">[</span><span class="va">climdiv_row_order</span>, <span class="op">]</span>
-
-<span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html">write_sf</a></span><span class="op">(</span><span class="va">climdiv_poly</span>, <span class="st">"climdiv.gpkg"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">prcp_data</span>, <span class="st">"climdiv-pcpndv.rds"</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span><span class="op">(</span><span class="st">"GIS*"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span><span class="op">(</span><span class="st">"CONUS_CLIMATE_DIVISIONS.shp.zip"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span><span class="op">(</span><span class="st">"prcp.txt"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Description here: ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt</span></span>
+<span><span class="va">prcp_url</span> <span class="op">&lt;-</span> <span class="st">"ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/climdiv-pcpndv-v1.0.0-20190408"</span></span>
+<span></span>
+<span><span class="va">prcp_file</span> <span class="op">&lt;-</span> <span class="st">"prcp.txt"</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">prcp_url</span>, destfile <span class="op">=</span> <span class="va">prcp_file</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">division_url</span> <span class="op">&lt;-</span> <span class="st">"ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/CONUS_CLIMATE_DIVISIONS.shp.zip"</span></span>
+<span><span class="va">division_file</span> <span class="op">&lt;-</span> <span class="st">"CONUS_CLIMATE_DIVISIONS.shp.zip"</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span>url <span class="op">=</span> <span class="va">division_url</span>, destfile <span class="op">=</span> <span class="va">division_file</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="st">"CONUS_CLIMATE_DIVISIONS.shp.zip"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="st">"GIS.OFFICIAL_CLIM_DIVISIONS.shp"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="st">"CLIMDIV"</span>, CLIMDIV_NAME <span class="op">=</span> <span class="st">"NAME"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>CLIMDIV <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">CLIMDIV</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">3</span>, </span>
+<span>                          <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"0"</span>,<span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">CLIMDIV</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                          <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">CLIMDIV</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html" class="external-link">st_simplify</a></span><span class="op">(</span>dTolerance <span class="op">=</span> <span class="fl">0.0125</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">month_strings</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"jan"</span>, <span class="st">"feb"</span>, <span class="st">"mar"</span>, <span class="st">"apr"</span>, <span class="st">"may"</span>, <span class="st">"jun"</span>, </span>
+<span>                   <span class="st">"jul"</span>, <span class="st">"aug"</span>, <span class="st">"sep"</span>, <span class="st">"oct"</span>, <span class="st">"nov"</span>, <span class="st">"dec"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">prcp_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="va">prcp_file</span>, header <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>                        colClasses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"character"</span>, </span>
+<span>                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"numeric"</span>, <span class="fl">12</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                        col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"meta"</span>, <span class="va">month_strings</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Here we gather the data into a long format and prep it for ncdfgeom.</span></span>
+<span><span class="va">prcp_data</span> <span class="op">&lt;-</span> <span class="va">prcp_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">gather</span><span class="op">(</span>key <span class="op">=</span> <span class="st">"month"</span>, value <span class="op">=</span> <span class="st">"precip_inches"</span>, <span class="op">-</span><span class="va">meta</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>climdiv <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">meta</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">meta</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>         year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">meta</span>, <span class="fl">7</span>, <span class="fl">10</span><span class="op">)</span>,</span>
+<span>         precip_inches <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">precip_inches</span> <span class="op">&lt;</span> <span class="fl">0</span>, <span class="cn">NA</span>, <span class="va">precip_inches</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"01"</span>, <span class="st">"-"</span>, <span class="va">month</span>, <span class="st">"-"</span>, <span class="va">year</span><span class="op">)</span>, </span>
+<span>                        format <span class="op">=</span> <span class="st">"%d-%b-%Y"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">meta</span>, <span class="op">-</span><span class="va">month</span>, <span class="op">-</span><span class="va">year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">climdiv</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">climdiv_poly</span><span class="op">$</span><span class="va">CLIMDIV</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">spread</span><span class="op">(</span>key <span class="op">=</span> <span class="st">"climdiv"</span>, value <span class="op">=</span> <span class="st">"precip_inches"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">`0101`</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Now make sure things are in the same order.</span></span>
+<span><span class="va">climdiv_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">prcp_data</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">climdiv_row_order</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">climdiv_names</span>, <span class="va">climdiv_poly</span><span class="op">$</span><span class="va">CLIMDIV</span><span class="op">)</span></span>
+<span><span class="va">climdiv_poly</span> <span class="op">&lt;-</span> <span class="va">climdiv_poly</span><span class="op">[</span><span class="va">climdiv_row_order</span>, <span class="op">]</span></span>
+<span></span>
+<span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">write_sf</a></span><span class="op">(</span><span class="va">climdiv_poly</span>, <span class="st">"climdiv.gpkg"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">prcp_data</span>, <span class="st">"climdiv-pcpndv.rds"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="st">"GIS*"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="st">"CONUS_CLIMATE_DIVISIONS.shp.zip"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="st">"prcp.txt"</span><span class="op">)</span></span></code></pre></div>
 <p>Here’s the <code>p_colors</code> function used in plotting above.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">p_colors</span> <span class="op">&lt;-</span> <span class="kw">function</span> <span class="op">(</span><span class="va">n</span>, <span class="va">name</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"precip_colors"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-<span class="co"># Thanks! https://quantdev.ssri.psu.edu/tutorials/generating-custom-color-palette-function-r</span>
-    <span class="va">p_rgb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/col2rgb.html">col2rgb</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#FAFBF3"</span>, <span class="st">"#F0F8E3"</span>, <span class="st">"#D4E9CA"</span>, 
-                       <span class="st">"#BBE0CE"</span>, <span class="st">"#B7DAD0"</span>, <span class="st">"#B0CCD7"</span>, 
-                       <span class="st">"#A9B8D7"</span>, <span class="st">"#A297C2"</span>, <span class="st">"#8F6F9E"</span>, 
-                       <span class="st">"#684A77"</span>, <span class="st">"#41234D"</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">precip_colors</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html">rgb</a></span><span class="op">(</span><span class="va">p_rgb</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>,<span class="va">p_rgb</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>,<span class="va">p_rgb</span><span class="op">[</span><span class="fl">3</span>,<span class="op">]</span>,maxColorValue <span class="op">=</span> <span class="fl">255</span><span class="op">)</span>
-    <span class="va">name</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.arg.html">match.arg</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span>
-    <span class="va">orig</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">name</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">rgb</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/col2rgb.html">col2rgb</a></span><span class="op">(</span><span class="va">orig</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">temp</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="cn">NA</span>, ncol <span class="op">=</span> <span class="fl">3</span>, nrow <span class="op">=</span> <span class="va">n</span><span class="op">)</span>
-    <span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, , <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">orig</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">xg</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, , <span class="va">n</span><span class="op">)</span>
-    <span class="kw">for</span> <span class="op">(</span><span class="va">k</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">{</span>
-        <span class="va">hold</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/splinefun.html">spline</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">rgb</span><span class="op">[</span>, <span class="va">k</span><span class="op">]</span>, n <span class="op">=</span> <span class="va">n</span><span class="op">)</span><span class="op">$</span><span class="va">y</span>
-        <span class="va">hold</span><span class="op">[</span><span class="va">hold</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">=</span> <span class="fl">0</span>
-        <span class="va">hold</span><span class="op">[</span><span class="va">hold</span> <span class="op">&gt;</span> <span class="fl">255</span><span class="op">]</span> <span class="op">=</span> <span class="fl">255</span>
-        <span class="va">temp</span><span class="op">[</span>, <span class="va">k</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">hold</span><span class="op">)</span>
-    <span class="op">}</span>
-    <span class="va">palette</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html">rgb</a></span><span class="op">(</span><span class="va">temp</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">temp</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>, <span class="va">temp</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span>, maxColorValue <span class="op">=</span> <span class="fl">255</span><span class="op">)</span>
-    <span class="va">palette</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">p_colors</span> <span class="op">&lt;-</span> <span class="kw">function</span> <span class="op">(</span><span class="va">n</span>, <span class="va">name</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"precip_colors"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="co"># Thanks! https://quantdev.ssri.psu.edu/tutorials/generating-custom-color-palette-function-r</span></span>
+<span>    <span class="va">p_rgb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/col2rgb.html" class="external-link">col2rgb</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#FAFBF3"</span>, <span class="st">"#F0F8E3"</span>, <span class="st">"#D4E9CA"</span>, </span>
+<span>                       <span class="st">"#BBE0CE"</span>, <span class="st">"#B7DAD0"</span>, <span class="st">"#B0CCD7"</span>, </span>
+<span>                       <span class="st">"#A9B8D7"</span>, <span class="st">"#A297C2"</span>, <span class="st">"#8F6F9E"</span>, </span>
+<span>                       <span class="st">"#684A77"</span>, <span class="st">"#41234D"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">precip_colors</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="va">p_rgb</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>,<span class="va">p_rgb</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>,<span class="va">p_rgb</span><span class="op">[</span><span class="fl">3</span>,<span class="op">]</span>,maxColorValue <span class="op">=</span> <span class="fl">255</span><span class="op">)</span></span>
+<span>    <span class="va">name</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span>
+<span>    <span class="va">orig</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">name</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">rgb</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/col2rgb.html" class="external-link">col2rgb</a></span><span class="op">(</span><span class="va">orig</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">temp</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>, ncol <span class="op">=</span> <span class="fl">3</span>, nrow <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
+<span>    <span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, , <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">orig</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">xg</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, , <span class="va">n</span><span class="op">)</span></span>
+<span>    <span class="kw">for</span> <span class="op">(</span><span class="va">k</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">hold</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/splinefun.html" class="external-link">spline</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">rgb</span><span class="op">[</span>, <span class="va">k</span><span class="op">]</span>, n <span class="op">=</span> <span class="va">n</span><span class="op">)</span><span class="op">$</span><span class="va">y</span></span>
+<span>        <span class="va">hold</span><span class="op">[</span><span class="va">hold</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span>        <span class="va">hold</span><span class="op">[</span><span class="va">hold</span> <span class="op">&gt;</span> <span class="fl">255</span><span class="op">]</span> <span class="op">=</span> <span class="fl">255</span></span>
+<span>        <span class="va">temp</span><span class="op">[</span>, <span class="va">k</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">hold</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="va">palette</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="va">temp</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">temp</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>, <span class="va">temp</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span>, maxColorValue <span class="op">=</span> <span class="fl">255</span><span class="op">)</span></span>
+<span>    <span class="va">palette</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 </div>
   </div>
 
@@ -488,11 +532,13 @@ remotes::install_github("USGS-R/ncdfgeom")</a></code></pre>
 
 
       <footer><div class="copyright">
-  <p>Developed by David Blodgett.</p>
+  <p></p>
+<p>Developed by David Blodgett.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -500,6 +546,8 @@ remotes::install_github("USGS-R/ncdfgeom")</a></code></pre>
 
   
 
+
+  
 
   </body>
 </html>

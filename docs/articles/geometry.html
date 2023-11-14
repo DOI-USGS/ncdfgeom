@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.5</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/ncdfgeom.html">Get started</a>
 </li>
@@ -50,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -70,7 +66,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/USGS-R/ncdfgeom/">
+  <a href="https://github.com/DOI-USGS/ncdfgeom/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -85,169 +81,176 @@
 
       
 
-      </header><script src="geometry_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Reading and Writing NetCDF-CF Geometry</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USGS-R/ncdfgeom/blob/master/vignettes/geometry.Rmd"><code>vignettes/geometry.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/DOI-USGS/ncdfgeom/blob/HEAD/vignettes/geometry.Rmd" class="external-link"><code>vignettes/geometry.Rmd</code></a></small>
       <div class="hidden name"><code>geometry.Rmd</code></div>
 
     </div>
 
     
     
-<div id="introduction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h2>
+<div class="section level3">
+<h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h3>
 <p>This example shows how to</p>
 <ol style="list-style-type: decimal">
-<li>add polygon data to a NetCDF-CF Discrete Sampling Geometry timeSeries featureType file,</li>
+<li>add polygon data to a NetCDF-CF Discrete Sampling Geometry
+timeSeries featureType file,</li>
 <li>read the polygon data from the NetCDF file,</li>
 <li>and write it to a standard GIS format.</li>
 </ol>
-<p>Below the example, all the geometry types that <code>ncdfgeom</code> handles are shown in detail.</p>
+<p>Below the example, all the geometry types that <code>ncdfgeom</code>
+handles are shown in detail.</p>
 </div>
-<div id="load-spatial-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#load-spatial-data" class="anchor"></a>Load Spatial Data</h2>
-<p>Tables of point, line, or polygon features with associated timeseries are the target for this functionality. Here, we use some sample data from the <code>ncdfgeom</code> package.</p>
+<div class="section level3">
+<h3 id="load-spatial-data">Load Spatial Data<a class="anchor" aria-label="anchor" href="#load-spatial-data"></a>
+</h3>
+<p>Tables of point, line, or polygon features with associated timeseries
+are the target for this functionality. Here, we use some sample data
+from the <code>ncdfgeom</code> package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">example_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/files.html">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata/example_huc_eta.nc'</span>, package <span class="op">=</span> <span class="st">'ncdfgeom'</span><span class="op">)</span>, 
-                    to <span class="op">=</span> <span class="va">example_file</span>, 
-                    overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">quiet</span>
-
-<span class="va">polygons</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">read_sf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">'extdata/example_huc_eta.json'</span>, package <span class="op">=</span> <span class="st">'ncdfgeom'</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">polygons</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">polygons</span>, <span class="va">LOADDATE</span>, <span class="va">AREASQKM</span>, <span class="va">HUC12</span>, <span class="va">NAME</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="va">polygons</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">example_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata/example_huc_eta.nc'</span>, package <span class="op">=</span> <span class="st">'ncdfgeom'</span><span class="op">)</span>, </span>
+<span>                    to <span class="op">=</span> <span class="va">example_file</span>, </span>
+<span>                    overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">quiet</span></span>
+<span></span>
+<span><span class="va">polygons</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata/example_huc_eta.json'</span>, package <span class="op">=</span> <span class="st">'ncdfgeom'</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">polygons</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">polygons</span>, <span class="va">LOADDATE</span>, <span class="va">AREASQKM</span>, <span class="va">HUC12</span>, <span class="va">NAME</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">polygons</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="geometry_files/figure-html/libs-1.png" width="576"></p>
-<p>Now we have the polygons as shown above and a NetCDF file with a header that looks like:</p>
-<p>Now we can use the <code>write_geometry</code> function to add the polygon data to the NetCDF file.</p>
+<p>Now we have the polygons as shown above and a NetCDF file with a
+header that looks like:</p>
+<p>Now we can use the <code>write_geometry</code> function to add the
+polygon data to the NetCDF file.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">(</span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu">ncmeta</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncmeta/man/nc_vars.html">nc_vars</a></span><span class="op">(</span><span class="va">example_file</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 5 x 5</span>
-<span class="co">#&gt;      id name         type      ndims natts</span>
-<span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;     &lt;int&gt; &lt;int&gt;</span>
-<span class="co">#&gt; 1     0 lat          NC_DOUBLE     1     4</span>
-<span class="co">#&gt; 2     1 lon          NC_DOUBLE     1     4</span>
-<span class="co">#&gt; 3     2 time         NC_DOUBLE     1     4</span>
-<span class="co">#&gt; 4     3 station_name NC_CHAR       2     5</span>
-<span class="co">#&gt; 5     4 et           NC_INT        2     4</span>
-
-<span class="fu">ncdfgeom</span><span class="fu">::</span><span class="fu"><a href="../reference/write_geometry.html">write_geometry</a></span><span class="op">(</span>nc_file<span class="op">=</span><span class="va">example_file</span>,
-                         geom_data <span class="op">=</span> <span class="va">polygons</span>, 
-                         instance_dim_name <span class="op">=</span> <span class="st">"station"</span>, 
-                         variables <span class="op">=</span> <span class="va">vars</span><span class="op">$</span><span class="va">name</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">example_file</span></code></pre></div>
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu">ncmeta</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ncmeta/man/nc_vars.html" class="external-link">nc_vars</a></span><span class="op">(</span><span class="va">example_file</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 5</span></span></span>
+<span><span class="co">#&gt;      id name         type      ndims natts</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0 lat          NC_DOUBLE     1     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     1 lon          NC_DOUBLE     1     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     2 time         NC_DOUBLE     1     4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     3 station_name NC_CHAR       2     5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     4 et           NC_INT        2     4</span></span>
+<span></span>
+<span><span class="fu">ncdfgeom</span><span class="fu">::</span><span class="fu"><a href="../reference/write_geometry.html">write_geometry</a></span><span class="op">(</span>nc_file<span class="op">=</span><span class="va">example_file</span>,</span>
+<span>                         geom_data <span class="op">=</span> <span class="va">polygons</span>, </span>
+<span>                         instance_dim_name <span class="op">=</span> <span class="st">"station"</span>, </span>
+<span>                         variables <span class="op">=</span> <span class="va">vars</span><span class="op">$</span><span class="va">name</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">example_file</span></span></code></pre></div>
 <p>Now the NetCDF file looks like:</p>
-<pre><code>#&gt; netcdf file10a6c2b8d18e8 {
-#&gt; dimensions:
-#&gt;  maxStrlen64 = 64 ;
-#&gt;  station = 2 ;
-#&gt;  time = 25 ;
-#&gt;  char = 12 ;
-#&gt;  node = 2628 ;
-#&gt; variables:
-#&gt;  double lat(station) ;
-#&gt;      lat:units = "degrees_north" ;
-#&gt;      lat:missing_value = -999. ;
-#&gt;      lat:long_name = "latitude of the observation" ;
-#&gt;      lat:standard_name = "latitude" ;
-#&gt;      lat:grid_mapping = "grid_mapping" ;
-#&gt;      lat:geometry = "geometry_container" ;
-#&gt;  double lon(station) ;
-#&gt;      lon:units = "degrees_east" ;
-#&gt;      lon:missing_value = -999. ;
-#&gt;      lon:long_name = "longitude of the observation" ;
-#&gt;      lon:standard_name = "longitude" ;
-#&gt;      lon:grid_mapping = "grid_mapping" ;
-#&gt;      lon:geometry = "geometry_container" ;
-#&gt;  double time(time) ;
-#&gt;      time:units = "days since 1970-01-01 00:00:00" ;
-#&gt;      time:missing_value = -999. ;
-#&gt;      time:long_name = "time of measurement" ;
-#&gt;      time:standard_name = "time" ;
-#&gt;      time:grid_mapping = "grid_mapping" ;
-#&gt;      time:geometry = "geometry_container" ;
-#&gt;  char station_name(station, maxStrlen64) ;
-#&gt;      station_name:units = "" ;
-#&gt;      station_name:missing_value = "" ;
-#&gt;      station_name:long_name = "Station Names" ;
-#&gt;      station_name:cf_role = "timeseries_id" ;
-#&gt;      station_name:standard_name = "station_id" ;
-#&gt;      station_name:grid_mapping = "grid_mapping" ;
-#&gt;      station_name:geometry = "geometry_container" ;
-#&gt;  int et(station, time) ;
-#&gt;      et:units = "mm" ;
-#&gt;      et:missing_value = -999 ;
-#&gt;      et:long_name = "Area Weighted Mean Actual Evapotranspiration" ;
-#&gt;      et:coordinates = "time lat lon" ;
-#&gt;      et:grid_mapping = "grid_mapping" ;
-#&gt;      et:geometry = "geometry_container" ;
-#&gt;  char LOADDATE(station, char) ;
-#&gt;      LOADDATE:units = "unknown" ;
-#&gt;      LOADDATE:grid_mapping = "grid_mapping" ;
-#&gt;      LOADDATE:geometry = "geometry_container" ;
-#&gt;  double AREASQKM(station) ;
-#&gt;      AREASQKM:units = "unknown" ;
-#&gt;      AREASQKM:missing_value = -9999.999 ;
-#&gt;      AREASQKM:grid_mapping = "grid_mapping" ;
-#&gt;      AREASQKM:geometry = "geometry_container" ;
-#&gt;  char HUC12(station, char) ;
-#&gt;      HUC12:units = "unknown" ;
-#&gt;      HUC12:grid_mapping = "grid_mapping" ;
-#&gt;      HUC12:geometry = "geometry_container" ;
-#&gt;  char NAME(station, char) ;
-#&gt;      NAME:units = "unknown" ;
-#&gt;      NAME:grid_mapping = "grid_mapping" ;
-#&gt;      NAME:geometry = "geometry_container" ;
-#&gt;  double x_nodes(node) ;
-#&gt;      x_nodes:units = "degrees_east" ;
-#&gt;      x_nodes:axis = "X" ;
-#&gt;  double y_nodes(node) ;
-#&gt;      y_nodes:units = "degrees_north" ;
-#&gt;      y_nodes:axis = "Y" ;
-#&gt;  int geometry_container ;
-#&gt;      geometry_container:node_coordinates = "x_nodes y_nodes" ;
-#&gt;      geometry_container:geometry_type = "polygon" ;
-#&gt;      geometry_container:node_count = "node_count" ;
-#&gt;      geometry_container:grid_mapping = "grid_mapping" ;
-#&gt;  int node_count(station) ;
-#&gt;      node_count:long_name = "count of coordinates in each instance geometry" ;
-#&gt;  int grid_mapping ;
-#&gt;      grid_mapping:grid_mapping_name = "latitude_longitude" ;
-#&gt;      grid_mapping:semi_major_axis = 6378137. ;
-#&gt;      grid_mapping:inverse_flattening = 298.257223563 ;
-#&gt;      grid_mapping:longitude_of_prime_meridian = 0. ;
-#&gt; 
-#&gt; // global attributes:
-#&gt;      :Conventions = "CF-1.8" ;
-#&gt;      :featureType = "timeSeries" ;
-#&gt;      :cdm_data_type = "Station" ;
-#&gt; }</code></pre>
-<p>Read the polygon data from the file and write it out to a geopackage.</p>
+<pre><code><span><span class="co">#&gt; netcdf file70e824c983 {</span></span>
+<span><span class="co">#&gt; dimensions:</span></span>
+<span><span class="co">#&gt;  maxStrlen64 = 64 ;</span></span>
+<span><span class="co">#&gt;  station = 2 ;</span></span>
+<span><span class="co">#&gt;  time = 25 ;</span></span>
+<span><span class="co">#&gt;  char = 12 ;</span></span>
+<span><span class="co">#&gt;  node = 2628 ;</span></span>
+<span><span class="co">#&gt; variables:</span></span>
+<span><span class="co">#&gt;  double lat(station) ;</span></span>
+<span><span class="co">#&gt;      lat:units = "degrees_north" ;</span></span>
+<span><span class="co">#&gt;      lat:missing_value = -999. ;</span></span>
+<span><span class="co">#&gt;      lat:long_name = "latitude of the observation" ;</span></span>
+<span><span class="co">#&gt;      lat:standard_name = "latitude" ;</span></span>
+<span><span class="co">#&gt;      lat:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      lat:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  double lon(station) ;</span></span>
+<span><span class="co">#&gt;      lon:units = "degrees_east" ;</span></span>
+<span><span class="co">#&gt;      lon:missing_value = -999. ;</span></span>
+<span><span class="co">#&gt;      lon:long_name = "longitude of the observation" ;</span></span>
+<span><span class="co">#&gt;      lon:standard_name = "longitude" ;</span></span>
+<span><span class="co">#&gt;      lon:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      lon:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  double time(time) ;</span></span>
+<span><span class="co">#&gt;      time:units = "days since 1970-01-01 00:00:00" ;</span></span>
+<span><span class="co">#&gt;      time:missing_value = -999. ;</span></span>
+<span><span class="co">#&gt;      time:long_name = "time of measurement" ;</span></span>
+<span><span class="co">#&gt;      time:standard_name = "time" ;</span></span>
+<span><span class="co">#&gt;      time:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      time:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  char station_name(station, maxStrlen64) ;</span></span>
+<span><span class="co">#&gt;      station_name:units = "" ;</span></span>
+<span><span class="co">#&gt;      station_name:missing_value = "" ;</span></span>
+<span><span class="co">#&gt;      station_name:long_name = "Station Names" ;</span></span>
+<span><span class="co">#&gt;      station_name:cf_role = "timeseries_id" ;</span></span>
+<span><span class="co">#&gt;      station_name:standard_name = "station_id" ;</span></span>
+<span><span class="co">#&gt;      station_name:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      station_name:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  int et(station, time) ;</span></span>
+<span><span class="co">#&gt;      et:units = "mm" ;</span></span>
+<span><span class="co">#&gt;      et:missing_value = -999 ;</span></span>
+<span><span class="co">#&gt;      et:long_name = "Area Weighted Mean Actual Evapotranspiration" ;</span></span>
+<span><span class="co">#&gt;      et:coordinates = "time lat lon" ;</span></span>
+<span><span class="co">#&gt;      et:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      et:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  char LOADDATE(station, char) ;</span></span>
+<span><span class="co">#&gt;      LOADDATE:units = "unknown" ;</span></span>
+<span><span class="co">#&gt;      LOADDATE:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      LOADDATE:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  double AREASQKM(station) ;</span></span>
+<span><span class="co">#&gt;      AREASQKM:units = "unknown" ;</span></span>
+<span><span class="co">#&gt;      AREASQKM:missing_value = -9999.999 ;</span></span>
+<span><span class="co">#&gt;      AREASQKM:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      AREASQKM:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  char HUC12(station, char) ;</span></span>
+<span><span class="co">#&gt;      HUC12:units = "unknown" ;</span></span>
+<span><span class="co">#&gt;      HUC12:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      HUC12:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  char NAME(station, char) ;</span></span>
+<span><span class="co">#&gt;      NAME:units = "unknown" ;</span></span>
+<span><span class="co">#&gt;      NAME:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;      NAME:geometry = "geometry_container" ;</span></span>
+<span><span class="co">#&gt;  double x_nodes(node) ;</span></span>
+<span><span class="co">#&gt;      x_nodes:units = "degrees_east" ;</span></span>
+<span><span class="co">#&gt;      x_nodes:axis = "X" ;</span></span>
+<span><span class="co">#&gt;  double y_nodes(node) ;</span></span>
+<span><span class="co">#&gt;      y_nodes:units = "degrees_north" ;</span></span>
+<span><span class="co">#&gt;      y_nodes:axis = "Y" ;</span></span>
+<span><span class="co">#&gt;  int geometry_container ;</span></span>
+<span><span class="co">#&gt;      geometry_container:node_coordinates = "x_nodes y_nodes" ;</span></span>
+<span><span class="co">#&gt;      geometry_container:geometry_type = "polygon" ;</span></span>
+<span><span class="co">#&gt;      geometry_container:node_count = "node_count" ;</span></span>
+<span><span class="co">#&gt;      geometry_container:grid_mapping = "grid_mapping" ;</span></span>
+<span><span class="co">#&gt;  int node_count(station) ;</span></span>
+<span><span class="co">#&gt;      node_count:long_name = "count of coordinates in each instance geometry" ;</span></span>
+<span><span class="co">#&gt;  int grid_mapping ;</span></span>
+<span><span class="co">#&gt;      grid_mapping:grid_mapping_name = "latitude_longitude" ;</span></span>
+<span><span class="co">#&gt;      grid_mapping:semi_major_axis = 6378137. ;</span></span>
+<span><span class="co">#&gt;      grid_mapping:inverse_flattening = 298.257223563 ;</span></span>
+<span><span class="co">#&gt;      grid_mapping:longitude_of_prime_meridian = 0. ;</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; // global attributes:</span></span>
+<span><span class="co">#&gt;      :Conventions = "CF-1.8" ;</span></span>
+<span><span class="co">#&gt;      :featureType = "timeSeries" ;</span></span>
+<span><span class="co">#&gt;      :cdm_data_type = "Station" ;</span></span>
+<span><span class="co">#&gt; }</span></span></code></pre>
+<p>Read the polygon data from the file and write it out to a
+geopackage.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">polygons_sf</span> <span class="op">&lt;-</span> <span class="fu">ncdfgeom</span><span class="fu">::</span><span class="fu"><a href="../reference/read_geometry.html">read_geometry</a></span><span class="op">(</span><span class="va">example_file</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="va">polygons_sf</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">polygons_sf</span> <span class="op">&lt;-</span> <span class="fu">ncdfgeom</span><span class="fu">::</span><span class="fu"><a href="../reference/read_geometry.html">read_geometry</a></span><span class="op">(</span><span class="va">example_file</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">polygons_sf</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="geometry_files/figure-html/read-1.png" width="576"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html">write_sf</a></span><span class="op">(</span><span class="va">polygons_sf</span>, <span class="st">"polygons.gpkg"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">write_sf</a></span><span class="op">(</span><span class="va">polygons_sf</span>, <span class="st">"polygons.gpkg"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="geometry-types" class="section level2">
-<h2 class="hasAnchor">
-<a href="#geometry-types" class="anchor"></a>Geometry Types</h2>
+<div class="section level3">
+<h3 id="geometry-types">Geometry Types<a class="anchor" aria-label="anchor" href="#geometry-types"></a>
+</h3>
 </div>
-<div id="examples---contiguous-ragged-arrays" class="section level1">
-<h1 class="hasAnchor">
-<a href="#examples---contiguous-ragged-arrays" class="anchor"></a>Examples - Contiguous Ragged Arrays</h1>
-<div id="point-2d" class="section level2">
-<h2 class="hasAnchor">
-<a href="#point-2d" class="anchor"></a>Point (2D)</h2>
+<div class="section level2">
+<h2 id="examples---contiguous-ragged-arrays">Examples - Contiguous Ragged Arrays<a class="anchor" aria-label="anchor" href="#examples---contiguous-ragged-arrays"></a>
+</h2>
+<div class="section level3">
+<h3 id="point-2d">Point (2D)<a class="anchor" aria-label="anchor" href="#point-2d"></a>
+</h3>
 <p>Well Known Text (WKT): <code>POINT (30 10)</code><br>
 Common Data Language (CDL):</p>
 <pre><code>netcdf sample_point {
@@ -284,10 +287,11 @@ data:
 }
   </code></pre>
 </div>
-<div id="linestring-2d" class="section level2">
-<h2 class="hasAnchor">
-<a href="#linestring-2d" class="anchor"></a>LineString (2D)</h2>
-<p>Well Known Text (WKT): <code>LINESTRING (30 10, 10 30, 40 40)</code><br>
+<div class="section level3">
+<h3 id="linestring-2d">LineString (2D)<a class="anchor" aria-label="anchor" href="#linestring-2d"></a>
+</h3>
+<p>Well Known Text (WKT):
+<code>LINESTRING (30 10, 10 30, 40 40)</code><br>
 Common Data Language (CDL):</p>
 <pre><code>netcdf sample_linestring {
 dimensions:
@@ -329,10 +333,11 @@ data:
 }
   </code></pre>
 </div>
-<div id="polygon-2d" class="section level2">
-<h2 class="hasAnchor">
-<a href="#polygon-2d" class="anchor"></a>Polygon (2D)</h2>
-<p>Well Known Text (WKT): <code>POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))</code><br>
+<div class="section level3">
+<h3 id="polygon-2d">Polygon (2D)<a class="anchor" aria-label="anchor" href="#polygon-2d"></a>
+</h3>
+<p>Well Known Text (WKT):
+<code>POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))</code><br>
 Common Data Language (CDL):</p>
 <pre><code>netcdf sample_polygon {
 dimensions:
@@ -374,10 +379,11 @@ data:
 }
   </code></pre>
 </div>
-<div id="multilinestring-2d" class="section level2">
-<h2 class="hasAnchor">
-<a href="#multilinestring-2d" class="anchor"></a>MultiLineString (2D)</h2>
-<p>Well Known Text (WKT): <code>MULTILINESTRING ((10 10, 20 20, 10 40), (40 40, 30 30, 40 20, 30 10))</code><br>
+<div class="section level3">
+<h3 id="multilinestring-2d">MultiLineString (2D)<a class="anchor" aria-label="anchor" href="#multilinestring-2d"></a>
+</h3>
+<p>Well Known Text (WKT):
+<code>MULTILINESTRING ((10 10, 20 20, 10 40), (40 40, 30 30, 40 20, 30 10))</code><br>
 Common Data Language (CDL):</p>
 <pre><code>netcdf sample_multilinestring {
 dimensions:
@@ -425,10 +431,11 @@ data:
 }
   </code></pre>
 </div>
-<div id="multipolygon-2d" class="section level2">
-<h2 class="hasAnchor">
-<a href="#multipolygon-2d" class="anchor"></a>MultiPolygon (2D)</h2>
-<p>Well Known Text (WKT): <code>MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, 40 10, 10 20, 5 10, 15 5)))</code><br>
+<div class="section level3">
+<h3 id="multipolygon-2d">MultiPolygon (2D)<a class="anchor" aria-label="anchor" href="#multipolygon-2d"></a>
+</h3>
+<p>Well Known Text (WKT):
+<code>MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, 40 10, 10 20, 5 10, 15 5)))</code><br>
 Common Data Language (CDL):</p>
 <pre><code>netcdf sample_multipolygon {
 dimensions:
@@ -481,10 +488,11 @@ data:
 }
   </code></pre>
 </div>
-<div id="polygon-with-one-interior-ring-2d" class="section level2">
-<h2 class="hasAnchor">
-<a href="#polygon-with-one-interior-ring-2d" class="anchor"></a>Polygon with One Interior Ring (2D)</h2>
-<p>Well Known Text (WKT): <code>POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10), (20 30, 35 35, 30 20, 20 30))</code><br>
+<div class="section level3">
+<h3 id="polygon-with-one-interior-ring-2d">Polygon with One Interior Ring (2D)<a class="anchor" aria-label="anchor" href="#polygon-with-one-interior-ring-2d"></a>
+</h3>
+<p>Well Known Text (WKT):
+<code>POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10), (20 30, 35 35, 30 20, 20 30))</code><br>
 Common Data Language (CDL):</p>
 <pre><code>netcdf sample_polygon_hole {
 dimensions:
@@ -537,10 +545,11 @@ data:
 }
   </code></pre>
 </div>
-<div id="multipolygon-with-one-interior-ring-2d" class="section level2">
-<h2 class="hasAnchor">
-<a href="#multipolygon-with-one-interior-ring-2d" class="anchor"></a>MultiPolygon with One Interior Ring (2D)</h2>
-<p>Well Known Text (WKT): <code>MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 10 30, 10 10, 30 5, 45 20, 20 35), (30 20, 20 15, 20 25, 30 20)))</code><br>
+<div class="section level3">
+<h3 id="multipolygon-with-one-interior-ring-2d">MultiPolygon with One Interior Ring (2D)<a class="anchor" aria-label="anchor" href="#multipolygon-with-one-interior-ring-2d"></a>
+</h3>
+<p>Well Known Text (WKT):
+<code>MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)), ((20 35, 10 30, 10 10, 30 5, 45 20, 20 35), (30 20, 20 15, 20 25, 30 20)))</code><br>
 Common Data Language (CDL):</p>
 <pre><code>netcdf sample_multipolygon_hole {
 dimensions:
@@ -593,10 +602,11 @@ data:
 }
   </code></pre>
 </div>
-<div id="multiple-multipolygons-with-interior-rings-2d" class="section level2">
-<h2 class="hasAnchor">
-<a href="#multiple-multipolygons-with-interior-rings-2d" class="anchor"></a>Multiple MultiPolygons with Interior Rings (2D)</h2>
-<p>Well Known Text (WKT): <code>MULTIPOLYGON(((0 0, 20 0, 20 20, 0 20, 0 0), (1 1, 10 5, 19 1, 1 1), (5 15, 7 19, 9 15, 5 15), (11 15, 13 19, 15 15, 11 15)), ((5 25, 9 25, 7 29, 5 25)), ((11 25, 15 25, 13 29, 11 25)))</code><br>
+<div class="section level3">
+<h3 id="multiple-multipolygons-with-interior-rings-2d">Multiple MultiPolygons with Interior Rings (2D)<a class="anchor" aria-label="anchor" href="#multiple-multipolygons-with-interior-rings-2d"></a>
+</h3>
+<p>Well Known Text (WKT):
+<code>MULTIPOLYGON(((0 0, 20 0, 20 20, 0 20, 0 0), (1 1, 10 5, 19 1, 1 1), (5 15, 7 19, 9 15, 5 15), (11 15, 13 19, 15 15, 11 15)), ((5 25, 9 25, 7 29, 5 25)), ((11 25, 15 25, 13 29, 11 25)))</code><br>
 Common Data Language (CDL):</p>
 <pre><code>netcdf sample_multipolygons_holes {
 dimensions:
@@ -665,11 +675,13 @@ data:
 
 
       <footer><div class="copyright">
-  <p>Developed by David Blodgett.</p>
+  <p></p>
+<p>Developed by David Blodgett.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -677,6 +689,8 @@ data:
 
   
 
+
+  
 
   </body>
 </html>

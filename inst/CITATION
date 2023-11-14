@@ -1,7 +1,7 @@
 citHeader("To cite ncdfgeom in publications, please use:")
 
 bibentry(bibtype = "Manual",
-         author = personList(
+         author = c(
            as.person("David Blodgett"),
            as.person("Luke Winslow")
          ),
