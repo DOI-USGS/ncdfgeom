@@ -236,12 +236,11 @@ test_that("big roundtrip", {
                                  overwrite = TRUE)
   
   sf::st_geometry(climdiv_poly)[[1]] <- sf::st_cast(sf::st_geometry(climdiv_poly)[[1]], "POLYGON")
-  climdiv_poly <- sf::st_cast(climdiv_poly, "GEOMETRY")
   
   expect_error(write_geometry(out_nc, climdiv_poly, variables = "climdiv_prcp_inches"),
                "Found multiple geometry types, only one is supported.")
   
-  climdiv_poly <- st_sf(st_cast(climdiv_poly, "MULTIPOLYGON"))
+  sf::st_geometry(climdiv_poly)[[1]] <- sf::st_cast(sf::st_geometry(climdiv_poly)[[1]], "MULTIPOLYGON")
   
   expect_warning(out_nc <- write_geometry(out_nc, climdiv_poly, variables = "climdiv_prcp_inches"),
                  "no datum information found assuming WGS84")
