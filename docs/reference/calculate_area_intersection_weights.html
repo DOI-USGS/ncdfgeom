@@ -78,7 +78,7 @@ in y. These can be used as the weights in an area-weighted
 mean overlay analysis where x is the data source and area-
 weighted means are being generated for the target, y.</p>
 <p>This function is a lightwieght wrapper around the functions
-aw_intersect aw_total and aw_weight
+<a href="https://slu-openGIS.github.io/areal/reference/aw_intersect.html" class="external-link">aw_intersect</a> <a href="https://slu-openGIS.github.io/areal/reference/aw_total.html" class="external-link">aw_total</a> and <a href="https://slu-openGIS.github.io/areal/reference/aw_weight.html" class="external-link">aw_weight</a>
 from the <a href="https://chris-prener.github.io/areal/" class="external-link">areal package</a>.</p>
     </div>
 
@@ -138,11 +138,7 @@ w will be 1. If a feature from x is 50<!-- % in one feature for y and 50% in ano
 <span class="r-in"><span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_agr.html" class="external-link">st_agr</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_agr.html" class="external-link">st_agr</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"constant"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">a_b</span> <span class="op">&lt;-</span> <span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: areal</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in calculate_area_intersection_weights(a, b):</span> areal package required for intersection weights</span>
 <span class="r-in"><span><span class="va">b_a</span> <span class="op">&lt;-</span> <span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">b</span>, <span class="va">a</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: areal</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in calculate_area_intersection_weights(b, a):</span> areal package required for intersection weights</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
