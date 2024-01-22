@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.6</span>
       </span>
     </div>
 
@@ -146,7 +146,7 @@ polygon data to the NetCDF file.</p>
 <span>                         instance_dim_name <span class="op">=</span> <span class="st">"station"</span>, </span>
 <span>                         variables <span class="op">=</span> <span class="va">vars</span><span class="op">$</span><span class="va">name</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">example_file</span></span></code></pre></div>
 <p>Now the NetCDF file looks like:</p>
-<pre><code><span><span class="co">#&gt; netcdf file7c48596274b7 {</span></span>
+<pre><code><span><span class="co">#&gt; netcdf file54e837436ac1 {</span></span>
 <span><span class="co">#&gt; dimensions:</span></span>
 <span><span class="co">#&gt;  maxStrlen64 = 64 ;</span></span>
 <span><span class="co">#&gt;  station = 2 ;</span></span>
@@ -453,9 +453,9 @@ variables:
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
         geometry_container:geometry_type = "polygon" ;
         geometry_container:node_count = "node_count" ;
-        geometry_container:part_node_count = "part_node_count" ;
         geometry_container:interior_ring = "interior_ring" ;
         geometry_container:grid_mapping = "grid_mapping" ;
+        geometry_container:part_node_count = "part_node_count" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
     int part_node_count(part) ;
@@ -510,9 +510,9 @@ variables:
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
         geometry_container:geometry_type = "polygon" ;
         geometry_container:node_count = "node_count" ;
-        geometry_container:part_node_count = "part_node_count" ;
         geometry_container:interior_ring = "interior_ring" ;
         geometry_container:grid_mapping = "grid_mapping" ;
+        geometry_container:part_node_count = "part_node_count" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
     int part_node_count(part) ;
@@ -567,9 +567,9 @@ variables:
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
         geometry_container:geometry_type = "polygon" ;
         geometry_container:node_count = "node_count" ;
-        geometry_container:part_node_count = "part_node_count" ;
         geometry_container:interior_ring = "interior_ring" ;
         geometry_container:grid_mapping = "grid_mapping" ;
+        geometry_container:part_node_count = "part_node_count" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
     int part_node_count(part) ;
@@ -624,9 +624,9 @@ variables:
         geometry_container:node_coordinates = "x_nodes y_nodes" ;
         geometry_container:geometry_type = "polygon" ;
         geometry_container:node_count = "node_count" ;
-        geometry_container:part_node_count = "part_node_count" ;
         geometry_container:interior_ring = "interior_ring" ;
         geometry_container:grid_mapping = "grid_mapping" ;
+        geometry_container:part_node_count = "part_node_count" ;
     int node_count(instance) ;
         node_count:long_name = "count of coordinates in each instance geometry" ;
     int part_node_count(part) ;

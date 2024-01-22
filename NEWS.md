@@ -1,3 +1,8 @@
+1.1.6
+==========
+* remove geoknife as suggested package
+* reduce installed package size
+
 1.1.5
 ==========
 * update URLs for new repository.
