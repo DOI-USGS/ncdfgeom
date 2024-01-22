@@ -91,10 +91,8 @@ get_sample_timeseries_data <- function() {
   lons<-lon_lat[,"X"]
   alts<-rep(1,length(lats))
   
-  local_file <- system.file("extdata/yahara_alb_gdp_file.csv", 
-                            package = "ncdfgeom")
-  all_data <- geoknife::parseTimeseries(local_file,
-                                        delim=',', with.units=TRUE)
+  all_data <- readRDS(system.file('extdata/yahara_alb_gdp_file.rds', package = "ncdfgeom"))
+  
   var_data <- all_data[2:(ncol(all_data)-3)]
   
   units <- all_data$units[1]
