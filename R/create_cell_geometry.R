@@ -20,7 +20,14 @@
 #' @importFrom stars st_as_stars st_dimensions
 #' @export
 #' @examples
-#' nc <- RNetCDF::open.nc(system.file("extdata/metdata.nc", package = "ncdfgeom"))
+#' dir <- tempdir()
+#' ncf <- file.path(dir, "metdata.nc") 
+#' 
+#' try(zip::unzip(system.file("extdata/metdata.zip", package = "ncdfgeom"), exdir = dir))
+#' 
+#' if(file.exists(ncf)) {
+#' 
+#' nc <- RNetCDF::open.nc(ncf)
 #' ncmeta::nc_vars(nc)
 #' variable_name <- "precipitation_amount"
 #' cv <- ncmeta::nc_coord_var(nc, variable_name)
@@ -37,6 +44,8 @@
 #'
 #' plot(sf::st_geometry(cell_geometry), lwd = 0.25)
 #' plot(sf::st_transform(sf::st_geometry(geom), prj), add = TRUE)
+#' 
+#' }
 #'
 create_cell_geometry <- function(X_coords, Y_coords, prj,
                                  geom = NULL, buffer_dist = 0,
