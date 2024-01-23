@@ -1,5 +1,6 @@
+testthat::skip_if_not(require(ncdf4))
+
 library(RNetCDF)
-library(ncdf4)
 library(sf)
 
 check_geom <- function(data, returndata) {
