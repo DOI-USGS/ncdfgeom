@@ -86,7 +86,7 @@ write_geometry = function(nc_file, geom_data, instance_dim_name = NULL, variable
 #' @importFrom stats setNames
 #' @importFrom sf st_geometry_type st_crs st_coordinates st_zm
 #' @noRd
-write_geom_data <- function(geom_data, ...)
+write_geom_data <- function(geom_data, nc_file, instance_dim_name, variables = c())
   UseMethod("write_geom_data")
 
 #' @noRd
