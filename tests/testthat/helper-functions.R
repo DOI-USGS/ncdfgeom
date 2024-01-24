@@ -1,5 +1,4 @@
-testthat::skip_if_not(require(ncdf4))
-
+require(ncdf4)
 library(RNetCDF)
 library(sf)
 

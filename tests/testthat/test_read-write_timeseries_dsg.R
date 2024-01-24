@@ -1,7 +1,7 @@
 context("orthogonal netcdf timeseries")
 
 test_that("Create basic DSG file", {
-  
+  testthat::skip_if_not(require("ncdf4"))
   # NOTE: this code has been moved to helper files but was left here to not mess with it.
   nc_file<-tempfile(fileext = ".nc")
   nc_summary<-'test summary'
@@ -342,6 +342,7 @@ test_that("Create basic DSG file", {
 })
 
 test_that('soilmoisturetools data writes as expected', {
+  testthat::skip_if_not(require("ncdf4"))
   ok<-readRDS("data/soilmoisturetools/ok.rds")
   ok_meta<-readRDS("data/soilmoisturetools/ok_meta.rds")
   attributes <- list(

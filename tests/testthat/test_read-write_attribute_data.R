@@ -2,6 +2,7 @@
 context("instance attributes")
 
 test_that("A dataframe can be round tripped to netCDF.", {
+  testthat::skip_if_not(require("ncdf4"))
   dataFrame <- sf::st_set_geometry(sf::read_sf("data/NHDLine/NHDLine.shp"), NULL)
   units<-c("unitless","date","unitless","unitless","unitless","km","unitless","unitless","unknown")
   nc_file <- write_attribute_data(nc_file=tempfile(), att_data = dataFrame, instance_dim_name = "instance", units = units)
@@ -23,6 +24,7 @@ test_that("A dataframe can be round tripped to netCDF.", {
   })
 
 test_that("instance data can be added to an existing netcdf file.", {
+  testthat::skip_if_not(require("ncdf4"))
 	hucPolygons <- read_sf(system.file('extdata','example_huc_eta.json', package = 'ncdfgeom'))
 	hucPolygons <- st_set_geometry(hucPolygons, NULL)
 	outFile <- tempfile()

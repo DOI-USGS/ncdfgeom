@@ -1,6 +1,7 @@
 context("line")
 
 test_that("linedata works", {
+  testthat::skip_if_not(require("ncdf4"))
   lineData <- get_fixture_data("linestring")
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = lineData)
   nc<-nc_open(nc_file)
@@ -16,6 +17,7 @@ test_that("linedata works", {
 })
 
 test_that("multiLine data works", {
+  testthat::skip_if_not(require("ncdf4"))
   lineData <- get_fixture_data("multilinestring")
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = lineData)
   nc<-nc_open(nc_file)
@@ -34,6 +36,7 @@ test_that("multiLine data works", {
 })
 
 test_that("multiline data frame works", {
+  testthat::skip_if_not(require("ncdf4"))
   lineData <- get_fixture_data("multilinestring")
   testdata<-as.data.frame(list("name"=c("test_name"), "id"=c(1)), stringsAsFactors = FALSE)
   lineData <- sf::st_sf(dplyr::bind_cols(lineData, testdata))
@@ -46,6 +49,7 @@ test_that("multiline data frame works", {
 })
 
 test_that("shapefile line data works", {
+  testthat::skip_if_not(require("ncdf4"))
   lineData <- sf::st_zm(sf::read_sf("data/NHDLine/NHDLine.shp"))
   nc_file <- write_geometry(nc_file=tempfile(), 
                       geom_data = lineData)

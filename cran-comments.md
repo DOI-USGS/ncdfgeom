@@ -5,3 +5,4 @@
 
 ## Comment
 * removed geoknife as suggested package
+* avoid ncdf4 tests if not installed
