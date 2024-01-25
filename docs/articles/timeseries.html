@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.6</span>
       </span>
     </div>
 
@@ -105,9 +105,12 @@
 <p>We now have vectors of latitudes, longitudes, altitudes for each of
 our time series.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">timeseries_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata/yahara_alb_gdp_file.csv'</span>, package <span class="op">=</span> <span class="st">"ncdfgeom"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="co"># can use geoknife from github</span></span>
+<span><span class="co"># timeseries_file &lt;- system.file('extdata/yahara_alb_gdp_file.csv', package = "ncdfgeom")</span></span>
+<span><span class="co"># raw_data &lt;- geoknife::parseTimeseries(timeseries_file, delim=',', with.units=TRUE)</span></span>
 <span></span>
-<span><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu">geoknife</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/geoknife/man/parseTimeseries.html" class="external-link">parseTimeseries</a></span><span class="op">(</span><span class="va">timeseries_file</span>, delim<span class="op">=</span><span class="st">','</span>, with.units<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'extdata/yahara_alb_gdp_file.rds'</span>, package <span class="op">=</span> <span class="st">"ncdfgeom"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">timeseries_data</span> <span class="op">&lt;-</span> <span class="va">raw_data</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">)</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>

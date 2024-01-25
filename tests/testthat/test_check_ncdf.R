@@ -28,6 +28,7 @@ test_that("line", {
 })
 
 test_that("multi polygon holes", {
+  testthat::skip_if_not(require("ncdf4"))
   polygonData <- get_fixture_data("multipolygons_holes")
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
@@ -41,6 +42,7 @@ test_that("multi polygon holes", {
 })
 
 test_that("polygon", {
+  testthat::skip_if_not(require("ncdf4"))
   polygonData <- get_fixture_data("polygon")
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
@@ -54,6 +56,7 @@ test_that("polygon", {
 })
 
 test_that("basic point works", {
+  testthat::skip_if_not(require("ncdf4"))
   pointData <- get_fixture_data("point")
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = pointData)
   nc<-nc_open(nc_file)
@@ -64,6 +67,7 @@ test_that("basic point works", {
 })
 
 test_that("a crs gets found correctly", {
+  testthat::skip_if_not(require("ncdf4"))
   polygonData <- sf::read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp")
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
@@ -82,6 +86,7 @@ test_that("a crs gets found correctly", {
 })
 
 test_that("errors", {
+  testthat::skip_if_not(require("ncdf4"))
   pointData <- get_fixture_data("point")
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = pointData)
   nc <- nc_open(nc_file, write = TRUE)

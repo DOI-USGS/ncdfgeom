@@ -4,5 +4,5 @@
 * local windows
 
 ## Comment
-* change urls to new repository.
-* removed use of deprecated pillars print argument.
+* removed geoknife as suggested package
+* avoid ncdf4 tests if not installed

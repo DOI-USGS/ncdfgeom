@@ -38,7 +38,14 @@ Intersection is performed with cell centers then geometry is constructed.
 A buffer may be required to fully cover geometry with cells.
 }
 \examples{
-nc <- RNetCDF::open.nc(system.file("extdata/metdata.nc", package = "ncdfgeom"))
+dir <- tempdir()
+ncf <- file.path(dir, "metdata.nc") 
+
+try(zip::unzip(system.file("extdata/metdata.zip", package = "ncdfgeom"), exdir = dir))
+
+if(file.exists(ncf)) {
+
+nc <- RNetCDF::open.nc(ncf)
 ncmeta::nc_vars(nc)
 variable_name <- "precipitation_amount"
 cv <- ncmeta::nc_coord_var(nc, variable_name)
@@ -55,5 +62,7 @@ cell_geometry <- create_cell_geometry(x, y, prj, geom, 0)
 
 plot(sf::st_geometry(cell_geometry), lwd = 0.25)
 plot(sf::st_transform(sf::st_geometry(geom), prj), add = TRUE)
+
+}
 
 }
