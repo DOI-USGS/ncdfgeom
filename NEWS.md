@@ -1,3 +1,7 @@
+1.2.0
+==========
+* calculate_area_intersection_weights() now supports normalized weights
+
 1.1.6
 ==========
 * remove geoknife as suggested package

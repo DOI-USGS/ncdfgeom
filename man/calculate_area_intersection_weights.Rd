@@ -11,7 +11,7 @@ calculate_area_intersection_weights(x, y, normalize, allow_lonlat = FALSE)
 
 \item{y}{sf data.frame target features including one geometry column and one identifier column}
 
-\item{normalize}{logical return normalized weights or not}
+\item{normalize}{logical return normalized weights or not. See details and examples.}
 
 \item{allow_lonlat}{boolean If FALSE (the default) lon/lat target features are not allowed.
 Intersections in lon/lat are generally not valid and problematic at the international date line.}
@@ -68,6 +68,8 @@ calculate_area_intersection_weights(a, b, normalize = TRUE)
 calculate_area_intersection_weights(b, a, normalize = FALSE)
 calculate_area_intersection_weights(b, a, normalize = TRUE)
 
+#a more typical arrangement of polygons
+
 b1 = sf::st_polygon(list(rbind(c(-1,-1), c(1,-1),
                            c(1,1), c(-1,1),
                            c(-1,-1))))
@@ -99,26 +101,16 @@ sf::st_agr(a) <- sf::st_agr(b) <- "constant"
 
 dplyr::summarize(dplyr::group_by(a_b, ida), w = sum(w))
 
-# set.seed for sanity
-set.seed(10)
-
-# make some random data and area get it ready to map
-x <- dplyr::tibble(ida = unique(a_b$ida), 
-                   val = sample(1:1000, size = length(unique(a_b$ida)), 
-                                replace = TRUE)) |>
+# We can apply these weights like...
+dplyr::tibble(ida = unique(a_b$ida), 
+                   val = c(1, 2, 3, 4)) |>
   dplyr::left_join(a_b, by = "ida") |>
   dplyr::mutate(val = ifelse(is.na(w), NA, val),
-                areasqkm = ifelse(is.na(w), NA, areasqkm))
-
-# apply area weighted with mutate rather than summarize for checking.
-# w is the fraction of the WU huc that is in each ms huc
-y <- x |>
-  dplyr::group_by(ms_huc12) |>
-  dplyr::mutate(new_val = 
-                  sum( (val * w * areasqkm), na.rm = TRUE ) 
-                /
-                  sum(w * areasqkm) )
-
+                areasqkm = 1.5 ^ 2) |> # area of each polygon in `a`
+  dplyr::group_by(idb) |> # group so we get one row per `b`
+  # now we weight by the percent of the area from each polygon in `b` per polygon in `a`
+  dplyr::summarize(new_val = sum( (val * w * areasqkm), na.rm = TRUE ) / sum(w * areasqkm))
+  
 # we can go in reverse if we had data from b that we want sampled to a
 
 (b_a <- calculate_area_intersection_weights(b, a, normalize = FALSE))
@@ -128,15 +120,25 @@ y <- x |>
 dplyr::summarize(dplyr::group_by(b_a, idb), w = sum(w))
 
 # with `normalize = TRUE`, `w` will sum to 1 when the target 
-# completely covers the source rather than when the source completly
+# completely covers the source rather than when the source completely
 # covers the target. 
 
 (a_b <- calculate_area_intersection_weights(a, b, normalize = TRUE))
 
-dplyr::summarize(dplyr::group_by(a_b, ida), w = sum(w))
+dplyr::summarize(dplyr::group_by(a_b, idb), w = sum(w))
 
 (b_a <- calculate_area_intersection_weights(b, a, normalize = TRUE))
 
-dplyr::summarize(dplyr::group_by(b_a, idb), w = sum(w))
+dplyr::summarize(dplyr::group_by(b_a, ida), w = sum(w))
+
+# We can apply these weights like...
+# Note that we don't need area in the normalized case
+dplyr::tibble(ida = unique(a_b$ida), 
+                   val = c(1, 2, 3, 4)) |>
+  dplyr::left_join(a_b, by = "ida") |>
+  dplyr::mutate(val = ifelse(is.na(w), NA, val)) |>
+  dplyr::group_by(idb) |> # group so we get one row per `b`
+  # now we weight by the percent of the area from each polygon in `b` per polygon in `a`
+  dplyr::summarize(new_val = sum( (val * w), na.rm = TRUE ))
 
 }
