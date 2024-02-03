@@ -24,7 +24,7 @@ from the areal package."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ncdfgeom</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.0</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@ from the <a href="https://chris-prener.github.io/areal/" class="external-link">a
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, allow_lonlat <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">normalize</span>, allow_lonlat <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -96,6 +96,10 @@ from the <a href="https://chris-prener.github.io/areal/" class="external-link">a
 <dd><p>sf data.frame target features including one geometry column and one identifier column</p></dd>
 
 
+<dt>normalize</dt>
+<dd><p>logical return normalized weights or not. See details and examples.</p></dd>
+
+
 <dt>allow_lonlat</dt>
 <dd><p>boolean If FALSE (the default) lon/lat target features are not allowed.
 Intersections in lon/lat are generally not valid and problematic at the international date line.</p></dd>
@@ -106,11 +110,17 @@ Intersections in lon/lat are generally not valid and problematic at the internat
     
 
 <p>data.frame containing fraction of each feature in x that is
-covered by each feature in y. e.g. If a feature from x is entirely within a feature in y,
-w will be 1. If a feature from x is 50<!-- % in one feature for y and 50% in another, there --></p>
-
-
-<p>will be two rows, one for each x/y pair of features with w = 0.5 in each.</p>
+covered by each feature in y.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Two versions of weights are available:</p>
+<p>`normalize = FALSE`, if a polygon from x is entirely within a polygon in y,
+w will be 1. If a polygon from x is 50<!-- % in one polygon from y and 50% in another, there -->
+will be two rows, one for each x/y pair of features with w = 0.5 in each. Weights
+will sum to 1 per SOURCE polygon if the target polygons fully cover that feature.
+`normalize = TRUE`, weights are divided by the target polygon area such that weights
+sum to 1 per TARGET polygon if the target polygon is fully covered by source polygons.</p>
     </div>
 
     <div id="ref-examples">
@@ -137,8 +147,204 @@ w will be 1. If a feature from x is 50<!-- % in one feature for y and 50% in ano
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_agr.html" class="external-link">st_agr</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_agr.html" class="external-link">st_agr</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"constant"</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">a_b</span> <span class="op">&lt;-</span> <span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">b_a</span> <span class="op">&lt;-</span> <span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">b</span>, <span class="va">a</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span>, normalize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ida   idb     w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     1 1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     2 0.5  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     3 0.375</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3     3 0.625</span>
+<span class="r-in"><span><span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ida   idb     w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     1 1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     2 1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2     3 0.375</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3     3 0.625</span>
+<span class="r-in"><span><span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">b</span>, <span class="va">a</span>, normalize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     idb   ida     w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     1  0.64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     2  0.32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     2  0.24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3     3  0.4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     4    <span style="color: #BB0000;">NA</span> <span style="color: #BB0000;">NA</span>   </span>
+<span class="r-in"><span><span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">b</span>, <span class="va">a</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     idb   ida      w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     1  1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     2  0.571</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     2  0.429</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3     3  1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     4    <span style="color: #BB0000;">NA</span> <span style="color: #BB0000;">NA</span>    </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#a more typical arrangement of polygons</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">b1</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st.html" class="external-link">st_polygon</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                           <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                           <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">b2</span> <span class="op">=</span> <span class="va">b1</span> <span class="op">+</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="va">b3</span> <span class="op">=</span> <span class="va">b1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">b4</span> <span class="op">=</span> <span class="va">b1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">b</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">st_sfc</a></span><span class="op">(</span><span class="va">b1</span>, <span class="va">b2</span>, <span class="va">b3</span>, <span class="va">b4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">a1</span> <span class="op">=</span> <span class="va">b1</span> <span class="op">*</span> <span class="fl">0.75</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">.25</span>, <span class="op">-</span><span class="fl">.25</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">a2</span> <span class="op">=</span> <span class="va">a1</span> <span class="op">+</span> <span class="fl">1.5</span></span></span>
+<span class="r-in"><span><span class="va">a3</span> <span class="op">=</span> <span class="va">a1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">a4</span> <span class="op">=</span> <span class="va">a1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sfc.html" class="external-link">st_sfc</a></span><span class="op">(</span><span class="va">a1</span>,<span class="va">a2</span>,<span class="va">a3</span>, <span class="va">a4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">b</span>, border <span class="op">=</span> <span class="st">'red'</span>, lwd <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">a</span>, border <span class="op">=</span> <span class="st">'green'</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="calculate_area_intersection_weights-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span><span class="fl">5070</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="va">b</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>idb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="va">a</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>ida <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"d"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_agr.html" class="external-link">st_agr</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_agr.html" class="external-link">st_agr</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"constant"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># say we have data from `a` that we want sampled to `b`.</span></span></span>
+<span class="r-in"><span><span class="co"># this gives the percent of each `a` that intersects each `b`</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">a_b</span> <span class="op">&lt;-</span> <span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span>, normalize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ida     idb     w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> a         1 1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> b         1 0.111</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> c         1 0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> d         1 0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> b         2 0.444</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> b         3 0.222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> c         3 0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> b         4 0.222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> d         4 0.667</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># note that `w` sums to 1 where `b` completely covers `a`.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">a_b</span>, <span class="va">ida</span><span class="op">)</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ida       w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> a         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> b         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> c         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> d         1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># We can apply these weights like...</span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>ida <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">a_b</span><span class="op">$</span><span class="va">ida</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>                   val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">a_b</span>, by <span class="op">=</span> <span class="st">"ida"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span>, <span class="cn">NA</span>, <span class="va">val</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                areasqkm <span class="op">=</span> <span class="fl">1.5</span> <span class="op">^</span> <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># area of each polygon in `a`</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">idb</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># group so we get one row per `b`</span></span></span>
+<span class="r-in"><span>  <span class="co"># now we weight by the percent of the area from each polygon in `b` per polygon in `a`</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>new_val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span> <span class="op">(</span><span class="va">val</span> <span class="op">*</span> <span class="va">w</span> <span class="op">*</span> <span class="va">areasqkm</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span> <span class="op">*</span> <span class="va">areasqkm</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     idb new_val</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1    2   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2    2   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3    2.75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     4    3.5 </span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="co"># we can go in reverse if we had data from b that we want sampled to a</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">b_a</span> <span class="op">&lt;-</span> <span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">b</span>, <span class="va">a</span>, normalize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     idb ida        w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1 a     0.562 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1 b     0.062<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2 b     0.25  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3 b     0.125 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     4 b     0.125 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1 c     0.188 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span>     3 c     0.375 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span>     1 d     0.188 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span>     4 d     0.375 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># note that `w` sums to 1 only where `a` complete covers `b`</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">b_a</span>, <span class="va">idb</span><span class="op">)</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     idb     w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1  1   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2  0.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3  0.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     4  0.5 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># with `normalize = TRUE`, `w` will sum to 1 when the target </span></span></span>
+<span class="r-in"><span><span class="co"># completely covers the source rather than when the source completely</span></span></span>
+<span class="r-in"><span><span class="co"># covers the target. </span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">a_b</span> <span class="op">&lt;-</span> <span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ida     idb      w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> a         1 0.562 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> b         1 0.062<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> c         1 0.188 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> d         1 0.188 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> b         2 1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> b         3 0.25  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> c         3 0.75  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> b         4 0.25  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> d         4 0.75  </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">a_b</span>, <span class="va">idb</span><span class="op">)</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     idb     w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     4     1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">b_a</span> <span class="op">&lt;-</span> <span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">b</span>, <span class="va">a</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     idb ida       w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1 a     1    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     1 b     0.111</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     2 b     0.444</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     3 b     0.222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>     4 b     0.222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>     1 c     0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span>     3 c     0.667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span>     1 d     0.333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span>     4 d     0.667</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">b_a</span>, <span class="va">ida</span><span class="op">)</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ida       w</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> a         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> b         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> c         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> d         1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># We can apply these weights like...</span></span></span>
+<span class="r-in"><span><span class="co"># Note that we don't need area in the normalized case</span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>ida <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">a_b</span><span class="op">$</span><span class="va">ida</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>                   val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">a_b</span>, by <span class="op">=</span> <span class="st">"ida"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span>, <span class="cn">NA</span>, <span class="va">val</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">idb</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># group so we get one row per `b`</span></span></span>
+<span class="r-in"><span>  <span class="co"># now we weight by the percent of the area from each polygon in `b` per polygon in `a`</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>new_val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span> <span class="op">(</span><span class="va">val</span> <span class="op">*</span> <span class="va">w</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     idb new_val</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>     1    2   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>     2    2   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>     3    2.75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>     4    3.5 </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
