@@ -11,7 +11,7 @@ BugReports: https://github.com/DOI-USGS/ncdfgeom/issues
 Imports: RNetCDF, ncmeta, sf, dplyr, methods, stars, areal
 Depends:
   R (>= 3.5)
-Suggests: testthat, knitr, rmarkdown, pkgdown, jsonlite, zip, ncdf4
+Suggests: testthat, knitr, rmarkdown, pkgdown, jsonlite, zip, ncdf4, nhdplusTools
 License: CC0
 Encoding: UTF-8
 VignetteBuilder: knitr
