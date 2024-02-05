@@ -1,0 +1,92 @@
+---
+title: "Area Weight Generation for Polygon Intersections"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Area Weight Generation for Polygon Intersections}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup_1, include = FALSE}
+local <- (Sys.getenv("BUILD_VIGNETTES") == "TRUE")
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval=local,
+  fig.width=6, 
+  fig.height=4
+)
+
+library(ncdfgeom)
+
+if(!require(nhdplusTools)) {
+  warning("need nhdplusTools for this demo")
+  knitr::opts_chunk$set(eval = FALSE)
+}
+
+org_options <- options(scipen = 9999)
+```
+
+This article demonstrates how to create area weights for two sets of polygons.
+
+[It is a comparison with the `gdptools` python package demonstration here.](https://gdptools.readthedocs.io/en/latest/Examples/PolyToPoly/Updated_PolytoPoly_weights.html)
+
+See `calculate_area_intersection_weights()` for additional demonstration and info.
+
+```{r} 
+
+gdptools_weights <- read.csv(system.file("extdata/gdptools_prl_out.csv", package = "ncdfgeom"), 
+                             colClasses = c("character", "character", "numeric"))
+
+gdptools_weights <- dplyr::rename(gdptools_weights, gdptools_wght = wght)
+
+gage_id <- "USGS-01482100"
+basin <- nhdplusTools::get_nldi_basin(list(featureSource = "nwissite", featureId = gage_id))
+huc08 <- nhdplusTools::get_huc(id = na.omit(unique(gdptools_weights$huc8)), type = "huc08")
+huc12 <- nhdplusTools::get_huc(id = na.omit(unique(gdptools_weights$huc12)), type = "huc12")
+
+org_par <- par(mar = c(0, 0, 0, 0))
+plot(sf::st_as_sfc(sf::st_bbox(huc12)))
+plot(sf::st_geometry(basin), lwd = 4, add = TRUE)
+plot(sf::st_simplify(sf::st_geometry(huc08), dTolerance = 500), add = TRUE, lwd = 2)
+plot(sf::st_simplify(sf::st_geometry(huc12), dTolerance = 500), add = TRUE, lwd = 0.2, border = "grey")
+par(org_par)
+
+weights <- ncdfgeom::calculate_area_intersection_weights(
+  x = sf::st_transform(dplyr::select(huc12, huc12), 6931),
+  y = sf::st_transform(dplyr::select(huc08, huc8), 6931),
+  normalize = TRUE
+)
+
+weights <- dplyr::left_join(weights, gdptools_weights, by = c("huc8", "huc12"))
+
+```
+
+With weights calculated, we can do a little investigation into the differences.
+
+```{r}
+
+weights$diff <- weights$w - weights$w
+
+# make sure nothing is way out of whack
+max(weights$diff, na.rm = TRUE)
+
+# ensure the weights generally sum as we would expect.
+sum(weights$gdptools_wght, na.rm = TRUE)
+sum(weights$w, na.rm = TRUE)
+length(unique(na.omit(weights$huc8)))
+
+# see how many NA values we have in each.
+sum(is.na(weights$w))
+sum(is.na(weights$gdptools_wght))
+
+# look at cases where gptools has NA and ncdfgeom does not
+weights[is.na(weights$gdptools_wght),]
+
+```
+
+```{r cleanup, echo=FALSE}
+options(org_options)
+unlink("climdiv_prcp.nc")
+```
