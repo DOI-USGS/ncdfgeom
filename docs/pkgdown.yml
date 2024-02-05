@@ -4,6 +4,7 @@ pkgdown_sha: ~
 articles:
   geometry: geometry.html
   ncdfgeom: ncdfgeom.html
+  polygon_intersection: polygon_intersection.html
   timeseries: timeseries.html
-last_built: 2024-02-03T13:28Z
+last_built: 2024-02-05T14:38Z
 
