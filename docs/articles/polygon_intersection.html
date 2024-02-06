@@ -142,11 +142,11 @@ demonstration and info.</p>
 differences.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">weights</span><span class="op">$</span><span class="va">diff</span> <span class="op">&lt;-</span> <span class="va">weights</span><span class="op">$</span><span class="va">w</span> <span class="op">-</span> <span class="va">weights</span><span class="op">$</span><span class="va">w</span></span>
+<span><span class="va">weights</span><span class="op">$</span><span class="va">diff</span> <span class="op">&lt;-</span> <span class="va">weights</span><span class="op">$</span><span class="va">w</span> <span class="op">-</span> <span class="va">weights</span><span class="op">$</span><span class="va">gdptools_wght</span></span>
 <span></span>
 <span><span class="co"># make sure nothing is way out of whack</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">weights</span><span class="op">$</span><span class="va">diff</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
+<span><span class="co">#&gt; [1] 0.0000009205585</span></span>
 <span></span>
 <span><span class="co"># ensure the weights generally sum as we would expect.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">weights</span><span class="op">$</span><span class="va">gdptools_wght</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
