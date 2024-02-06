@@ -67,7 +67,7 @@ With weights calculated, we can do a little investigation into the differences.
 
 ```{r}
 
-weights$diff <- weights$w - weights$w
+weights$diff <- weights$w - weights$gdptools_wght
 
 # make sure nothing is way out of whack
 max(weights$diff, na.rm = TRUE)
