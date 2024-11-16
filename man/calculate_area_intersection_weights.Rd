@@ -60,6 +60,10 @@ sum to 1 per TARGET polygon if the target polygon is fully covered by source pol
 }
 \examples{
 
+library(dplyr)
+library(sf)
+library(ncdfgeom)
+
 g <- list(rbind(c(-1,-1), c(1,-1), c(1,1), c(-1,1), c(-1,-1)))
 
 a1 = sf::st_polygon(g) * 0.8
@@ -110,14 +114,10 @@ calculate_area_intersection_weights(b, a, normalize = FALSE)
 
 calculate_area_intersection_weights(b, a, normalize = TRUE)
 
-NOTE: normalize = TRUE so weights sum to 1 per target polygon. Non-overlap 
+# NOTE: normalize = TRUE so weights sum to 1 per target polygon. Non-overlap 
 # is ignored as if it does not exist.
 
 # a more typical arrangement of polygons
-
-library(dplyr)
-library(sf)
-library(ncdfgeom)
 
 g <- list(rbind(c(-1,-1), c(1,-1), c(1,1), 
                 c(-1,1), c(-1,-1)))
