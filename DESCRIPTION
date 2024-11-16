@@ -15,4 +15,4 @@ Suggests: testthat, knitr, rmarkdown, pkgdown, jsonlite, zip, ncdf4, nhdplusTool
 License: CC0
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

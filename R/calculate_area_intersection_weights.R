@@ -2,8 +2,8 @@
 #' @description Returns the fractional percent of each
 #' feature in x that is covered by each intersecting feature
 #' in y. These can be used as the weights in an area-weighted
-#' mean overlay analysis where x is the data source and area-
-#' weighted means are being generated for the target, y.
+#' mean overlay analysis where x is the data **source** and area-
+#' weighted means are being generated for the **target**, y.
 #'
 #' This function is a lightwieght wrapper around the functions
 #' \link[areal]{aw_intersect} \link[areal]{aw_total} and \link[areal]{aw_weight}
@@ -21,113 +21,192 @@
 #' 
 #' Two versions of weights are available: 
 #' 
-#' `normalize = FALSE`, if a polygon from x is entirely within a polygon in y,
-#' w will be 1. If a polygon from x is 50% in one polygon from y and 50% in another, there
-#' will be two rows, one for each x/y pair of features with w = 0.5 in each. Weights
-#' will sum to 1 per SOURCE polygon if the target polygons fully cover that feature.
-#' `normalize = TRUE`, weights are divided by the target polygon area such that weights
+#' If `normalize = FALSE`, if a polygon from x (source) is entirely within a polygon in y
+#'  (target), w will be 1. If a polygon from x (source) is 50% in one polygon from y (target) 
+#'  and 50% in another, there will be two rows, one for each x/y pair of features with w = 0.5 
+#'  in each. Weights will sum to 1 per **SOURCE** polygon if the target polygons fully cover that 
+#'  feature.
+#'  
+#'  For `normalize = FALSE` the area weighted mean calculation must include the area of each 
+#'  x (source) polygon as in:
+#'  
+#'  > *in this case, `area` is the area of source polygons and you would do this operation grouped 
+#'  by target polygon id.*
+#'
+#'  > `sum( (val * w * area), na.rm = TRUE ) / sum(w * area)`
+#'  
+#' If `normalize = TRUE`, weights are divided by the target polygon area such that weights
 #' sum to 1 per TARGET polygon if the target polygon is fully covered by source polygons.
+#' 
+#'  For `normalize = FALSE` the area weighted mean calculation no area is required
+#'  as in:
+#' 
+#'  > `sum( (val * w), na.rm = TRUE ) / sum(w)`
+#'
+#'  See examples for illustration of these two modes.
 #'
 #' @examples
-#' b1 = sf::st_polygon(list(rbind(c(-1,-1), c(1,-1),
-#'                            c(1,1), c(-1,1),
-#'                            c(-1,-1))))
+#' 
+#' g <- list(rbind(c(-1,-1), c(1,-1), c(1,1), c(-1,1), c(-1,-1)))
+#' 
+#' a1 = sf::st_polygon(g) * 0.8
+#' a2 = a1 + c(1, 2)
+#' a3 = a1 + c(-1, 2)
+#' 
+#' b1 = sf::st_polygon(g)
 #' b2 = b1 + 2
 #' b3 = b1 + c(-0.2, 2)
 #' b4 = b1 + c(2.2, 0)
-#' b = sf::st_sfc(b1, b2, b3, b4)
-#' a1 = b1 * 0.8
-#' a2 = a1 + c(1, 2)
-#' a3 = a1 + c(-1, 2)
+#' 
 #' a = sf::st_sfc(a1,a2,a3)
-#' plot(b, border = 'red')
-#' plot(a, border = 'green', add = TRUE)
-#'
-#' sf::st_crs(b) <- sf::st_crs(a) <- sf::st_crs(5070)
-#'
-#' b <- sf::st_sf(b, data.frame(idb = c(1, 2, 3, 4)))
+#' 
+#' b = sf::st_sfc(b1, b2, b3, b4)
+#' 
+#' plot(c(a,b), border = NA)
+#' plot(a, border = 'darkgreen', add = TRUE)
+#' plot(b, border = 'red', add = TRUE)
+#' 
 #' a <- sf::st_sf(a, data.frame(ida = c(1, 2, 3)))
+#' b <- sf::st_sf(b, data.frame(idb = c(7, 8, 9, 10)))
+#' 
+#' text(sapply(sf::st_geometry(a), \(x) mean(x[[1]][,1]) + 0.4),
+#'      sapply(sf::st_geometry(a), \(x) mean(x[[1]][,2]) + 0.3),
+#'      a$ida, col = "darkgreen")
+#'      
+#' text(sapply(sf::st_geometry(b), \(x) mean(x[[1]][,1]) + 0.4),
+#'      sapply(sf::st_geometry(b), \(x) mean(x[[1]][,2])),
+#'      b$idb, col = "red")
 #'
 #' sf::st_agr(a) <- sf::st_agr(b) <- "constant"
+#' sf::st_crs(b) <- sf::st_crs(a) <- sf::st_crs(5070)
 #'
 #' calculate_area_intersection_weights(a, b, normalize = FALSE)
+#' 
+#' # NOTE: normalize = FALSE so weights sum to 1 per source polygon 
+#' # when source is fully within target.
+#' 
 #' calculate_area_intersection_weights(a, b, normalize = TRUE)
+#' 
+#' # NOTE: normalize = TRUE so weights sum to 1 per target polygon. Non-overlap
+#' # is ignored as if it does not exist.
+#' 
 #' calculate_area_intersection_weights(b, a, normalize = FALSE)
+#' 
+#' # NOTE: normalize = FALSE so weights never sum to 1 since no source is fully
+#' # within target.
+#' 
 #' calculate_area_intersection_weights(b, a, normalize = TRUE)
 #' 
-#' #a more typical arrangement of polygons
+#' NOTE: normalize = TRUE so weights sum to 1 per target polygon. Non-overlap 
+#' # is ignored as if it does not exist.
 #' 
-#' b1 = sf::st_polygon(list(rbind(c(-1,-1), c(1,-1),
-#'                            c(1,1), c(-1,1),
-#'                            c(-1,-1))))
-#' b2 = b1 + 2
-#' b3 = b1 + c(0, 2)
-#' b4 = b1 + c(2, 0)
-#' b = sf::st_sfc(b1, b2, b3, b4)
-#' a1 = b1 * 0.75 + c(-.25, -.25)
+#' # a more typical arrangement of polygons
+#' 
+#' library(dplyr)
+#' library(sf)
+#' library(ncdfgeom)
+#' 
+#' g <- list(rbind(c(-1,-1), c(1,-1), c(1,1), 
+#'                 c(-1,1), c(-1,-1)))
+#' 
+#' a1 = st_polygon(g) * 0.75 + c(-.25, -.25)
 #' a2 = a1 + 1.5
 #' a3 = a1 + c(0, 1.5)
 #' a4 = a1 + c(1.5, 0)
-#' a = sf::st_sfc(a1,a2,a3, a4)
-#' plot(b, border = 'red', lwd = 3)
-#' plot(a, border = 'green', add = TRUE)
 #' 
-#' sf::st_crs(b) <- sf::st_crs(a) <- sf::st_crs(5070)
-#'
-#' b <- sf::st_sf(b, data.frame(idb = c(1, 2, 3, 4)))
-#' a <- sf::st_sf(a, data.frame(ida = c("a", "b", "c", "d")))
-#'
-#' sf::st_agr(a) <- sf::st_agr(b) <- "constant"
-#'
+#' b1 = st_polygon(g)
+#' b2 = b1 + 2
+#' b3 = b1 + c(0, 2)
+#' b4 = b1 + c(2, 0)
+#' 
+#' a = st_sfc(a1,a2, a3, a4)
+#' b = st_sfc(b1, b2, b3, b4)
+#' 
+#' b <- st_sf(b, data.frame(idb = c(1, 2, 3, 4)))
+#' a <- st_sf(a, data.frame(ida = c(6, 7, 8, 9)))
+#' 
+#' plot(st_geometry(b), border = 'red', lwd = 3)
+#' plot(st_geometry(a), border = 'darkgreen', lwd = 3, add = TRUE)
+#' 
+#' text(sapply(st_geometry(a), \(x) mean(x[[1]][,1]) + 0.4),
+#'      sapply(st_geometry(a), \(x) mean(x[[1]][,2]) + 0.3),
+#'      a$ida, col = "darkgreen")
+#' 
+#' text(sapply(st_geometry(b), \(x) mean(x[[1]][,1]) - 0.4),
+#'      sapply(st_geometry(b), \(x) mean(x[[1]][,2]) - 0.5),
+#'      b$idb, col = "red")
+#' 
+#' st_agr(a) <- st_agr(b) <- "constant"
+#' st_crs(b) <- st_crs(a) <- st_crs(5070)
+#' 
+#' a$val <- c(1, 2, 3, 4)
+#' a$a_areasqkm <- 1.5 ^ 2
+#' 
+#' plot(a["val"], reset = FALSE)
+#' plot(st_geometry(b), border = 'red', lwd = 3, add = TRUE, reset = FALSE)
+#' plot(st_geometry(a), border = 'darkgreen', lwd = 3, add = TRUE)
+#' 
+#' text(sapply(st_geometry(a), \(x) mean(x[[1]][,1]) + 0.4),
+#'      sapply(st_geometry(a), \(x) mean(x[[1]][,2]) + 0.3),
+#'      a$ida, col = "darkgreen")
+#' 
+#' text(sapply(st_geometry(b), \(x) mean(x[[1]][,1]) - 0.4),
+#'      sapply(st_geometry(b), \(x) mean(x[[1]][,2]) - 0.5),
+#'      b$idb, col = "red")
+#' 
 #' # say we have data from `a` that we want sampled to `b`.
 #' # this gives the percent of each `a` that intersects each `b`
 #' 
-#' (a_b <- calculate_area_intersection_weights(a, b, normalize = FALSE))
+#' (a_b <- calculate_area_intersection_weights(
+#'   select(a, ida), select(b, idb), normalize = FALSE))
 #' 
-#' # note that `w` sums to 1 where `b` completely covers `a`.
+#' # NOTE: `w` sums to 1 per `a` in all cases
 #' 
-#' dplyr::summarize(dplyr::group_by(a_b, ida), w = sum(w))
+#' summarize(group_by(a_b, ida), w = sum(w))
 #' 
-#' # We can apply these weights like...
-#' dplyr::tibble(ida = unique(a_b$ida), 
-#'                    val = c(1, 2, 3, 4)) |>
-#'   dplyr::left_join(a_b, by = "ida") |>
-#'   dplyr::mutate(val = ifelse(is.na(w), NA, val),
-#'                 areasqkm = 1.5 ^ 2) |> # area of each polygon in `a`
-#'   dplyr::group_by(idb) |> # group so we get one row per `b`
-#'   # now we weight by the percent of the area from each polygon in `b` per polygon in `a`
-#'   dplyr::summarize(new_val = sum( (val * w * areasqkm), na.rm = TRUE ) / sum(w * areasqkm))
-#'   
+#' # Since normalize is false, we apply weights like:
+#' st_drop_geometry(a) |>
+#'   left_join(a_b, by = "ida") |>
+#'   mutate(a_areasqkm = 1.5 ^ 2) |> # add area of each polygon in `a`
+#'   group_by(idb) |> # group so we get one row per `b`
+#'   # now we calculate the value for each b with fraction of the area of each 
+#'   # polygon in `a` per polygon in `b` with an equation like this:
+#'   summarize(
+#'     new_val = sum( (val * w * a_areasqkm), na.rm = TRUE ) / sum(w * a_areasqkm))
+#' 
+#' # NOTE: `w` is the fraction of the polygon in a. We need to multiply w by the 
+#' # unique area of the polygon it is associated with to get the weighted mean weight.
+#' 
 #' # we can go in reverse if we had data from b that we want sampled to a
 #' 
-#' (b_a <- calculate_area_intersection_weights(b, a, normalize = FALSE))
+#' (b_a <- calculate_area_intersection_weights(
+#'   select(b, idb), select(a, ida), normalize = FALSE))
 #' 
-#' # note that `w` sums to 1 only where `a` complete covers `b`
+#' # NOTE: `w` sums to 1 per `b` (source) only where `b` is fully covered by `a` (target).
 #' 
-#' dplyr::summarize(dplyr::group_by(b_a, idb), w = sum(w))
+#' summarize(group_by(b_a, idb), w = sum(w))
 #' 
-#' # with `normalize = TRUE`, `w` will sum to 1 when the target 
-#' # completely covers the source rather than when the source completely
-#' # covers the target. 
+#' # Now let's look at what happens if we set normalize = TRUE. Here we 
+#' # get `a` as source and `b` as target but normalize the weights so
+#' # the area of a is built into `w`.
 #' 
-#' (a_b <- calculate_area_intersection_weights(a, b, normalize = TRUE))
+#' (a_b <- calculate_area_intersection_weights(
+#'   select(a, ida), select(b, idb), normalize = TRUE))
 #' 
-#' dplyr::summarize(dplyr::group_by(a_b, idb), w = sum(w))
+#' # NOTE: if we summarize by `b` (target) `w` sums to 1 where above, with 
+#' #       normalize = FALSE, `w` summed to one per `a` (source).
 #' 
-#' (b_a <- calculate_area_intersection_weights(b, a, normalize = TRUE))
+#' summarize(group_by(a_b, idb), w = sum(w))
 #' 
-#' dplyr::summarize(dplyr::group_by(b_a, ida), w = sum(w))
+#' # Since normalize is false, we apply weights like:
+#' st_drop_geometry(a) |>
+#'   left_join(a_b, by = "ida") |>
+#'   group_by(idb) |> # group so we get one row per `b`
+#'   # now we weight by the percent of each polygon in `b` per polygon in `a`
+#'   summarize(new_val = sum( (val * w), na.rm = TRUE ))
 #' 
-#' # We can apply these weights like...
-#' # Note that we don't need area in the normalized case
-#' dplyr::tibble(ida = unique(a_b$ida), 
-#'                    val = c(1, 2, 3, 4)) |>
-#'   dplyr::left_join(a_b, by = "ida") |>
-#'   dplyr::mutate(val = ifelse(is.na(w), NA, val)) |>
-#'   dplyr::group_by(idb) |> # group so we get one row per `b`
-#'   # now we weight by the percent of the area from each polygon in `b` per polygon in `a`
-#'   dplyr::summarize(new_val = sum( (val * w), na.rm = TRUE ))
-
+#' # NOTE: `w` is the fraction of the polygon from `a` overlapping the polygon from `b`. 
+#' # The area of `a` is built into the weight so we just sum the weith times value oer polygon.
 #'
 #' @export
 #' @importFrom sf st_intersection st_set_geometry st_area st_crs st_drop_geometry
