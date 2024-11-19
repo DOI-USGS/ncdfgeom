@@ -181,7 +181,7 @@ In practice, the above can be accomplished with:
     new_val = sum( (val * w * area) ) / sum(w * area)))
 ```
 
-Now let's do the same thing but with `normalize = FALSE`.
+Now let's do the same thing but with `normalize = TRUE`.
 
 ```{r}
 
