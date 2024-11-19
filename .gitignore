@@ -5,4 +5,4 @@
 *.Rproj
 CRAN-SUBMISSION
 cran-comments.md
-.Renviron.R
+.Renviron
