@@ -154,10 +154,10 @@ calculate_area_intersection_weights <- function(x, y, normalize, allow_lonlat = 
                             areaWeight = "areaWeight_x_y")
     
   } else {
-    
-    # for normalized, we sum the intersection area by the total target intersection area
-    int <- ungroup(mutate(group_by(int, vary), 
-                          totalArea_y = sum(.data$area_intersection)))
+
+    # for normalized, we sum the intersection area by the total target area
+    int <- left_join(int, data.frame(vary = y$vary, 
+                                     totalArea_y = as.numeric(sf::st_area(y))), by = "vary")
     
     int <- areal::aw_weight(int, 
                             areaVar = "area_intersection",
