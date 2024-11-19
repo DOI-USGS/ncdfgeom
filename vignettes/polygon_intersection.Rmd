@@ -32,8 +32,6 @@ This article demonstrates how to create area weights for two sets of polygons.
 
 [It is a comparison with the `gdptools` python package demonstration here.](https://gdptools.readthedocs.io/en/latest/Examples/PolyToPoly/Updated_PolytoPoly_weights.html)
 
-See `calculate_area_intersection_weights()` for additional demonstration and info.
-
 ```{r} 
 
 gdptools_weights <- read.csv(system.file("extdata/gdptools_prl_out.csv", package = "ncdfgeom"), 
@@ -82,7 +80,7 @@ sum(is.na(weights$w))
 sum(is.na(weights$gdptools_wght))
 
 # look at cases where gptools has NA and ncdfgeom does not
-weights[is.na(weights$gdptools_wght),]
+weights[is.na(weights$gdptools_wght) & !is.na(weights$w),]
 
 ```
 The following example illustrates the nuances between normalized and non-normalized area weights and shows more specifically how area weight intersection calculations can be accomplished.
@@ -157,19 +155,22 @@ This is saying that 0.375 of blue-3 covers pink-9 and 0.6 of blue-2 covers pink-
 Since we are using area as the weighting method, we multiply the fraction of each
 source polygon by its area and the value we want to create an area weight for.
 We sum the contributions from blue-2 and blue-3 to pink-9 and divide by the sum
-of the combined area weights. Note that because there is no contribution to 9
-over some parts of the polygon, that missing area does not appear. The
-intersecting areas are 0.96 and 2.23 meaning that we are missing
-4 - 0.96 - 2.23 = 0.81 and could rewrite the value for pink-9 as:
+of the combined area weights. 
+
+Note that because there is no contribution to 9 over some parts of the polygon, that missing area does not appear. The intersecting areas are 0.96 and 2.23 meaning that we are missing 
+
+4 - 0.96 - 2.23 = 0.81 
+
+and could rewrite the value for pink-9 as:
 
 ```{r}
 ((10 * 0.375 * 2.56) + (20 * 0.604167 * 3.6864)) + (NA * 1 * 0.81) / 
   ((1 * 0.81) + (0.375 * 2.56) + (0.604167 * 3.6864))
 ```
 
-Which evaluates to NA which is why for this operation we usually drop NA terms!
+Which evaluates to NA. This is why for this operation we usually drop NA terms!
 
-The above can be accomplished with:
+In practice, the above can be accomplished with:
 
 ```{r}
 (result <- result |>
@@ -177,7 +178,7 @@ The above can be accomplished with:
   # now we calculate the value for each `pink` with fraction of the area of each
   # polygon in `blue` per polygon in `pink` with an equation like this:
   summarize(
-    new_val = sum( (val * w * area), na.rm = TRUE ) / sum(w * area)))
+    new_val = sum( (val * w * area) ) / sum(w * area)))
 ```
 
 Now let's do the same thing but with `normalize = FALSE`.
@@ -201,10 +202,10 @@ The following breaks down how to use these weights for one source polygon.
 To calculate the value for pink-9, we would do:
 
 ```{r}
-((10 * 0.3012) + (20 * 0.6988)) / ((0.3012) + (0.6988))
+((10 * 0.24) + (20 * 0.5568)) / (0.24 + (0.5568))
 ```
 
-This is saying that the portion of pink-9 that should get the value fromblue-2 is 0.3 and the portion of pink-9 that should get the value from blue-3 is 0.7. In this form, our weights are transformed to includethe relative area of the source polygons. 
+This is saying that the portion of pink-9 that should get the value from blue-2 is 0.3 and the portion of pink-9 that should get the value from blue-3 is 0.7. In this form, our weights are transformed to includethe relative area of the source polygons. 
 
 As shown above as well, the calculation can be accomplished with:
 
@@ -214,7 +215,7 @@ As shown above as well, the calculation can be accomplished with:
     # now we calculate the value for each `pink` with fraction of the area of each
     # polygon in `blue` per polygon in `pink` with an equation like this:
     summarize(
-      new_val = sum( (val * w), na.rm = TRUE )))
+      new_val = sum( (val * w) ) / sum(w)))
 ```
 
 We can look at a more typical arrangement of polygons and look at this a different way.
@@ -256,7 +257,7 @@ st_crs(pink) <- st_crs(blue) <- st_crs(5070)
 Let's also look at the values.
 ```{r, echo = FALSE}
 blue$val <- c(1, 2, 3, 4)
-blue$a_areasqkm <- 1.5 ^ 2
+blue$blue_areasqkm <- 1.5 ^ 2
 
 plot(blue["val"], reset = FALSE, pal = heat.colors)
 plot(st_geometry(pink), border = "#dc267f", lwd = 3, add = TRUE, reset = FALSE)
@@ -272,59 +273,58 @@ text(sapply(st_geometry(pink), \(x) mean(x[[1]][,1]) - 0.4),
 ```
 
 ```{r}
-# say we have data from `a` that we want sampled to `b`.
-# this gives the percent of each `a` that intersects each `b`
+# say we have data from `blue` that we want sampled to `pink`.
+# this gives the percent of each `blue` that intersects each `pink`
 
-(a_b <- calculate_area_intersection_weights(
+(blue_pink <- calculate_area_intersection_weights(
   select(blue, idblue), select(pink, idpink), normalize = FALSE))
 
-# NOTE: `w` sums to 1 per `a` in all cases
+# NOTE: `w` sums to 1 per `blue` in all cases
 
-summarize(group_by(a_b, idblue), w = sum(w))
+summarize(group_by(blue_pink, idblue), w = sum(w))
 
 # Since normalize is false, we apply weights like:
 st_drop_geometry(blue) |>
-  left_join(a_b, by = "idblue") |>
-  mutate(a_areasqkm = 1.5 ^ 2) |> # add area of each polygon in `a`
-  group_by(idpink) |> # group so we get one row per `b`
+  left_join(blue_pink, by = "idblue") |>
+  mutate(blue_areasqkm = 1.5 ^ 2) |> # add area of each polygon in `blue`
+  group_by(idpink) |> # group so we get one row per `pink`
   # now we calculate the value for each b with fraction of the area of each
-  # polygon in `a` per polygon in `b` with an equation like this:
+  # polygon in `blue` per polygon in `pink` with an equation like this:
   summarize(
-    new_val = sum( (val * w * a_areasqkm), na.rm = TRUE ) / sum(w * a_areasqkm))
+    new_val = sum( (val * w * blue_areasqkm) ) / sum(w * blue_areasqkm))
 
-# NOTE: `w` is the fraction of the polygon in a. We need to multiply w by the
+# NOTE: `w` is the fraction of the polygon in `blue`. We need to multiply `w` by the
 # unique area of the polygon it is associated with to get the weighted mean weight.
 
-# we can go in reverse if we had data from b that we want sampled to a
+# we can go in reverse if we had data from `pink` that we want sampled to `blue`
 
-(b_a <- calculate_area_intersection_weights(
+(pink_blue <- calculate_area_intersection_weights(
   select(pink, idpink), select(blue, idblue), normalize = FALSE))
 
-# NOTE: `w` sums to 1 per `b` (source) only where `b` is fully covered by `a` (target).
+# NOTE: `w` sums to 1 per `pink` (source) only where `pink` is fully covered by `blue` (target).
 
-summarize(group_by(b_a, idpink), w = sum(w))
+summarize(group_by(pink_blue, idpink), w = sum(w))
 
 # Now let's look at what happens if we set normalize = TRUE. Here we
-# get `a` as source and `b` as target but normalize the weights so
-# the area of a is built into `w`.
+# get `blue` as source and `pink` as target but normalize the weights so
+# the area of `blue` is built into `w`.
 
-(a_b <- calculate_area_intersection_weights(
-  select(blue, idpinklue), select(pink, idpink), normalize = TRUE))
+(blue_pink <- calculate_area_intersection_weights(
+  select(blue, idblue), select(pink, idpink), normalize = TRUE))
 
-# NOTE: if we summarize by `b` (target) `w` sums to 1 where above, with
-#       normalize = FALSE, `w` summed to one per `a` (source).
+# NOTE: if we summarize by `pink` (target) `w` sums to 1 only where there is full overlap.
 
-summarize(group_by(a_b, idpink), w = sum(w))
+summarize(group_by(blue_pink, idpink), w = sum(w))
 
 # Since normalize is false, we apply weights like:
 st_drop_geometry(blue) |>
-  left_join(a_b, by = "idblue") |>
-  group_by(idpink) |> # group so we get one row per `b`
-  # now we weight by the percent of each polygon in `b` per polygon in `a`
-  summarize(new_val = sum( (val * w), na.rm = TRUE ))
+  left_join(blue_pink, by = "idblue") |>
+  group_by(idpink) |> # group so we get one row per `pink`
+  # now we weight by the percent of each polygon in `pink` per polygon in `blue`
+  summarize(new_val = sum( (val * w) ) / sum( w ))
 
-# NOTE: `w` is the fraction of the polygon from `a` overlapping the polygon from `b`.
-# The area of `a` is built into the weight so we just sum the weith times value oer polygon.
+# NOTE: `w` is the fraction of the polygon from `blue` overlapping the polygon from `pink`.
+# The area of `blue` is built into the weight so we just sum the weith times value oer polygon.
 
 ```
 
