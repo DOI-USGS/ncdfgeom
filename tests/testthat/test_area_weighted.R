@@ -179,7 +179,8 @@ test_that("extended_example", {
     
     (y_x_norm <- calculate_area_intersection_weights(y, x, normalize = TRUE))
     
-    expect_true(all(dplyr::summarize(dplyr::group_by(y_x_norm, idx), w = sum(w))$w == 1))
+    expect_equal(dplyr::summarize(dplyr::group_by(y_x_norm, idx), w = sum(w))$w,
+                 c(1, .25, .5, .5))
     
     # and to use these in an area weighted sum we need the area of each polygon in 
     # the source data (x)
@@ -190,7 +191,7 @@ test_that("extended_example", {
         dplyr::mutate(val = ifelse(is.na(w), NA, val)) |>
         dplyr::group_by(idx) |> # group so we get one row per `x`
         # now we weight by the percent of the area from each polygon in `x` per polygon in `y`
-        dplyr::mutate(new_val = sum( (val * w), na.rm = TRUE )))
+        dplyr::mutate(new_val = sum( (val * w), na.rm = TRUE ) / sum(w, na.rm = TRUE)))
     
     # summarize to show the result
     (z_y_x_norm <- dplyr::summarise(z_y_x_norm, new_val = unique(new_val)))
