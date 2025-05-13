@@ -16,11 +16,13 @@ calculate_area_intersection_weights(x, y, normalize, allow_lonlat = FALSE)
 Normalized weights express the fraction of **target** polygons covered by 
 a portion of each **source** polygon. They are normalized in that the area
 of each **source** polygon has already been factored into the weight.
+Normalized weights are intended to be used with _intensive_ variables.
 
 Un-normalized weights express the fraction of **source** polygons covered by
 a portion of each **target** polygon. This is a more general form that requires
 knowledge of the area of each **source** polygon to derive area-weighted
-statistics from **source** to **target.
+statistics from **source** to **target. Un-normalized weights are intended
+to be used with either _intensive_ or _extensive_ variables.
 
 See details and examples for more regarding this distinction.}
 
@@ -38,7 +40,7 @@ in y. These can be used as the weights in an area-weighted
 mean overlay analysis where x is the data **source** and area-
 weighted means are being generated for the **target**, y.
 
-This function is a lightwieght wrapper around the functions
+This function is a light wieght wrapper around the functions
 \link[areal]{aw_intersect} \link[areal]{aw_total} and \link[areal]{aw_weight}
 from the \href{https://chris-prener.github.io/areal/}{areal package}.
 }
@@ -95,7 +97,8 @@ calculate_area_intersection_weights(source[c("source_id", "geom")],
 (res <-
 merge(st_drop_geometry(source), w, by = "source_id"))
 
-sum(res$val * res$w * res$area) / sum(res$w * res$area)
+(intesive <- sum(res$val * res$w * res$area) / sum(res$w * res$area))
+(extensive <- sum(res$val * res$w))
 
 (w <-
 calculate_area_intersection_weights(source[c("source_id", "geom")], 
@@ -104,6 +107,6 @@ calculate_area_intersection_weights(source[c("source_id", "geom")],
 (res <-
 merge(st_drop_geometry(source), w, by = "source_id"))
 
-sum(res$val * res$w) / sum(res$w)
+(intensive <- sum(res$val * res$w) / sum(res$w))
 
 }
