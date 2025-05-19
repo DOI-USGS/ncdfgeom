@@ -5,7 +5,7 @@
 #' mean overlay analysis where x is the data **source** and area-
 #' weighted means are being generated for the **target**, y.
 #'
-#' This function is a light wieght wrapper around the functions
+#' This function is a light weight wrapper around the functions
 #' \link[areal]{aw_intersect} \link[areal]{aw_total} and \link[areal]{aw_weight}
 #' from the \href{https://chris-prener.github.io/areal/}{areal package}.
 #'

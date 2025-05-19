@@ -136,25 +136,28 @@ text(sapply(sf::st_geometry(pink), \(x) mean(x[[1]][,1]) + 0.4),
 sf::st_agr(blue) <- sf::st_agr(pink) <- "constant"
 sf::st_crs(pink) <- sf::st_crs(blue) <- sf::st_crs(5070)
 ```
+
+Here, we compare blue (source) and pink (target) and w is the fraction of blue (source) that is covered pink (target) since we set `normalize = FALSE`.
+
 ```{r}
 
 (blue_pink_norm_false <- 
 calculate_area_intersection_weights(blue, pink, normalize = FALSE))
 ```
 
-NOTE: normalize = FALSE so weights sum to 1 per source polygon only when a source polygon is fully covered by the target. The non-intersecting portion is not included.
+NOTE: `normalize = FALSE` so weights sum to 1 per _source_ polygon only when a source polygon is fully covered by the target. The non-intersecting portion is not included.
 
-The following breaks down how to use these weights for one source polygon.
+The following breaks down how to use these weights for _intensive_ or _extensive_ variables.
 
 ```{r}
 blue$val = c(30, 10, 20)
-blue$area <- as.numeric(sf::st_area(blue))
+blue$area_blue <- as.numeric(sf::st_area(blue))
 
 (result <- st_drop_geometry(blue) |>
   left_join(blue_pink_norm_false, by = "idblue"))
 ```
 
-For intensive variables, such as precipitation depth, to calculate the value for pink-9, we would do:
+For _intensive_ variables, such as precipitation depth, to calculate the value for pink-9, we calculate an area-weighted mean:
 
 ```{r}
 
@@ -163,12 +166,12 @@ For intensive variables, such as precipitation depth, to calculate the value for
 ```
 
 This is saying that 0.375 of blue-3 covers pink-9 and 0.6 of blue-2 covers pink-9.
-Since we are calculating a area weighted mean for an extensive variable, we 
+Since we are calculating a area weighted mean for an intensive variable, we 
 multiply the fraction of each source polygon by its area and the value we want 
 to create an area weight for. We sum the contributions from blue-2 and blue-3 
 to pink-9 and divide by the sum of the combined area weights. 
 
-Note that because there is no contribution to 9 over some parts of the polygon, 
+NOTE: Because there is no contribution to pink-9 over some parts of the polygon, 
 that missing area does not appear. The intersecting areas are 0.96 and 2.23 
 meaning that we are missing 
 
@@ -192,7 +195,7 @@ For _extensive_ variables, such as population, to calculate the value of pink-9 
 ```
 This is saying that 0.375 of blue-3 covers pink-9 and 0.6 of blue-2 covers pink-9.
 Since we are apportioning the counts of an intensive variable from blue to
-pink, the weight can be used directly without area weighting contributions.
+pink, the weight can be used directly without calculating an area weighted mean.
 
 In practice, the above can be accomplished with `dplyr::group_by()` and `dplyr::summarize()`
 
@@ -202,11 +205,13 @@ In practice, the above can be accomplished with `dplyr::group_by()` and `dplyr::
   # now we calculate the value for each `pink` with fraction of the area of each
   # polygon in `blue` per polygon in `pink` with an equation like this:
   summarize(
-    new_val_intensive = sum( (val * w * area) ) / sum(w * area),
-    new_val_extensive = sum( val * w )))
+    new_val_intensive = sum((val * w * area_blue)) / sum(w * area_blue),
+    new_val_extensive = sum(val * w)))
 ```
 
 Now let's do the same thing but with `normalize = TRUE`. In this case, `area` is built into `w` so you don't need to know it when using `w` for intensive variables. The downfall with normalized weights is that they can not be used directly with `extensive` variables.
+
+Here, we set blue as source and pink as target as was done above but change normalize to `TRUE`. 
 
 ```{r}
 
@@ -217,20 +222,20 @@ calculate_area_intersection_weights(select(blue, idblue), pink, normalize = TRUE
 
 NOTE: normalize = TRUE so weights sum to 1 per _target_ polygon. Non-overlap is ignored as if it does not exist.
 
-The following breaks down how to use these weights for one source polygon.
+The following breaks down how to use these weights for _intensive_ variables.
 
 ```{r}
 (result <- st_drop_geometry(blue) |>
     left_join(blue_pink_norm_true, by = "idblue"))
 ```
 
-To calculate the value for pink-9, we would do:
+To calculate the area weighted mean value for pink-9, we would do:
 
 ```{r}
 ((10 * 0.24) + (20 * 0.5568)) / (0.24 + (0.5568))
 ```
 
-This is saying that the portion of pink-9 that should get the value from blue-2 is 0.3 and the portion of pink-9 that should get the value from blue-3 is 0.7. In this form, our weights are transformed to includethe relative area of the source polygons. 
+This is saying that the portion of pink-9 that should get the value from blue-2 is 0.3 and the portion of pink-9 that should get the value from blue-3 is 0.7. In this form, our weights include the relative area of the source polygons. 
 
 As shown above as well, the calculation can be accomplished with:
 
@@ -240,7 +245,7 @@ As shown above as well, the calculation can be accomplished with:
     # now we calculate the value for each `pink` with fraction of the area of each
     # polygon in `blue` per polygon in `pink` with an equation like this:
     summarize(
-      new_val = sum( (val * w) ) / sum(w)))
+      new_val = sum((val * w)) / sum(w)))
 ```
 
 ## Extended Example Two
