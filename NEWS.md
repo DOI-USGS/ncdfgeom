@@ -1,3 +1,7 @@
+1.2.1
+==========
+* improved documentation of calculate_area_intersection_weights()
+
 1.2.0
 ==========
 * calculate_area_intersection_weights() now supports normalized weights
