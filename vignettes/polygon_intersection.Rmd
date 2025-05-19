@@ -30,6 +30,11 @@ org_options <- options(scipen = 9999)
 
 This article demonstrates how to create area weights for two sets of polygons.
 
+There are three examples included, one for a [typical application with hydrologic units](#applied-example),
+one for [a set of polygons that have gaps](#extended-example-one) and one [for polygons without gaps](#extended-example-two).  
+
+## Applied Example
+
 [It is a comparison with the `gdptools` python package demonstration here.](https://gdptools.readthedocs.io/en/latest/Examples/PolyToPoly/Updated_PolytoPoly_weights.html)
 
 ```{r} 
@@ -57,6 +62,9 @@ weights <- ncdfgeom::calculate_area_intersection_weights(
   normalize = TRUE
 )
 
+# NOTE: normalize = TRUE means these weights can not be used for "intensive" 
+# weighted sums such as population per polygon. See below for more on this.
+
 weights <- dplyr::left_join(weights, gdptools_weights, by = c("huc8", "huc12"))
 
 ```
@@ -83,7 +91,10 @@ sum(is.na(weights$gdptools_wght))
 weights[is.na(weights$gdptools_wght) & !is.na(weights$w),]
 
 ```
-The following example illustrates the nuances between normalized and non-normalized area weights and shows more specifically how area weight intersection calculations can be accomplished.
+
+## Extended Example One
+
+The following example illustrates the nuances between normalized and non-normalized area weights and shows more specifically how area weight intersection calculations can be accomplished for both intensive variables, like total population, and extensive variables, like average precipitation depth.
 
 The set of polygons are a contrived but useful for the sake of demonstration.
 ```{r}
@@ -143,7 +154,7 @@ blue$area <- as.numeric(sf::st_area(blue))
   left_join(blue_pink_norm_false, by = "idblue"))
 ```
 
-To calculate the value for pink-9, we would do:
+For intensive variables, such as precipitation depth, to calculate the value for pink-9, we would do:
 
 ```{r}
 
@@ -152,12 +163,14 @@ To calculate the value for pink-9, we would do:
 ```
 
 This is saying that 0.375 of blue-3 covers pink-9 and 0.6 of blue-2 covers pink-9.
-Since we are using area as the weighting method, we multiply the fraction of each
-source polygon by its area and the value we want to create an area weight for.
-We sum the contributions from blue-2 and blue-3 to pink-9 and divide by the sum
-of the combined area weights. 
+Since we are calculating a area weighted mean for an extensive variable, we 
+multiply the fraction of each source polygon by its area and the value we want 
+to create an area weight for. We sum the contributions from blue-2 and blue-3 
+to pink-9 and divide by the sum of the combined area weights. 
 
-Note that because there is no contribution to 9 over some parts of the polygon, that missing area does not appear. The intersecting areas are 0.96 and 2.23 meaning that we are missing 
+Note that because there is no contribution to 9 over some parts of the polygon, 
+that missing area does not appear. The intersecting areas are 0.96 and 2.23 
+meaning that we are missing 
 
 4 - 0.96 - 2.23 = 0.81 
 
@@ -167,10 +180,21 @@ and could rewrite the value for pink-9 as:
 ((10 * 0.375 * 2.56) + (20 * 0.604167 * 3.6864)) + (NA * 1 * 0.81) / 
   ((1 * 0.81) + (0.375 * 2.56) + (0.604167 * 3.6864))
 ```
-
 Which evaluates to NA. This is why for this operation we usually drop NA terms!
 
-In practice, the above can be accomplished with:
+For _extensive_ variables, such as population, to calculate the value of pink-9 we would do:
+
+
+```{r}
+
+((10 * 0.375) + (20 * 0.604167))
+
+```
+This is saying that 0.375 of blue-3 covers pink-9 and 0.6 of blue-2 covers pink-9.
+Since we are apportioning the counts of an intensive variable from blue to
+pink, the weight can be used directly without area weighting contributions.
+
+In practice, the above can be accomplished with `dplyr::group_by()` and `dplyr::summarize()`
 
 ```{r}
 (result <- result |>
@@ -178,10 +202,11 @@ In practice, the above can be accomplished with:
   # now we calculate the value for each `pink` with fraction of the area of each
   # polygon in `blue` per polygon in `pink` with an equation like this:
   summarize(
-    new_val = sum( (val * w * area) ) / sum(w * area)))
+    new_val_intensive = sum( (val * w * area) ) / sum(w * area),
+    new_val_extensive = sum( val * w )))
 ```
 
-Now let's do the same thing but with `normalize = TRUE`.
+Now let's do the same thing but with `normalize = TRUE`. In this case, `area` is built into `w` so you don't need to know it when using `w` for intensive variables. The downfall with normalized weights is that they can not be used directly with `extensive` variables.
 
 ```{r}
 
@@ -190,7 +215,7 @@ calculate_area_intersection_weights(select(blue, idblue), pink, normalize = TRUE
 
 ```
 
-NOTE: normalize = TRUE so weights sum to 1 per target polygon. Non-overlap is ignored as if it does not exist.
+NOTE: normalize = TRUE so weights sum to 1 per _target_ polygon. Non-overlap is ignored as if it does not exist.
 
 The following breaks down how to use these weights for one source polygon.
 
@@ -218,7 +243,9 @@ As shown above as well, the calculation can be accomplished with:
       new_val = sum( (val * w) ) / sum(w)))
 ```
 
-We can look at a more typical arrangement of polygons and look at this a different way.
+## Extended Example Two
+
+We can look at a more typical arrangement of polygons and look at this a different way. The following polygons are used below to illustrate transferring data from one set of polygons to another.
 
 ```{r, echo=FALSE}
 
@@ -254,6 +281,7 @@ text(sapply(st_geometry(pink), \(x) mean(x[[1]][,1]) - 0.4),
 st_agr(blue) <- st_agr(pink) <- "constant"
 st_crs(pink) <- st_crs(blue) <- st_crs(5070)
 ```
+
 Let's also look at the values.
 ```{r, echo = FALSE}
 blue$val <- c(1, 2, 3, 4)
@@ -272,6 +300,11 @@ text(sapply(st_geometry(pink), \(x) mean(x[[1]][,1]) - 0.4),
      pink$idpink, col = "#dc267f")
 ```
 
+In the example code below, values from blue are translated to values from pink
+using two methods: an weighted sum is done for _extensive_ data such as 
+population data and a weighted mean is done for _intensive_ data such
+as precipitation depth.
+
 ```{r}
 # say we have data from `blue` that we want sampled to `pink`.
 # this gives the percent of each `blue` that intersects each `pink`
@@ -286,12 +319,12 @@ summarize(group_by(blue_pink, idblue), w = sum(w))
 # Since normalize is false, we apply weights like:
 st_drop_geometry(blue) |>
   left_join(blue_pink, by = "idblue") |>
-  mutate(blue_areasqkm = 1.5 ^ 2) |> # add area of each polygon in `blue`
   group_by(idpink) |> # group so we get one row per `pink`
-  # now we calculate the value for each b with fraction of the area of each
+  # now we calculate the value for each `pink` with fraction of the area of each
   # polygon in `blue` per polygon in `pink` with an equation like this:
   summarize(
-    new_val = sum( (val * w * blue_areasqkm) ) / sum(w * blue_areasqkm))
+    new_val_intensive = sum( (val * w * blue_areasqkm) ) / sum(w * blue_areasqkm),
+    new_val_extensive = sum( (val * w) ))
 
 # NOTE: `w` is the fraction of the polygon in `blue`. We need to multiply `w` by the
 # unique area of the polygon it is associated with to get the weighted mean weight.
@@ -324,7 +357,8 @@ st_drop_geometry(blue) |>
   summarize(new_val = sum( (val * w) ) / sum( w ))
 
 # NOTE: `w` is the fraction of the polygon from `blue` overlapping the polygon from `pink`.
-# The area of `blue` is built into the weight so we just sum the weith times value oer polygon.
+# The area of `blue` is built into the weight so we just sum the with times value per polygon.
+# We can not calculate intensive weighted sums with this weight.
 
 ```
 
