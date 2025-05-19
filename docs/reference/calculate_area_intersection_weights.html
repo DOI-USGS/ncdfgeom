@@ -4,13 +4,13 @@ feature in x that is covered by each intersecting feature
 in y. These can be used as the weights in an area-weighted
 mean overlay analysis where x is the data **source** and area-
 weighted means are being generated for the **target**, y.
-This function is a lightweight wrapper around the functions
+This function is a light weight wrapper around the functions
 aw_intersect aw_total and aw_weight
 from the areal package."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -38,7 +38,7 @@ from the areal package."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -57,14 +57,14 @@ from the areal package."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/DOI-USGS/ncdfgeom/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -80,7 +80,7 @@ feature in x that is covered by each intersecting feature
 in y. These can be used as the weights in an area-weighted
 mean overlay analysis where x is the data **source** and area-
 weighted means are being generated for the **target**, y.</p>
-<p>This function is a lightweight wrapper around the functions
+<p>This function is a light weight wrapper around the functions
 <a href="https://slu-openGIS.github.io/areal/reference/aw_intersect.html" class="external-link">aw_intersect</a> <a href="https://slu-openGIS.github.io/areal/reference/aw_total.html" class="external-link">aw_total</a> and <a href="https://slu-openGIS.github.io/areal/reference/aw_weight.html" class="external-link">aw_weight</a>
 from the <a href="https://chris-prener.github.io/areal/" class="external-link">areal package</a>.</p>
     </div>
@@ -91,36 +91,38 @@ from the <a href="https://chris-prener.github.io/areal/" class="external-link">a
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>sf data.frame source features including one geometry column and one identifier column</p></dd>
 
 
-<dt>y</dt>
+<dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
 <dd><p>sf data.frame target features including one geometry column and one identifier column</p></dd>
 
 
-<dt>normalize</dt>
+<dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
 <dd><p>logical return normalized weights or not.</p>
-<p>Normalized weights express the fraction of **target** polygons covered by 
+<p>Normalized weights express the fraction of **target** polygons covered by
 a portion of each **source** polygon. They are normalized in that the area
-of each **source** polygon has already been factored into the weight.</p>
+of each **source** polygon has already been factored into the weight.
+Normalized weights are intended to be used with _intensive_ variables.</p>
 <p>Un-normalized weights express the fraction of **source** polygons covered by
 a portion of each **target** polygon. This is a more general form that requires
 knowledge of the area of each **source** polygon to derive area-weighted
-statistics from **source** to **target.</p>
+statistics from **source** to **target. Un-normalized weights are intended
+to be used with either _intensive_ or _extensive_ variables.</p>
 <p>See details and examples for more regarding this distinction.</p></dd>
 
 
-<dt>allow_lonlat</dt>
+<dt id="arg-allow-lonlat">allow_lonlat<a class="anchor" aria-label="anchor" href="#arg-allow-lonlat"></a></dt>
 <dd><p>boolean If FALSE (the default) lon/lat target features are not allowed.
 Intersections in lon/lat are generally not valid and problematic at the international date line.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>data.frame containing fraction of each feature in x that is
+    <p>data.frame containing fraction of each feature in x that is
 covered by each feature in y.</p>
     </div>
     <div id="details">
@@ -129,11 +131,11 @@ covered by each feature in y.</p>
 <p>`normalize = FALSE`, if a polygon from x (source) is entirely within a polygon in y
 (target), w will be 1. If a polygon from x (source) is 50<!-- % in one polygon from y (target)  -->
 and 50<!-- % in another, there will be two rows, one for each x/y pair of features with w = 0.5  -->
-in each. Weights will sum to 1 per **SOURCE** polygon if the target polygons fully cover that 
+in each. Weights will sum to 1 per **SOURCE** polygon if the target polygons fully cover that
 feature.</p>
-<p>For `normalize = FALSE` the area weighted mean calculation must include the area of each 
+<p>For `normalize = FALSE` the area weighted mean calculation must include the area of each
 x (source) polygon as in:</p>
-<p>&gt; *in this case, `area` is the area of source polygons and you would do this operation grouped 
+<p>&gt; *in this case, `area` is the area of source polygons and you would do this operation grouped
 by target polygon id.*</p>
 <p>&gt; `sum( (val * w * area), na.rm = TRUE ) / sum(w * area)`</p>
 <p>If `normalize = TRUE`, weights are divided by the target polygon area such that weights
@@ -148,7 +150,7 @@ as in:</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.3.1; sf_use_s2() is TRUE</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.12.2, GDAL 3.9.3, PROJ 9.4.1; sf_use_s2() is TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span>source_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>                val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span>, </span></span>
@@ -181,8 +183,10 @@ as in:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         1  10 2.5600         a 0.3750000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2         2  20 3.6864         a 0.6041667</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">val</span> <span class="op">*</span> <span class="va">res</span><span class="op">$</span><span class="va">w</span> <span class="op">*</span> <span class="va">res</span><span class="op">$</span><span class="va">area</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">w</span> <span class="op">*</span> <span class="va">res</span><span class="op">$</span><span class="va">area</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">intesive</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">val</span> <span class="op">*</span> <span class="va">res</span><span class="op">$</span><span class="va">w</span> <span class="op">*</span> <span class="va">res</span><span class="op">$</span><span class="va">area</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">w</span> <span class="op">*</span> <span class="va">res</span><span class="op">$</span><span class="va">area</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16.98795</span>
+<span class="r-in"><span><span class="op">(</span><span class="va">extensive</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">val</span> <span class="op">*</span> <span class="va">res</span><span class="op">$</span><span class="va">w</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 15.83333</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">w</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span><span class="fu">calculate_area_intersection_weights</span><span class="op">(</span><span class="va">source</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"source_id"</span>, <span class="st">"geom"</span><span class="op">)</span><span class="op">]</span>, </span></span>
@@ -199,7 +203,7 @@ as in:</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         1  10 2.5600         a 0.2400</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2         2  20 3.6864         a 0.5568</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">val</span> <span class="op">*</span> <span class="va">res</span><span class="op">$</span><span class="va">w</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">w</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">intensive</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">val</span> <span class="op">*</span> <span class="va">res</span><span class="op">$</span><span class="va">w</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">w</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 16.98795</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -216,15 +220,15 @@ as in:</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 
