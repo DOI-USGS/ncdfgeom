@@ -80,7 +80,7 @@ get_fixture_data <- function(geom_type) {
 
 get_sample_timeseries_data <- function() {
   
-  yahara <- sf::read_sf(list.files(pattern = "Yahara_River_HRUs_alb_eq.shp", full.names = TRUE, recursive = TRUE))
+  yahara <- sf::read_sf(list.files(pattern = "Yahara_River_HRUs_alb_eq.gpkg", full.names = TRUE, recursive = TRUE))
   lon_lat <- yahara %>%
     sf::st_set_agr("constant") %>%
     sf::st_centroid() %>%

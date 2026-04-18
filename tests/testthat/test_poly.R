@@ -147,7 +147,7 @@ test_that("multipolygons with holes.", {
 
 test_that("A whole shapefile can be written", {
   testthat::skip_if_not(require("ncdf4"))
-  polygonData <- read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp", check_ring_dir = TRUE)
+  polygonData <- read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.gpkg", check_ring_dir = TRUE)
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
   
