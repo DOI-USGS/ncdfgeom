@@ -1,8 +1,8 @@
 1.2.2
 ==========
 * migrated test and example spatial data from shapefile to GeoPackage (#107)
-* improved CRS handling in write_geometry() with clearer warnings when a CRS is missing versus unmappable to a CF grid mapping
-* internal modernization (seq_len, inherits) and package cleanup
+* improved CRS handling in write_geometry() with clearer warnings when a CRS is missing or cannot be mapped to a CF grid mapping
+* internal code cleanup
 
 1.2.1
 ==========

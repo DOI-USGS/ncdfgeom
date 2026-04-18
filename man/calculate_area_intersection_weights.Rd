@@ -21,7 +21,7 @@ Normalized weights are intended to be used with _intensive_ variables.
 Un-normalized weights express the fraction of **source** polygons covered by
 a portion of each **target** polygon. This is a more general form that requires
 knowledge of the area of each **source** polygon to derive area-weighted
-statistics from **source** to **target. Un-normalized weights are intended
+statistics from **source** to **target**. Un-normalized weights are intended
 to be used with either _intensive_ or _extensive_ variables.
 
 See details and examples for more regarding this distinction.}

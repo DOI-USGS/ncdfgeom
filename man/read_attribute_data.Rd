@@ -7,7 +7,7 @@
 read_attribute_data(nc, instance_dim)
 }
 \arguments{
-\item{nc}{A NetCDF path or urlto be opened.}
+\item{nc}{A NetCDF path or url to be opened.}
 
 \item{instance_dim}{The NetCDF instance/station dimension.}
 }

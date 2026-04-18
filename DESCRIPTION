@@ -14,5 +14,6 @@ Depends:
 Suggests: testthat, knitr, rmarkdown, pkgdown, jsonlite, zip, ncdf4, nhdplusTools
 License: CC0
 Encoding: UTF-8
+Language: en-US
 VignetteBuilder: knitr
 RoxygenNote: 7.3.3

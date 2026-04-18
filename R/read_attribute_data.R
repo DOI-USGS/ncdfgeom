@@ -1,6 +1,6 @@
 #'@title Read attribute dataframe from NetCDF-DSG file
 #'
-#'@param nc A NetCDF path or urlto be opened.
+#'@param nc A NetCDF path or url to be opened.
 #'@param instance_dim The NetCDF instance/station dimension.
 #'
 #'@description
