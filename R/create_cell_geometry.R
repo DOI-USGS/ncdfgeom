@@ -163,13 +163,13 @@ create_cell_geometry <- function(X_coords, Y_coords, prj,
 construct_points <- function(x, y, i_ind = NULL, j_ind = NULL, prj) {
 
   x_vals <- matrix(x, nrow = length(y), ncol = length(x),
-                   byrow = T)
+                   byrow = TRUE)
   y_vals <- matrix(y, nrow = length(y), ncol = length(x),
-                   byrow = F)
+                   byrow = FALSE)
 
   if(is.null(i_ind)) {
-    i_ind <- c(1:ncol(x_vals))
-    j_ind <- c(1:nrow(x_vals))
+    i_ind <- seq_len(ncol(x_vals))
+    j_ind <- seq_len(nrow(x_vals))
   }
 
   get_points(x_vals, y_vals, i_ind, j_ind, prj)
@@ -178,11 +178,11 @@ construct_points <- function(x, y, i_ind = NULL, j_ind = NULL, prj) {
 construct_points_array <- function(x, y, i_ind = NULL, j_ind = NULL, prj) {
 
   if(is.null(i_ind)) {
-    i_ind <- matrix(rep(c(1:ncol(x)), nrow(x)),
+    i_ind <- matrix(rep(seq_len(ncol(x)), nrow(x)),
                     nrow = nrow(x), ncol = ncol(x),
                     byrow = TRUE)
 
-    j_ind <- matrix(rep(c(1:nrow(x)), ncol(x)),
+    j_ind <- matrix(rep(seq_len(nrow(x)), ncol(x)),
                     nrow = nrow(x), ncol = ncol(x),
                     byrow = FALSE)
   }

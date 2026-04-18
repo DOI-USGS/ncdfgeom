@@ -1,9 +1,6 @@
 NetCDF-CF Geometry and Timeseries Tools for R
 ===
-<!---
-![R-CMD-check](https://github.com/doi-usgs/ncdfgeom/workflows/R-CMD-check/badge.svg) [![codecov](https://codecov.io/gh/doi-usgs/ncdfgeom/branch/master/graph/badge.svg?token=5c1L38yK5q)](https://app.codecov.io/gh/doi-usgs/ncdfgeom) 
---->
-[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfgeom)](https://cran.r-project.org/package=ncdfgeom) [![CRAN](https://www.r-pkg.org/badges/version/ncdfgeom)](https://cran.r-project.org/package=ncdfgeom)
+[![R-CMD-check](https://github.com/DOI-USGS/ncdfgeom/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/DOI-USGS/ncdfgeom/actions/workflows/R-CMD-check.yml) [![codecov](https://codecov.io/gh/DOI-USGS/ncdfgeom/branch/main/graph/badge.svg)](https://app.codecov.io/gh/DOI-USGS/ncdfgeom) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ncdfgeom)](https://cran.r-project.org/package=ncdfgeom) [![CRAN](https://www.r-pkg.org/badges/version/ncdfgeom)](https://cran.r-project.org/package=ncdfgeom)
 
 `ncdfgeom` reads and writes geometry data (points lines and polygons), attributes of geometries, and time series associated with the geometries in a standards-compliant way.
 

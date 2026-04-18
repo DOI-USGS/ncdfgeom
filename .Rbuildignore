@@ -5,9 +5,10 @@ _pkgdown.yml
 docs
 DISCLAIMER.md
 code.json
-appveyor.yml
 .github
 .gitlab-ci.yml
 Dockerfile
 ^CRAN-SUBMISSION$
 cran-comments.md
+^vignettes/.*_cache$
+^vignettes/.*_files$

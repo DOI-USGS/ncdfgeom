@@ -45,7 +45,7 @@ test_that("multiPoint_timeSeries", {
 
 test_that("shapefile_point", {
   testthat::skip_if_not(require("ncdf4"))
-  pointData <- sf::read_sf("data/se_sites/se_sitest.shp")
+  pointData <- sf::read_sf("data/se_sites/se_sitest.gpkg")
   nc_file <- write_geometry(nc_file = tempfile(), geom_data = pointData)
   nc <- nc_open(nc_file)
   pointData_nogeo <- sf::st_set_geometry(pointData, NULL)

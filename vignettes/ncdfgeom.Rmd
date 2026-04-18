@@ -218,7 +218,7 @@ division_url <- "ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/CONUS_CLIMATE_DIV
 division_file <- "CONUS_CLIMATE_DIVISIONS.shp.zip"
 
 download.file(url = division_url, destfile = division_file, quiet = TRUE)
-unzip("CONUS_CLIMATE_DIVISIONS.shp.zip")
+zip::unzip("CONUS_CLIMATE_DIVISIONS.shp.zip")
 
 climdiv_poly <- read_sf("GIS.OFFICIAL_CLIM_DIVISIONS.shp") %>%
   select("CLIMDIV", CLIMDIV_NAME = "NAME") %>%

@@ -75,7 +75,6 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times,
 																attributes=list(), add_to_existing=FALSE, overwrite = FALSE){
 
   if(!overwrite & !add_to_existing & file.exists(nc_file)) stop("File already exists and overwrite is false.")
-  if(overwrite & !add_to_existing) unlink(file.exists(nc_file))
 
 	if(add_to_existing & !file.exists(nc_file)) add_to_existing=FALSE
 
@@ -204,9 +203,9 @@ write_timeseries_dsg = function(nc_file, instance_names, lats, lons, times,
 
 		#Add the optional global attributes
 		if(length(attributes)>0){
-			for(i in 1:length(attributes)){
+			for(i in seq_along(attributes)){
 				att.put.nc(nc, "NC_GLOBAL", names(attributes)[i],
-				           pkg.env$nc_types[class(attributes[[i]])][[1]], attributes[[i]])
+				           pkg.env$nc_types[[class(attributes[[i]])[1]]], attributes[[i]])
 			}
 		}
 

@@ -50,7 +50,7 @@ test_that("multiline data frame works", {
 
 test_that("shapefile line data works", {
   testthat::skip_if_not(require("ncdf4"))
-  lineData <- sf::st_zm(sf::read_sf("data/NHDLine/NHDLine.shp"))
+  lineData <- sf::st_zm(sf::read_sf("data/NHDLine/NHDLine.gpkg"))
   nc_file <- write_geometry(nc_file=tempfile(), 
                       geom_data = lineData)
   nc<-nc_open(nc_file)

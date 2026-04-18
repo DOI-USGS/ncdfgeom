@@ -1,4 +1,3 @@
-require(ncdf4)
 library(RNetCDF)
 library(sf)
 
