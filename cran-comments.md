@@ -1,8 +1,7 @@
 ## Test environments
-* rhub::check_for_cran w/ defaults
+* r_hub -- github actions
 * r_win_builder devel
 * local windows
 
 ## Comment
-* removed geoknife as suggested package
-* avoid ncdf4 tests if not installed
+* updated broken files and overall code review. [#107](https://github.com/DOI-USGS/ncdfgeom/issues/107)

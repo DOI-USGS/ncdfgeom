@@ -60,9 +60,15 @@ write_attribute_data <- function(nc_file, att_data, instance_dim_name = "instanc
 	i <- sapply(att_data, is, class2 = "Date") | sapply(att_data, is, class2 = "POSIXt")
 	att_data[i] <- lapply(att_data[i], as.character)
 	
+	col_type <- function(x) {
+	  if(inherits(x, "character")) "character"
+	  else if(inherits(x, "integer")) "integer"
+	  else "numeric"
+	}
+
 	charDimLen<-0
 	for(colName in names(att_data)) {
-		if(grepl(class(att_data[colName][[1]]), "character")) {
+		if(col_type(att_data[colName][[1]]) == "character") {
 			charDimLen<-max(sapply(att_data[colName][[1]], nchar, keepNA=FALSE), charDimLen)
 		}
 	}
@@ -72,21 +78,22 @@ write_attribute_data <- function(nc_file, att_data, instance_dim_name = "instanc
 	}
 	col <- 1
 	for(colName in names(att_data)) {
-		if(grepl(class(att_data[colName][[1]]), "character")) {
+	  ct <- col_type(att_data[colName][[1]])
+		if(ct == "character") {
 		  dim <- c(char_dim, instance_dim)
 		  missval <- ""
 		  char <- TRUE
 		  att_data[colName][[1]][is.na(att_data[colName][[1]])] <- ""
-		} else if(grepl(class(att_data[colName][[1]]), "integer")) {
+		} else if(ct == "integer") {
 		  dim <- instance_dim
 		  missval <- -9999
 		} else {
 		  dim <- instance_dim
 		  missval <- -9999.999
 		}
-	  var.def.nc(nc, colName, types[[class(att_data[colName][[1]])]], dim)
+	  var.def.nc(nc, colName, types[[ct]], dim)
 	  att.put.nc(nc, colName, "units", "NC_CHAR", units[col])
-	  att.put.nc(nc, colName, "missing_value", types[[class(att_data[colName][[1]])]], missval)
+	  att.put.nc(nc, colName, "missing_value", types[[ct]], missval)
 		col <- col + 1
 	}
 

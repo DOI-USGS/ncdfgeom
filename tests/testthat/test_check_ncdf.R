@@ -68,7 +68,7 @@ test_that("basic point works", {
 
 test_that("a crs gets found correctly", {
   testthat::skip_if_not(require("ncdf4"))
-  polygonData <- sf::read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.shp")
+  polygonData <- sf::read_sf("data/Yahara_alb/Yahara_River_HRUs_alb_eq.gpkg")
   nc_file <- write_geometry(nc_file=tempfile(), geom_data = polygonData)
   nc<-nc_open(nc_file)
   checkVals <- ncdfgeom:::check_netcdf(nc_file)

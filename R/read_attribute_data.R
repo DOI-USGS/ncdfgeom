@@ -37,7 +37,7 @@ read_attribute_data <- function(nc, instance_dim) {
 	  
   dataFrame <- as.data.frame(list(id = 1:nc_dim$length))
   
-  for(i in 1:nrow(nc_meta$variable)) {
+  for(i in seq_len(nrow(nc_meta$variable))) {
     var <- nc_meta$variable[i, ]
     axis <- filter(nc_meta$axis, variable == var$name)
     if(var$ndims == 1 && axis$dimension == nc_dim$id) {

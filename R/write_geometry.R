@@ -96,7 +96,7 @@ write_geom_data.sfc_POINT <- function(geom_data, nc_file, instance_dim_name, var
   
   geom_data <- st_coordinates(geom_data)
   
-  node_count <- c(1:nrow(geom_data))
+  node_count <- seq_len(nrow(geom_data))
   
   x_vals <- geom_data[,1]
   y_vals <- geom_data[,2]
@@ -154,7 +154,7 @@ write_geom_data.sfc_LINESTRING <- function(geom_data, nc_file, instance_dim_name
 #' @name write_geom_data
 write_geom_data.sfc_MULTILINESTRING <- function(geom_data, nc_file, 
                                                 instance_dim_name, variables = c()) {
-  if(grepl("Z|M", class(st_geometry(geom_data)[[1]])[1])) {
+  if(inherits(st_geometry(geom_data)[[1]], c("XYZ", "XYM", "XYZM"))) {
     warning("Found more than two dimensions in geometry. Removing Z and M content.")
     geom_data <- st_zm(geom_data)
   }
@@ -253,8 +253,8 @@ write_geom_data.sfc_POLYGON <- function(geom_data, nc_file, instance_dim_name, v
       coords <- g_data[g_data[, 3] == g_part, c(1,2)]
       nrc <- nrow(coords)
       
-      x_vals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 1]
-      y_vals[coord:(coord+nrow(coords)-1)]<-coords[1:nrow(coords), 2]
+      x_vals[coord:(coord+nrc-1)]<-coords[, 1]
+      y_vals[coord:(coord+nrc-1)]<-coords[, 2]
         
       nd_count <- nd_count + nrc
       part_node_count[nc_part] <-  nrc
@@ -346,15 +346,25 @@ write_geom_data.sfc_MULTIPOLYGON <- function(geom_data, nc_file, instance_dim_na
 }
 
 get_crs <- function(geom_data) {
-  crs <- ncmeta::nc_prj_to_gridmapping(st_crs(geom_data)$proj4string)
+  st_crs_obj <- st_crs(geom_data)
+
+  if(is.na(st_crs_obj)) {
+    warning("No CRS was found. Assuming WGS84 Lat Lon.")
+    return(list(grid_mapping_name = "latitude_longitude",
+                semi_major_axis = 6378137,
+                inverse_flattening = 298.257223563,
+                longitude_of_prime_meridian = 0))
+  }
+
+  crs <- ncmeta::nc_prj_to_gridmapping(st_crs_obj$proj4string)
   crs <- setNames(crs$value, crs$name)
-  
+
   if(length(crs) == 0) {
     crs <- list(grid_mapping_name = "latitude_longitude",
                 semi_major_axis = 6378137,
                 inverse_flattening = 298.257223563,
                 longitude_of_prime_meridian = 0)
-    warning("No CRS was found. Assuming WGS84 Lat Lon.")
+    warning("CRS could not be mapped to a CF grid mapping. Assuming WGS84 Lat Lon.")
   }
   return(crs)
 }
@@ -412,7 +422,7 @@ put_meta_nc <- function(nc, crs, variables) {
     # 
     # nc <- open.nc(nc_file, write = TRUE)
     
-    for(crs_att in names(crs)) att.put.nc(nc, pkg.env$crs_var_name, crs_att, pkg.env$nc_types[class(crs[crs_att][[1]])][[1]], crs[crs_att][[1]])
+    for(crs_att in names(crs)) att.put.nc(nc, pkg.env$crs_var_name, crs_att, pkg.env$nc_types[[class(crs[crs_att][[1]])[1]]], crs[crs_att][[1]])
   }
   
   for(var in variables) {

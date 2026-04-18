@@ -114,14 +114,14 @@ parse_geom <- function(nc_props, nc) {
   
   nc_props <- populate_nc_props(nc_props, nc)
   
-  poly <- class(nc_props) == "polygon"
+  poly <- inherits(nc_props, "polygon")
   
   node_start <- 1
   geom_node_stop <- 0
   p_ind <- 1
   f_list <- list()
   multi_geometry <- FALSE
-  for(geom in 1:length(nc_props$geom_container$node_count)) {
+  for(geom in seq_along(nc_props$geom_container$node_count)) {
     multi_g <- FALSE
     geom_node_stop <- geom_node_stop + nc_props$geom_container$node_count[geom]
     
