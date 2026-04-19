@@ -126,7 +126,7 @@ try({ncdump <- system(paste("ncdump -h", nc_file), intern = TRUE)
 cat(ncdump, sep = "\n")}, silent = TRUE)
 ```
 
-For more information about the polygon and timeseries data structures used here, see the [NetCDF-CF standard.](http://cfconventions.org/cf-conventions/cf-conventions.html)  
+For more information about the polygon and timeseries data structures used here, see the [NetCDF-CF standard.](https://www.cfconventions.org/cf-conventions/cf-conventions.html)  
 
 ## Read Timeseries and Geometry from NetCDF
 Now that we have all our data in a single file, we can read it back in.

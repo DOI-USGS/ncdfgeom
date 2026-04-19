@@ -10,5 +10,6 @@ code.json
 Dockerfile
 ^CRAN-SUBMISSION$
 cran-comments.md
+^\.claude$
 ^vignettes/.*_cache$
 ^vignettes/.*_files$

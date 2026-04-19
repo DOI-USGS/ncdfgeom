@@ -35,7 +35,7 @@ one for [a set of polygons that have gaps](#extended-example-one) and one [for p
 
 ## Applied Example
 
-[It is a comparison with the `gdptools` python package demonstration here.](https://gdptools.readthedocs.io/en/latest/Examples/PolyToPoly/Updated_PolytoPoly_weights.html)
+[It is a comparison with the `gdptools` python package demonstration here.](https://gdptools.readthedocs.io/en/develop/Examples/PolyToPoly/Extensive_vs_intensive_variables.html)
 
 ```{r} 
 

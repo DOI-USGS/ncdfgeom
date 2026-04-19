@@ -33,7 +33,7 @@
 #' See the timeseries vignette for more information.
 #'
 #'@references
-#'https://www.unidata.ucar.edu/software/netcdf-java/v4.6/reference/FeatureDatasets/CFpointImplement.html
+#'https://docs.unidata.ucar.edu/netcdf-java/4.6/userguide/reference/FeatureDatasets/CFpointImplement.html
 #'
 #'@importFrom RNetCDF open.nc var.get.nc var.inq.nc utcal.nc close.nc
 #'@importFrom ncmeta nc_meta
@@ -225,7 +225,7 @@ get_timeseries_id <- function(nc_atts) {
 
 get_coord_vars <- function(nc) {
   # Look for 'coordinates' that match variable names. 
-  # http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/ch09s05.html
+  # https://www.cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/ch09s05.html
   nc_coord_vars <- ncmeta::nc_coord_var(nc)
   
   if (nrow(nc_coord_vars) == 0) { 

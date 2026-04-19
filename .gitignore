@@ -8,3 +8,4 @@ cran-comments.md
 .Renviron
 vignettes/*_cache/
 vignettes/*_files/
+revdep

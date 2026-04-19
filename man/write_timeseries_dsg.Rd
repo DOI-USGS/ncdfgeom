@@ -94,8 +94,8 @@ See the timeseries vignette for more information.
 }
 \references{
 \enumerate{
-  \item \url{https://www.unidata.ucar.edu/software/netcdf-java/v4.6/reference/FeatureDatasets/CFpointImplement.html}
-  \item \url{http://cfconventions.org/cf-conventions/cf-conventions.html#_orthogonal_multidimensional_array_representation}
-  \item \url{http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data}
+  \item \url{https://docs.unidata.ucar.edu/netcdf-java/4.6/userguide/reference/FeatureDatasets/CFpointImplement.html}
+  \item \url{https://www.cfconventions.org/cf-conventions/cf-conventions.html#_orthogonal_multidimensional_array_representation}
+  \item \url{https://www.cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#time-series-data}
 }
 }
