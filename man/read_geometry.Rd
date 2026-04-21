@@ -36,9 +36,9 @@ names(huc_poly)
 
 }
 \references{
-https://www.cfconventions.org/index.html
+https://cfconventions.org/index.html
 
 \enumerate{
-  \item \url{https://www.cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
+  \item \url{https://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
  }
 }

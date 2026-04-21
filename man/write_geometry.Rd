@@ -45,6 +45,6 @@ try({
 }
 \references{
 \enumerate{
-  \item \url{https://www.cfconventions.org/cf-conventions/cf-conventions.html}
+  \item \url{https://cfconventions.org/cf-conventions/cf-conventions.html}
 }
 }

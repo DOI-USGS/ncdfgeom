@@ -225,7 +225,7 @@ get_timeseries_id <- function(nc_atts) {
 
 get_coord_vars <- function(nc) {
   # Look for 'coordinates' that match variable names. 
-  # https://www.cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/ch09s05.html
+  # https://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/ch09s05.html
   nc_coord_vars <- ncmeta::nc_coord_var(nc)
   
   if (nrow(nc_coord_vars) == 0) { 

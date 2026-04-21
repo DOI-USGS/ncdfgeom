@@ -4,7 +4,7 @@ NetCDF-CF Geometry and Timeseries Tools for R
 
 `ncdfgeom` reads and writes geometry data (points lines and polygons), attributes of geometries, and time series associated with the geometries in a standards-compliant way.
 
-It implements the NetCDF-CF Spatial Geometries specification and the timeSeries feature type of the [Discrete Sampling Geometry](https://www.cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries) NetCDF-CF specification. 
+It implements the NetCDF-CF Spatial Geometries specification and the timeSeries feature type of the [Discrete Sampling Geometry](https://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries) NetCDF-CF specification. 
 
 **Visit the [`pkgdown` site](https://doi-usgs.github.io/ncdfgeom/articles/ncdfgeom.html) for a complete overview of the package.**
 

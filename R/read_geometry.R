@@ -6,7 +6,7 @@
 #'Attempts to convert a NetCDF-CF DSG Simple Geometry file into a sf data.frame.
 #'
 #'@references
-#'https://www.cfconventions.org/index.html
+#'https://cfconventions.org/index.html
 #'
 #'@importFrom RNetCDF open.nc var.get.nc close.nc
 #'@importFrom sf st_sf st_sfc st_linestring st_polygon st_multipolygon st_multilinestring st_crs
@@ -15,7 +15,7 @@
 #'
 #'@references
 #' \enumerate{
-#'   \item \url{https://www.cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
+#'   \item \url{https://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
 #'  }
 #'@export
 #'

@@ -23,7 +23,7 @@
 #'
 #'@references
 #' \enumerate{
-#'   \item \url{https://www.cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
+#'   \item \url{https://cfconventions.org/cf-conventions/cf-conventions.html#_features_and_feature_types}
 #'   \item \url{https://docs.unidata.ucar.edu/netcdf-java/4.6/userguide/reference/FeatureDatasets/CFpointImplement.html}
 #'  }
 #'
