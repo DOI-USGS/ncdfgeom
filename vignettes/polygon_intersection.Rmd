@@ -20,8 +20,8 @@ knitr::opts_chunk$set(
 
 library(ncdfgeom)
 
-if(!require(nhdplusTools)) {
-  warning("need nhdplusTools for this demo")
+if(!require(hydrogeofetch)) {
+  warning("need hydrogeofetch for this demo")
   knitr::opts_chunk$set(eval = FALSE)
 }
 
@@ -45,9 +45,9 @@ gdptools_weights <- read.csv(system.file("extdata/gdptools_prl_out.csv", package
 gdptools_weights <- dplyr::rename(gdptools_weights, gdptools_wght = wght)
 
 gage_id <- "USGS-01482100"
-basin <- nhdplusTools::get_nldi_basin(list(featureSource = "nwissite", featureId = gage_id))
-huc08 <- nhdplusTools::get_huc(id = na.omit(unique(gdptools_weights$huc8)), type = "huc08")
-huc12 <- nhdplusTools::get_huc(id = na.omit(unique(gdptools_weights$huc12)), type = "huc12")
+basin <- hydrogeofetch::get_nldi_basin(list(featureSource = "nwissite", featureId = gage_id))
+huc08 <- hydrogeofetch::get_huc(id = na.omit(unique(gdptools_weights$huc8)), type = "huc08")
+huc12 <- hydrogeofetch::get_huc(id = na.omit(unique(gdptools_weights$huc12)), type = "huc12")
 
 org_par <- par(mar = c(0, 0, 0, 0))
 plot(sf::st_as_sfc(sf::st_bbox(huc12)))
