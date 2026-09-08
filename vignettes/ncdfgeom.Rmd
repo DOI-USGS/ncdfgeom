@@ -19,12 +19,11 @@ options(scipen = 9999)
 
 ## Introduction
 
-`ncdfgeom` is intended to write spatial geometries, their attributes, and timeseries data (that would typically be stored in two or more files) into a single file. The package provides functions to read and write NetCDF-CF Discrete Sampling Geometries point and timeseries feature types as well as NetCDF-CF spatial geometries. These utilities are meant to be general, but were designed to support working with typical geospatial feature data with linked attributes and time series in NetCDF. Supported data types include:  
+`ncdfgeom` is intended to write spatial geometries, their attributes, and timeseries data (that would typically be stored in two or more files) into a single file. The package provides functions to read and write the NetCDF-CF Discrete Sampling Geometries timeSeries feature type as well as NetCDF-CF spatial geometries. These utilities are meant to be general, but were designed to support working with typical geospatial feature data with linked attributes and time series in NetCDF. Supported data types include:  
 
 - Variables from R `data.frame` tables with one row per geometry are read from or written to NetCDF variables.
 - `data.frame` tables with a time series per column are read from or written as NetCDF-CF DSG timeSeries FeatureType data.
-- `data.frame` table variables with a single-time-step observation for a given point location in each row are written to a NetCDF-CF DSG Point FeatureType.
-- `sp` and `sf` spatial point, line, and polygon types can be read from or written to NetCDF-CF geometry variables introduced in CF-1.8
+- `sf` spatial point, line, and polygon types can be read from or written to NetCDF-CF geometry variables introduced in CF-1.8
 
 For timeseries, two formats are supported:  
 
@@ -35,17 +34,17 @@ Additional read / write functions to include additional DSG feature types will b
 
 ## Installation
 
-At the time of writing, installation is only available via `remotes` or building the package directly as one would for development purposes.
+`ncdfgeom` is available from CRAN.
+
+```
+install.packages("ncdfgeom")
+```
+
+The development version can be installed from GitHub.
 
 ```
 install.packages("remotes")
 remotes::install_github("DOI-USGS/ncdfgeom")
-```
-
-When on CRAN, the package will be installed with the typical install.packages method.
-
-```
-install.packages("ncdfgeom")
 ```
 
 For this demo, we'll use `sf`, `dplyr`, and `ncdfgeom`.

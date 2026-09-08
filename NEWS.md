@@ -1,3 +1,12 @@
+1.2.3
+==========
+* switched the polygon intersection vignette from nhdplusTools to hydrogeofetch
+* read_timeseries_dsg() now falls back to a standard_name of station_id when no
+  variable carries a cf_role of timeseries_id
+* corrected the normalize = TRUE documentation of
+  calculate_area_intersection_weights() (#102)
+* minimum R version is now 4.1, matching sf, stars and dplyr
+
 1.2.2
 ==========
 * migrated test and example spatial data from shapefile to GeoPackage (#107)

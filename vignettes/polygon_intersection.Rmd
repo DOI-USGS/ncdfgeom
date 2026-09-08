@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 library(ncdfgeom)
 
-if(!require(hydrogeofetch)) {
+if(!requireNamespace("hydrogeofetch", quietly = TRUE)) {
   warning("need hydrogeofetch for this demo")
   knitr::opts_chunk$set(eval = FALSE)
 }

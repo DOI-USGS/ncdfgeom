@@ -316,6 +316,15 @@ test_that("Create basic DSG file", {
     testlist<-read_timeseries_dsg(nc_file_borked), 
     "A timeseries id variable was not found in the file.")
   
+  # with no cf_role, a standard_name of station_id identifies the timeseries id
+  file.copy(nc_file, nc_file_borked, overwrite = TRUE)
+  nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
+  att.delete.nc(nc, "instance_name", "cf_role")
+  att.put.nc(nc, "instance_name", "standard_name", "NC_CHAR", "station_id")
+  close.nc(nc)
+  testlist <- read_timeseries_dsg(nc_file_borked)
+  expect_s3_class(testlist, "ncdfgeom")
+  
   file.copy(nc_file, nc_file_borked, overwrite = TRUE)
   nc <- RNetCDF::open.nc(nc_file_borked, write = TRUE)
   att.delete.nc(nc, "BCCA_0-125deg_pr_day_ACCESS1-0_rcp45_r1i1p1", "coordinates")

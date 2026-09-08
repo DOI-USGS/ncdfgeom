@@ -64,7 +64,7 @@ by target polygon id.*
 If `normalize = TRUE`, weights are divided by the target polygon area such that weights
 sum to 1 per TARGET polygon if the target polygon is fully covered by source polygons.
 
-For `normalize = FALSE` the area weighted mean calculation no area is required
+For `normalize = TRUE` the area weighted mean calculation requires no area
 as in:
 
 > `sum( (val * w), na.rm = TRUE ) / sum(w)`

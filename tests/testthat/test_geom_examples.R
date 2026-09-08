@@ -2,6 +2,7 @@ context("geom_examples.md")
 
 test_that("create geom_examples.md", {
   testthat::skip_on_ci()
+  testthat::skip_if(Sys.which("ncdump") == "", "ncdump is not on PATH")
   
   geom_examples <- list.files(pattern = "geom_examples.md", full.names = TRUE, recursive = TRUE)
   
@@ -17,25 +18,23 @@ test_that("create geom_examples.md", {
               "Multiple MultiPolygons with Interior Rings (2D)")
   
   sink(geom_examples)
+  on.exit(if(sink.number() > 0) sink(NULL), add = TRUE)
+  
   cat(paste("# Examples - Contiguous Ragged Arrays  \n\n"))
   
-  try({
-  for(geom in 1:length(namesstr)) {
+  for(geom in seq_along(namesstr)) {
     cat(paste0("## ", namesstr[geom],"  \nWell Known Text (WKT): ```",fixtureData[["2d"]][order[geom]]),"```  \n")
     fileName<-paste0("sample_",order[geom],".nc")
-    if(grepl('point',order[geom])) {
-      write_geometry(fileName, get_fixture_data(order[geom]))
-    } else {
-      write_geometry(fileName, get_fixture_data(order[geom]))
-    }
+    write_geometry(fileName, get_fixture_data(order[geom]))
     cat("Common Data Language (CDL):\n```  \n")
     t <- system(paste0("ncdump ", fileName), intern = TRUE)
     cat(t, sep = "\n")
     cat("  \n```  \n\n")
-    system(paste("rm", fileName))
+    unlink(fileName)
   }
-  sink()
+  
+  sink(NULL)
+  
   testthat::skip_on_cran()
   expect_true(file.exists(geom_examples))
-  }, silent = FALSE)
 })
