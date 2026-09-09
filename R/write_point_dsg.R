@@ -12,14 +12,13 @@
 #' @param data_units \code{character} vector of observation units. Length must be the same as number 
 #' of columns in \code{data} parameter
 #' @param feature_names \code{character} or \code{numeric} vector of identifiers for features or stations.
-#' @param ... additional arguments to be passed on \code{nc_create}.
+#' @param ... additional arguments to be passed on to \code{write_attribute_data}.
 #'
 #' @return \code{character} path of created file
 #' 
 #' @description
 #' Creates a point feature type discrete sampling features NetCDF file. 
 #' Returns the created filename. 
-#' Can pass in netCDF creation options like force_v4 to pass on to nc_create().
 #'
 #'@references
 #' \enumerate{

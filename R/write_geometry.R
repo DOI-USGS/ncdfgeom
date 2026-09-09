@@ -128,7 +128,7 @@ write_geom_data.sfc_LINESTRING <- function(geom_data, nc_file, instance_dim_name
   y_vals <- x_vals
   coord <- 1
   
-  for(geom in 1:n_geoms) {
+  for(geom in seq_len(n_geoms)) {
     coords <- geom_data[geom_data[, 3] == geom, ][, c(1,2)]
     nrc <- nrow(coords)
 
@@ -181,7 +181,7 @@ write_geom_data.sfc_MULTILINESTRING <- function(geom_data, nc_file,
   nc_part <- 0
   coord <- 1
   
-  for(geom in 1:n_geoms) {
+  for(geom in seq_len(n_geoms)) {
     nd_count <- 0
     
     g_data <- geom_data[geom_data[, 4] == geom, ]
@@ -237,13 +237,13 @@ write_geom_data.sfc_POLYGON <- function(geom_data, nc_file, instance_dim_name, v
   nc_part <- 0
   coord <- 1
   
-  for(geom in 1:n_geoms) {
+  for(geom in seq_len(n_geoms)) {
     nd_count <- 0
     g_data <- geom_data[geom_data[, 4] == geom, ]
     
     nc_parts <- length(unique(g_data[, 3]))
     
-    for(g_part in 1:nc_parts) {
+    for(g_part in seq_len(nc_parts)) {
       nc_part <- nc_part + 1
       
       if(g_part > 1) {
@@ -306,13 +306,13 @@ write_geom_data.sfc_MULTIPOLYGON <- function(geom_data, nc_file, instance_dim_na
   nc_part <- 0
   coord <- 1
   
-    for(geom in 1:n_geoms) {
+    for(geom in seq_len(n_geoms)) {
       nd_count <- 0
       g_data <- geom_data[geom_data[, 5] == geom, ]
       
       nc_parts <- length(unique(g_data[, 4]))
       
-      for(g_part in 1:nc_parts) {
+      for(g_part in seq_len(nc_parts)) {
         nc_part <- nc_part + 1
         
         if(g_part > 1 && g_data[g_data[, 4] == nc_part, 3][1] > 1) {

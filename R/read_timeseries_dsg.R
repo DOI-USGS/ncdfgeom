@@ -210,11 +210,15 @@ get_nc_list <- function(nc, dsg, nc_meta, read_data) {
 }
 
 get_timeseries_id <- function(nc_atts) {
-  # Look for variable with the timeseries_id in it.
-  timeseries_id <- filter(nc_atts, .data$name == "standard_name" &
-                            .data$value == "station_id")$variable
+  # Look for variable with the timeseries_id in it. cf_role is the CF-canonical
+  # marker; standard_name of station_id is accepted as a fallback.
   timeseries_id <- filter(nc_atts, .data$name == "cf_role" &
                             .data$value == pkg.env$timeseries_id_cf_role)$variable
+  
+  if(length(timeseries_id) == 0) {
+    timeseries_id <- filter(nc_atts, .data$name == "standard_name" &
+                              .data$value == "station_id")$variable
+  }
   
   if(length(timeseries_id) == 0) { 
     stop('A timeseries id variable was not found in the file.') 

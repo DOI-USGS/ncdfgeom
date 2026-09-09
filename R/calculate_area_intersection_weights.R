@@ -53,7 +53,7 @@
 #' If `normalize = TRUE`, weights are divided by the target polygon area such that weights
 #' sum to 1 per TARGET polygon if the target polygon is fully covered by source polygons.
 #' 
-#' For `normalize = FALSE` the area weighted mean calculation no area is required
+#' For `normalize = TRUE` the area weighted mean calculation requires no area
 #' as in:
 #' 
 #' > `sum( (val * w), na.rm = TRUE ) / sum(w)`
@@ -109,8 +109,6 @@ calculate_area_intersection_weights <- function(x, y, normalize, allow_lonlat = 
     normalize <- FALSE
   }
 
-  if(!requireNamespace("areal")) stop("areal package required for intersection weights")
-  
   if (st_crs(x) != st_crs(y)) {
     x <- st_transform(x, st_crs(y))
   }
@@ -178,4 +176,4 @@ calculate_area_intersection_weights <- function(x, y, normalize, allow_lonlat = 
   return(dplyr::as_tibble(int))
 }
 
-varx <- vary <- w <- d <- poly_id <- areaWeight <- NULL
+varx <- vary <- NULL

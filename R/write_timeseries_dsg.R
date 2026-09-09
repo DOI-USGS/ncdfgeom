@@ -239,21 +239,19 @@ put_data_in_nc <- function(nc, nt, n, data_name, data, alts=NA) {
 	                       pkg.env$lat_coord_var_name,
 	                       pkg.env$lon_coord_var_name)
 	}
-	  att.put.nc(nc, data_name, 'coordinates', "NC_CHAR", coordinates)
-
-		att.put.nc(nc, data_name, 'coordinates', "NC_CHAR", coordinates)
+	att.put.nc(nc, data_name, 'coordinates', "NC_CHAR", coordinates)
 
 	if ( nt * n < 100000 ) {
 		var.put.nc(nc, data_name, as.matrix(data))
 	} else {
 	  if(is.character(data[1,1])) {
-  	    for ( st in 1:n ) {
+  	    for ( st in seq_len(n) ) {
     	      to_write <- as.matrix(data[,st])
 	      to_write[is.na(to_write)] <- "NA"
 	      var.put.nc(nc, data_name, to_write, start=c(1, 1, st), count=c(NA, nt, 1))
 	    }
 	  } else {
-	    for ( st in 1:n ) {
+	    for ( st in seq_len(n) ) {
 	      var.put.nc(nc, data_name, as.matrix(data[,st]), start=c(1, st), count=c(nt, 1))
 	    }
 	  }

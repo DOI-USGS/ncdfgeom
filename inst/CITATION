@@ -8,9 +8,11 @@ bibentry(bibtype = "Manual",
          title = "ncdfgeom: 'NetCDF' Geometry and Time Series",
          publisher = "U.S. Geological Survey",
          address="Reston, VA",
-         version = "1.1.0",
+         version = meta$Version,
          institution = "U.S. Geological Survey",
-         year = 2019,
+         year = 2026,
          url = "https://code.usgs.gov/water/ncdfgeom",
-         textVersion = "Blodgett, D., 2019, ncdfgeom: 'NetCDF' Geometry and Time Series, https://code.usgs.gov/water/ncdfgeom"
+         textVersion = paste0("Blodgett, D., 2026, ncdfgeom: 'NetCDF' Geometry and Time Series, ",
+                              "version ", meta$Version,
+                              ", https://code.usgs.gov/water/ncdfgeom")
 )
