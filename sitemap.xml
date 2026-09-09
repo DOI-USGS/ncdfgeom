@@ -1,0 +1,22 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/404.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/DISCLAIMER.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/articles/geometry.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/articles/index.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/articles/ncdfgeom.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/articles/polygon_intersection.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/articles/timeseries.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/authors.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/index.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/news/index.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/reference/calculate_area_intersection_weights.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/reference/create_cell_geometry.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/reference/index.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/reference/read_attribute_data.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/reference/read_geometry.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/reference/read_timeseries_dsg.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/reference/write_attribute_data.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/reference/write_geometry.html</loc></url>
+<url><loc>https://doi-usgs.github.io/ncdfgeom/reference/write_timeseries_dsg.html</loc></url>
+</urlset>
+

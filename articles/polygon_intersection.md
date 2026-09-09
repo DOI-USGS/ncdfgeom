@@ -1,0 +1,333 @@
+# Area Weight Generation for Polygon Intersections
+
+This article demonstrates how to create area weights for two sets of
+polygons.
+
+There are three examples included, one for a [typical application with
+hydrologic units](#applied-example), one for [a set of polygons that
+have gaps](#extended-example-one) and one [for polygons without
+gaps](#extended-example-two).
+
+## Applied Example
+
+[It is a comparison with the `gdptools` python package demonstration
+here.](https://gdptools.readthedocs.io/en/develop/Examples/PolyToPoly/Extensive_vs_intensive_variables.html)
+
+``` r
+
+
+gdptools_weights <- read.csv(system.file("extdata/gdptools_prl_out.csv", package = "ncdfgeom"), 
+                             colClasses = c("character", "character", "numeric"))
+
+gdptools_weights <- dplyr::rename(gdptools_weights, gdptools_wght = wght)
+
+gage_id <- "USGS-01482100"
+basin <- hydrogeofetch::get_nldi_basin(list(featureSource = "nwissite", featureId = gage_id))
+huc08 <- hydrogeofetch::get_huc(id = na.omit(unique(gdptools_weights$huc8)), type = "huc08")
+huc12 <- hydrogeofetch::get_huc(id = na.omit(unique(gdptools_weights$huc12)), type = "huc12")
+
+org_par <- par(mar = c(0, 0, 0, 0))
+plot(sf::st_as_sfc(sf::st_bbox(huc12)))
+plot(sf::st_geometry(basin), lwd = 4, add = TRUE)
+plot(sf::st_simplify(sf::st_geometry(huc08), dTolerance = 500), add = TRUE, lwd = 2)
+plot(sf::st_simplify(sf::st_geometry(huc12), dTolerance = 500), add = TRUE, lwd = 0.2, border = "grey")
+par(org_par)
+
+weights <- ncdfgeom::calculate_area_intersection_weights(
+  x = sf::st_transform(dplyr::select(huc12, huc12), 6931),
+  y = sf::st_transform(dplyr::select(huc08, huc8), 6931),
+  normalize = TRUE
+)
+
+# NOTE: normalize = TRUE means these weights can not be used for "intensive" 
+# weighted sums such as population per polygon. See below for more on this.
+
+weights <- dplyr::left_join(weights, gdptools_weights, by = c("huc8", "huc12"))
+```
+
+With weights calculated, we can do a little investigation into the
+differences.
+
+``` r
+
+
+weights$diff <- weights$w - weights$gdptools_wght
+
+# make sure nothing is way out of whack
+max(weights$diff, na.rm = TRUE)
+
+# ensure the weights generally sum as we would expect.
+sum(weights$gdptools_wght, na.rm = TRUE)
+sum(weights$w, na.rm = TRUE)
+length(unique(na.omit(weights$huc8)))
+
+# see how many NA values we have in each.
+sum(is.na(weights$w))
+sum(is.na(weights$gdptools_wght))
+
+# look at cases where gptools has NA and ncdfgeom does not
+weights[is.na(weights$gdptools_wght) & !is.na(weights$w),]
+```
+
+## Extended Example One
+
+The following example illustrates the nuances between normalized and
+non-normalized area weights and shows more specifically how area weight
+intersection calculations can be accomplished for both intensive
+variables, like total population, and extensive variables, like average
+precipitation depth.
+
+The set of polygons are a contrived but useful for the sake of
+demonstration.
+
+``` r
+
+
+library(dplyr)
+library(sf)
+library(ncdfgeom)
+
+g <- list(rbind(c(-1,-1), c(1,-1), c(1,1), c(-1,1), c(-1,-1)))
+
+blue1 = sf::st_polygon(g) * 0.8
+blue2 = blue1 + c(1, 2)
+blue3 = blue1 * 1.2 + c(-1, 2)
+
+pink1 = sf::st_polygon(g)
+pink2 = pink1 + 2
+pink3 = pink1 + c(-0.2, 2)
+pink4 = pink1 + c(2.2, 0)
+
+blue = sf::st_sfc(blue1,blue2,blue3)
+
+pink = sf::st_sfc(pink1, pink2, pink3, pink4)
+
+plot(c(blue,pink), border = NA)
+plot(blue, border = "#648fff", add = TRUE)
+plot(pink, border = "#dc267f", add = TRUE)
+
+blue <- sf::st_sf(blue, data.frame(idblue = c(1, 2, 3)))
+pink <- sf::st_sf(pink, data.frame(idpink = c(7, 8, 9, 10)))
+
+text(sapply(sf::st_geometry(blue), \(x) mean(x[[1]][,1]) + 0.4),
+     sapply(sf::st_geometry(blue), \(x) mean(x[[1]][,2]) + 0.3),
+     blue$idblue, col = "#648fff")
+
+text(sapply(sf::st_geometry(pink), \(x) mean(x[[1]][,1]) + 0.4),
+     sapply(sf::st_geometry(pink), \(x) mean(x[[1]][,2])),
+     pink$idpink, col = "#dc267f")
+
+sf::st_agr(blue) <- sf::st_agr(pink) <- "constant"
+sf::st_crs(pink) <- sf::st_crs(blue) <- sf::st_crs(5070)
+```
+
+Here, we compare blue (source) and pink (target) and w is the fraction
+of blue (source) that is covered pink (target) since we set
+`normalize = FALSE`.
+
+``` r
+
+
+(blue_pink_norm_false <- 
+calculate_area_intersection_weights(blue, pink, normalize = FALSE))
+```
+
+NOTE: `normalize = FALSE` so weights sum to 1 per *source* polygon only
+when a source polygon is fully covered by the target. The
+non-intersecting portion is not included.
+
+The following breaks down how to use these weights for *intensive* or
+*extensive* variables.
+
+``` r
+
+blue$val = c(30, 10, 20)
+blue$area_blue <- as.numeric(sf::st_area(blue))
+
+(result <- st_drop_geometry(blue) |>
+  left_join(blue_pink_norm_false, by = "idblue"))
+```
+
+For *intensive* variables, such as precipitation depth, to calculate the
+value for pink-9, we calculate an area-weighted mean:
+
+``` r
+
+
+((10 * 0.375 * 2.56) + (20 * 0.604167 * 3.6864)) / ((0.375 * 2.56) + (0.604167 * 3.6864))
+```
+
+This is saying that 0.375 of blue-3 covers pink-9 and 0.6 of blue-2
+covers pink-9. Since we are calculating a area weighted mean for an
+intensive variable, we multiply the fraction of each source polygon by
+its area and the value we want to create an area weight for. We sum the
+contributions from blue-2 and blue-3 to pink-9 and divide by the sum of
+the combined area weights.
+
+NOTE: Because there is no contribution to pink-9 over some parts of the
+polygon, that missing area does not appear. The intersecting areas are
+0.96 and 2.23 meaning that we are missing
+
+4 - 0.96 - 2.23 = 0.81
+
+and could rewrite the value for pink-9 as:
+
+``` r
+
+((10 * 0.375 * 2.56) + (20 * 0.604167 * 3.6864)) + (NA * 1 * 0.81) / 
+  ((1 * 0.81) + (0.375 * 2.56) + (0.604167 * 3.6864))
+```
+
+Which evaluates to NA. This is why for this operation we usually drop NA
+terms!
+
+For *extensive* variables, such as population, to calculate the value of
+pink-9 we would do:
+
+``` r
+
+
+((10 * 0.375) + (20 * 0.604167))
+```
+
+This is saying that 0.375 of blue-3 covers pink-9 and 0.6 of blue-2
+covers pink-9. Since we are apportioning the counts of an intensive
+variable from blue to pink, the weight can be used directly without
+calculating an area weighted mean.
+
+In practice, the above can be accomplished with
+[`dplyr::group_by()`](https://dplyr.tidyverse.org/reference/group_by.html)
+and
+[`dplyr::summarize()`](https://dplyr.tidyverse.org/reference/summarise.html)
+
+``` r
+
+(result <- result |>
+  group_by(idpink) |> # group so we get one row per target
+  # now we calculate the value for each `pink` with fraction of the area of each
+  # polygon in `blue` per polygon in `pink` with an equation like this:
+  summarize(
+    new_val_intensive = sum((val * w * area_blue)) / sum(w * area_blue),
+    new_val_extensive = sum(val * w)))
+```
+
+Now let’s do the same thing but with `normalize = TRUE`. In this case,
+`area` is built into `w` so you don’t need to know it when using `w` for
+intensive variables. The downfall with normalized weights is that they
+can not be used directly with `extensive` variables.
+
+Here, we set blue as source and pink as target as was done above but
+change normalize to `TRUE`.
+
+``` r
+
+
+(blue_pink_norm_true <-
+calculate_area_intersection_weights(select(blue, idblue), pink, normalize = TRUE))
+```
+
+NOTE: normalize = TRUE so weights sum to 1 per *target* polygon.
+Non-overlap is ignored as if it does not exist.
+
+The following breaks down how to use these weights for *intensive*
+variables.
+
+``` r
+
+(result <- st_drop_geometry(blue) |>
+    left_join(blue_pink_norm_true, by = "idblue"))
+```
+
+To calculate the area weighted mean value for pink-9, we would do:
+
+``` r
+
+((10 * 0.24) + (20 * 0.5568)) / (0.24 + (0.5568))
+```
+
+This is saying that the portion of pink-9 that should get the value from
+blue-2 is 0.3 and the portion of pink-9 that should get the value from
+blue-3 is 0.7. In this form, our weights include the relative area of
+the source polygons.
+
+As shown above as well, the calculation can be accomplished with:
+
+``` r
+
+(result <- result |>
+    group_by(idpink) |> # group so we get one row per target
+    # now we calculate the value for each `pink` with fraction of the area of each
+    # polygon in `blue` per polygon in `pink` with an equation like this:
+    summarize(
+      new_val = sum((val * w)) / sum(w)))
+```
+
+## Extended Example Two
+
+We can look at a more typical arrangement of polygons and look at this a
+different way. The following polygons are used below to illustrate
+transferring data from one set of polygons to another.
+
+Let’s also look at the values.
+
+In the example code below, values from blue are translated to values
+from pink using two methods: an weighted sum is done for *extensive*
+data such as population data and a weighted mean is done for *intensive*
+data such as precipitation depth.
+
+``` r
+
+# say we have data from `blue` that we want sampled to `pink`.
+# this gives the percent of each `blue` that intersects each `pink`
+
+(blue_pink <- calculate_area_intersection_weights(
+  select(blue, idblue), select(pink, idpink), normalize = FALSE))
+
+# NOTE: `w` sums to 1 per `blue` in all cases
+
+summarize(group_by(blue_pink, idblue), w = sum(w))
+
+# Since normalize is false, we apply weights like:
+st_drop_geometry(blue) |>
+  left_join(blue_pink, by = "idblue") |>
+  group_by(idpink) |> # group so we get one row per `pink`
+  # now we calculate the value for each `pink` with fraction of the area of each
+  # polygon in `blue` per polygon in `pink` with an equation like this:
+  summarize(
+    new_val_intensive = sum( (val * w * blue_areasqkm) ) / sum(w * blue_areasqkm),
+    new_val_extensive = sum( (val * w) ))
+
+# NOTE: `w` is the fraction of the polygon in `blue`. We need to multiply `w` by the
+# unique area of the polygon it is associated with to get the weighted mean weight.
+
+# we can go in reverse if we had data from `pink` that we want sampled to `blue`
+
+(pink_blue <- calculate_area_intersection_weights(
+  select(pink, idpink), select(blue, idblue), normalize = FALSE))
+
+# NOTE: `w` sums to 1 per `pink` (source) only where `pink` is fully covered by `blue` (target).
+
+summarize(group_by(pink_blue, idpink), w = sum(w))
+
+# Now let's look at what happens if we set normalize = TRUE. Here we
+# get `blue` as source and `pink` as target but normalize the weights so
+# the area of `blue` is built into `w`.
+
+(blue_pink <- calculate_area_intersection_weights(
+  select(blue, idblue), select(pink, idpink), normalize = TRUE))
+
+# NOTE: if we summarize by `pink` (target) `w` sums to 1 only where there is full overlap.
+
+summarize(group_by(blue_pink, idpink), w = sum(w))
+
+# Since normalize is false, we apply weights like:
+st_drop_geometry(blue) |>
+  left_join(blue_pink, by = "idblue") |>
+  group_by(idpink) |> # group so we get one row per `pink`
+  # now we weight by the percent of each polygon in `pink` per polygon in `blue`
+  summarize(new_val = sum( (val * w) ) / sum( w ))
+
+# NOTE: `w` is the fraction of the polygon from `blue` overlapping the polygon from `pink`.
+# The area of `blue` is built into the weight so we just sum the with times value per polygon.
+# We can not calculate intensive weighted sums with this weight.
+```

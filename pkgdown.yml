@@ -1,0 +1,12 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  geometry: geometry.html
+  ncdfgeom: ncdfgeom.html
+  polygon_intersection: polygon_intersection.html
+  timeseries: timeseries.html
+last_built: 2026-09-09T13:08Z
+urls:
+  reference: https://doi-usgs.github.io/ncdfgeom/reference
+  article: https://doi-usgs.github.io/ncdfgeom/articles
