@@ -9,7 +9,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/DOI-USGS/ncdfgeom/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/DOI-USGS/ncdfgeom/blob/v1.2.3/inst/CITATION)
 
 Blodgett, D., 2026, ncdfgeom: 'NetCDF' Geometry and Time Series, version
 1.2.3, https://code.usgs.gov/water/ncdfgeom

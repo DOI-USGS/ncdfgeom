@@ -6,7 +6,7 @@ articles:
   ncdfgeom: ncdfgeom.html
   polygon_intersection: polygon_intersection.html
   timeseries: timeseries.html
-last_built: 2026-09-09T13:08Z
+last_built: 2026-09-09T13:10Z
 urls:
   reference: https://doi-usgs.github.io/ncdfgeom/reference
   article: https://doi-usgs.github.io/ncdfgeom/articles
